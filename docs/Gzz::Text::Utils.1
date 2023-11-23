@@ -12,8 +12,20 @@ Gzz::Text::Utils
 A Raku module to provide text formating services to Raku progarms\&.
 .SH "COPYRIGHT"
 GPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE]
-.SH Motivations
+.SS Introduction
+
+A Raku module to provide text formatting services to Raku programs\&.
+.SS Motivations
 
 When you in\-bed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
 
 Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
+.SS The functions Provided\&.
+
+Currently there are 3 functions provided 
+.IP \(bu 2m
+\fBsub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
+.IP \(bu 2m
+\fBsub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
+.IP \(bu 2m
+\fBsub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
