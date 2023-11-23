@@ -42,7 +42,7 @@ code point,  or it will fail to behave correctly. If  it requires an on number p
 side will get one more char/codepoint. The parameter B<C<:$ref>> is by default set to the value of B<C<$text>>
 this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
 width the text if printed on the current terminal: B<NB: C<wcswidth> will return -1 if you pass it text with
-colours etc in-bedded in them.>.
+colours etc in-bedded in them>.
 
 =item B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
 
