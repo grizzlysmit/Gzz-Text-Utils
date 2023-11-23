@@ -8,6 +8,9 @@ unit module Gzz::Text::Utils:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@s
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formating services to Raku progarms.
 
+=COPYRIGHT
+GPL V3+ L<LICENSE>
+
 
 =head1 Motivations
 
