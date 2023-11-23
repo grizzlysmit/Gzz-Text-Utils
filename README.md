@@ -14,6 +14,7 @@ GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICE
 
 A Raku module to provide text formating services to Raku progarms.
 
+
 ### Motivations
 
 When you in-bed formatting information into your text such as **bold**, *italics*, etc ... and **colours** standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.
