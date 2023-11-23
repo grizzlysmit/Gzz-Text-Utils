@@ -598,9 +598,12 @@ footer {
 <li><p><strong><code>sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)</code></strong></p></li>
 <li><p><strong><code>sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)</code></strong></p></li>
 <li><p><strong><code>sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)</code></strong></p></li>
+<li><p><strong><code>centre</code></strong> centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong> by default <strong><code>$fill</code></strong> is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>$text</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal: <strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them.</strong>.</p></li>
+<li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p></li>
+<li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p></li>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-23T21:16:21Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-23T22:01:28Z</span></div></footer>
 	</body>
 </html>
 
