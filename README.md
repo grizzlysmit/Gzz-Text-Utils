@@ -6,6 +6,8 @@ Gzz::Text::Utils
 
 **VERSION: 0.1.0**
 
+**COPYRIGHT:
+GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)**
 
 
 ## Introduction
@@ -18,3 +20,5 @@ When you in-bed formatting information into your text such as **bold**, *italics
 
 Another important thing to note is that even these functions will fail if you include such formatting in the **text** field unless you supply a copy of the text with out the formatting characters in it in the **:ref** field i.e. **`left($formatted-text, $width, :ref($unformatted-text))`** or **`text($formatted-text, $width, :$ref)`** if the reference text is in a variable called **`$ref`** or you can write it as **`left($formatted-text, $width, ref => $unformatted-text)`**
 
+
+!INCLUDE "docs/README.md"
