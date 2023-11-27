@@ -30,6 +30,8 @@ or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-t
 
 use Terminal::Width;
 use Terminal::WCWidth;
+#use Grammar::Debugger;
+#use Grammar::Tracer;
 
 =begin pod1
 
@@ -42,6 +44,10 @@ BadArg is a exception type that Sprintf will throw in case of badly specified ar
 =end pod1
 
 class BadArg is Exception is export {
+    
+}
+
+class ArgParityMissMatch is Exception is export {
     
 }
 
@@ -110,6 +116,7 @@ grammar FormatBase {
                                  || 'E' #`« like e, but using an uppercase "E" »
                                  || 'G' #`« like g, but with an uppercase "E" (if applicable) »
                                  || 'b' #`« an unsigned integer, in binary »
+                                 || 'B' #`« an unsigned integer, in binary »
                                         #`« Compatibility: »
                                  || 'i' #`« a synonym for %d »
                                  || 'D' #`« a synonym for %ld »
@@ -124,18 +131,18 @@ role FormatBaseActions {
     method dollar-directive($/) {
         my Int $dollar-directive = +$/ - 1;
         BadArg.new("bad \$ spec for arg: cannot be less than 1 ").throw if $dollar-directive < 0;
-        dd $dollar-directive;
+        #dd $dollar-directive;
         make $dollar-directive;
     }
     method flags($/) {
         my @_flags = $/<flag>».made;
         my $flags = @_flags.join();
-        dd $flags;
+        #dd $flags;
         make $flags;
     }
     method flag($/) {
         my $flag = ~$/;
-        dd $flag;
+        #dd $flag;
         make $flag;
     }
     #token width            { [ '*' [ <width-dollar> '$' ]? || <width-int> ] }
@@ -144,12 +151,12 @@ role FormatBaseActions {
     method width-dollar($/) {
         my Int:D $width-dollar = +$/ - 1;
         BadArg.new("bad \$ spec for width: cannot be less than 1 ").throw if $width-dollar < 0;
-        dd $width-dollar;
+        #dd $width-dollar;
         make $width-dollar;
     }
     method width-int($/) {
         my Int:D $width-int = +$/;
-        dd $width-int;
+        #dd $width-int;
         make $width-int;
     }
     method width($/) {
@@ -159,7 +166,7 @@ role FormatBaseActions {
         } elsif $/<width-int> {
             %width = kind => 'int', val => $/<width-int>.made;
         }
-        dd %width;
+        #dd %width;
         make %width;
     }
     #token precision        { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
@@ -168,12 +175,12 @@ role FormatBaseActions {
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
         BadArg.new("bad \$ spec for precision: cannot be less than 1 ").throw if $prec-dollar < 0;
-        dd $prec-dollar;
+        #dd $prec-dollar;
         make $prec-dollar;
     }
     method prec-int($/) {
         my Int:D $prec-int = +$/;
-        dd $prec-int;
+        #dd $prec-int;
         make $prec-int;
     }
     method precision($/) {
@@ -183,24 +190,24 @@ role FormatBaseActions {
         } elsif $/<prec-int> {
             %precision = kind => 'int', val => $/<prec-int>.made;
         }
-        dd %precision;
+        #dd %precision;
         make %precision;
     }
     method modifier($/) {
         my Str $modifier = ~$/;
-        dd $modifier;
+        #dd $modifier;
         make $modifier;
     }
     method spec-char($/) {
         my Str:D $spec-char = ~$/;
-        dd $spec-char;
+        #dd $spec-char;
         make $spec-char;
     }
     #token fmt-esc          { [ '%' || 'n' ] }
     method fmt-esc($/) {
         my %fmt-esc = type => 'literal', val => ~$/;
         %fmt-esc«val» = "\n" if %fmt-esc«val» eq 'n'; # %n gives us an newline saves on needing double quotes #
-        dd %fmt-esc;
+        #dd %fmt-esc;
         make %fmt-esc;
     }
     #token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
@@ -222,7 +229,7 @@ role FormatBaseActions {
         if $/<modifier> {
             %fmt-spec«modifier» = $/<modifier>.made;
         }
-        dd %fmt-spec;
+        #dd %fmt-spec;
         make %fmt-spec;
     }
     #token format-spec      { [ <fmt-esc> || <fmt-spec> ] }
@@ -233,13 +240,13 @@ role FormatBaseActions {
         } elsif $/<fmt-spec> {
             %format-spec = $/<fmt-spec>.made;
         }
-        dd %format-spec;
+        #dd %format-spec;
         make %format-spec;
     }
     #token chunk            { <-[%]>+ }
     method chunk($/) {
         my %chunk = type => 'literal', val => ~$/;
-        dd %chunk;
+        #dd %chunk;
         make %chunk;
     }
     #token chunks           { [ <chunk> || '%' <format-spec> ] }
@@ -250,13 +257,13 @@ role FormatBaseActions {
         } elsif $/<format-spec> {
             %chunks = $/<format-spec>.made;
         }
-        dd %chunks;
+        #dd %chunks;
         make %chunks;
     }
     #token format           { <chunks>+ }
     method format($/) {
         my @format = $/<chunks>».made;
-        dd @format;
+        #dd @format;
         make @format;
     }
 } # role FormatBaseActions #
@@ -268,7 +275,7 @@ grammar Format is FormatBase is export {
 class FormatActions does FormatBaseActions is export {
     method TOP($made) {
         my @top = $made<format>.made;
-        dd @top;
+        #dd @top;
         $made.make: @top;
     }
 } # class FormatActions does FormatBaseActions is export # 
@@ -346,182 +353,146 @@ grammar UnhighlightBase is export {
 role UnhighlightBaseActions is export {
     method clear-screen($/) {
         my %clear-screen = type => 'ansi', sub-type => 'clear-screen', val => ~$/;
-        dd %clear-screen;
         make %clear-screen;
     }
     method home($/) {
         my %home = type => 'ansi', sub-type => 'home', val => ~$/;
-        dd %home;
         make %home;
     }
     method move-to($/) {
         my %move-to = type => 'ansi', sub-type => 'move-to', val => ~$/;
-        dd %move-to;
         make %move-to;
     }
     method reset-scroll-region($/) {
         my %reset-scroll-region = type => 'ansi', sub-type => 'reset-scroll-region', val => ~$/;
-        dd %reset-scroll-region;
         make %reset-scroll-region;
     }
     method set-scroll-region($/) {
         my %set-scroll-region = type => 'ansi', sub-type => 'set-scroll-region', val => ~$/;
-        dd %set-scroll-region;
         make %set-scroll-region;
     }
     method scroll-down($/) {
         my %scroll-down = type => 'ansi', sub-type => 'scroll-down', val => ~$/;
-        dd %scroll-down;
         make %scroll-down;
     }
     method scroll-up($/) {
         my %scroll-up = type => 'ansi', sub-type => 'scroll-up', val => ~$/;
-        dd %scroll-up;
         make %scroll-up;
     }
     method hide-cursor($/) {
         my %hide-cursor = type => 'ansi', sub-type => 'hide-cursor', val => ~$/;
-        dd %hide-cursor;
         make %hide-cursor;
     }
     method save-screen($/) {
         my %save-screen = type => 'ansi', sub-type => 'save-screen', val => ~$/;
-        dd %save-screen;
         make %save-screen;
     }
     method restore-screen($/) {
         my %restore-screen = type => 'ansi', sub-type => 'restore-screen', val => ~$/;
-        dd %restore-screen;
         make %restore-screen;
     }
     method show-cursor($/) {
         my %show-cursor = type => 'ansi', sub-type => 'show-cursor', val => ~$/;
-        dd %show-cursor;
         make %show-cursor;
     }
     method cursor-up($/) {
         my %cursor-up = type => 'ansi', sub-type => 'cursor-up', val => ~$/;
-        dd %cursor-up;
         make %cursor-up;
     }
     method cursor-down($/) {
         my %cursor-down = type => 'ansi', sub-type => 'cursor-down', val => ~$/;
-        dd %cursor-down;
         make %cursor-down;
     }
     method cursor-right($/) {
         my %cursor-right = type => 'ansi', sub-type => 'cursor-right', val => ~$/;
-        dd %cursor-right;
         make %cursor-right;
     }
     method cursor-left($/) {
         my %cursor-left = type => 'ansi', sub-type => 'cursor-left', val => ~$/;
-        dd %cursor-left;
         make %cursor-left;
     }
     method cursor-next-line($/) {
         my %cursor-next-line = type => 'ansi', sub-type => 'cursor-next-line', val => ~$/;
-        dd %cursor-next-line;
         make %cursor-next-line;
     }
     method cursor-prev-line($/) {
         my %cursor-prev-line = type => 'ansi', sub-type => 'cursor-prev-line', val => ~$/;
-        dd %cursor-prev-line;
         make %cursor-prev-line;
     }
     method print-at($/) {
         my %print-at = type => 'ansi', sub-type => 'print-at', val => ~$/;
-        dd %print-at;
         make %print-at;
     }
     method set-fg-color($/) {
         my %set-fg-color = type => 'ansi', sub-type => 'set-fg-color', val => ~$/;
-        dd %set-fg-color;
         make %set-fg-color;
     }
     method set-fg-rgb-color($/) {
         my %set-fg-rgb-color = type => 'ansi', sub-type => 'set-fg-rgb-color', val => ~$/;
-        dd %set-fg-rgb-color;
         make %set-fg-rgb-color;
     }
     method set-bg-color($/) {
         my %set-bg-color = type => 'ansi', sub-type => 'set-bg-color', val => ~$/;
-        dd %set-bg-color;
         make %set-bg-color;
     }
     method set-bg-rgb-color($/) {
         my %set-bg-rgb-color = type => 'ansi', sub-type => 'set-bg-rgb-color', val => ~$/;
-        dd %set-bg-rgb-color;
         make %set-bg-rgb-color;
     }
     method set-bg-default($/) {
         my %set-bg-default = type => 'ansi', sub-type => 'set-bg-default', val => ~$/;
-        dd %set-bg-default;
         make %set-bg-default;
     }
     method save-cursor($/) {
         my %save-cursor = type => 'ansi', sub-type => 'save-cursor', val => ~$/;
-        dd %save-cursor;
         make %save-cursor;
     }
     method restore-cursor($/) {
         my %restore-cursor = type => 'ansi', sub-type => 'restore-cursor', val => ~$/;
-        dd %restore-cursor;
         make %restore-cursor;
     }
     method start-of-line($/) {
         my %start-of-line = type => 'ansi', sub-type => 'start-of-line', val => ~$/;
-        dd %start-of-line;
         make %start-of-line;
     }
     method erase-to-end-of-line($/) {
         my %erase-to-end-of-line = type => 'ansi', sub-type => 'erase-to-end-of-line', val => ~$/;
-        dd %erase-to-end-of-line;
         make %erase-to-end-of-line;
     }
     method normal-video($/) {
         my %normal-video = type => 'ansi', sub-type => 'normal-video', val => ~$/;
-        dd %normal-video;
         make %normal-video;
     }
     method bold($/) {
         my %bold = type => 'ansi', sub-type => 'bold', val => ~$/;
-        dd %bold;
         make %bold;
     }
     method faint($/) {
         my %faint = type => 'ansi', sub-type => 'faint', val => ~$/;
-        dd %faint;
         make %faint;
     }
     method italic($/) {
         my %italic = type => 'ansi', sub-type => 'italic', val => ~$/;
-        dd %italic;
         make %italic;
     }
     method underline($/) {
         my %underline = type => 'ansi', sub-type => 'underline', val => ~$/;
-        dd %underline;
         make %underline;
     }
     method blink($/) {
         my %blink = type => 'ansi', sub-type => 'blink', val => ~$/;
-        dd %blink;
         make %blink;
     }
     method reverse-video($/) {
         my %reverse-video = type => 'ansi', sub-type => 'reverse-video', val => ~$/;
-        dd %reverse-video;
         make %reverse-video;
     }
     method strike($/) {
         my %strike = type => 'ansi', sub-type => 'strike', val => ~$/;
-        dd %strike;
         make %strike;
     }
     method alt-font($/) {
         my %alt-font = type => 'ansi', sub-type => 'alt-font', val => ~$/;
-        dd %alt-font;
         make %alt-font;
     }
     method ansi($/) {
@@ -599,12 +570,10 @@ role UnhighlightBaseActions is export {
         } elsif $/<alt-font> {
             %ansi = $/<alt-font>.made;
         }
-        dd %ansi;
         make %ansi;
     }
     method chunk($/) {
         my %chunk = type => 'chunk', sub-type => 'chunk', val => ~$/;
-        dd %chunk;
         make %chunk;
     }
     method chunks($/) {
@@ -614,12 +583,10 @@ role UnhighlightBaseActions is export {
         } elsif $/<ansi> {
             %chunks = $/<ansi>.made;
         }
-        dd %chunks;
         make %chunks;
     }
     method text($/) {
         my @text = $/<chunks>».made;
-        dd @text;
         make @text;
     }
 } # role UnhighlightBaseActions #
@@ -631,7 +598,6 @@ grammar Unhighlight is UnhighlightBase {
 class UnhighlightActions does UnhighlightBaseActions {
     method TOP($made) {
         my @top = $made<text>.made;
-        dd @top;
         $made.make: @top;
     }
 } # class UnhighlightActions does UnhighlightBaseActions #
@@ -704,7 +670,9 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
     my Str $result = $text;
     $width -= $w;
     return $text if $width <= 0;
-    $width = $width div wcswidth($fill);
+    my Int:D $fill-width = wcswidth($fill);
+    $fill-width = 1 unless $fill-width > 0;
+    $width = $width div $fill-width;
     my Int:D $l  = $width div 2;
     $result = $fill x $l ~ $result ~ $fill x ($width - $l);
     return $result;
@@ -771,18 +739,18 @@ sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = strip-ansi
 sub Sprintf(Str:D $format-str, *@args --> Str) is export {
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
-    my Int:D $specs = [+] (@format-str.grep( -> %elt { %elt«fmt-spec» eq 'fmt-spec' }).map( -> %e {
+    #dd @format-str;
+    my Int:D $specs = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                                  my Int:D $n = 1;
-                                                                                                 $n++ if %e«dollar-directive» > 0;
+                                                                                                 $n-- if %e«dollar-directive» > 0;
                                                                                                  $n++ if %e«width»«kind» eq 'star';
                                                                                                  $n++ if %e«precision»«kind» eq 'star';
                                                                                                  $n;
                                                                                              }));
-    if $specs != @args.elems {
-        die "Error: argument parity error; expected $specs args got {@args.elems}";
-    }
+    ArgParityMissMatch("Error: argument parity error; expected $specs args got {@args.elems}").throw if $specs != @args.elems;
     my Str:D $result = '';
     my Int:D $cnt = 0;
+    #dd @format-str;
     for @format-str -> %elt {
         my Str:D $type = %elt«type»;
         if $type eq 'literal' {
@@ -862,13 +830,13 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                 $arg = @args[$i][0];
                 if @args[$i].elems == 1 {
-                    $ref = strip-ansi($arg);
+                    $ref = (($arg ~~ Str:D) ?? strip-ansi($arg) !! $arg);
                 } elsif @args[$i].elems > 1 {
                     $ref = @args[$i][1];
                 }
             } else {
                 $arg = @args[$i];
-                $ref = strip-ansi($arg);
+                $ref = (($arg ~~ Str:D) ?? strip-ansi($arg) !! $arg);
             }
             my Str:D  $flags       = %elt«flags»;
             my Str:D  $padding     = '';
@@ -908,7 +876,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                  $result ~=  centre($arg, $width, $padding, :$ref, :$precision, :ellipsis('…'));
                              }
                          }
-                when 'd', 'i', 'D' {
+                when 'd'|'i'|'D' {
                                        $arg .=Int;
                                        my Str:D $fmt = '%';
                                        $fmt ~= '+' if $force-sign;
@@ -1000,8 +968,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } # $padding eq '' #
-                                   } # when 'd', 'i', 'D' #
-                when 'u', 'U' {
+                                 } # when 'd', 'i', 'D' #
+                when 'u'|'U' {
                                  $arg .=Int;
                                  BadArg("argument cannot be negative for char spec: $spec-char").throw if $arg < 0;
                                  my Str:D $fmt = '%';
@@ -1094,8 +1062,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
                                  } # $padding eq '' #
-                              } # when 'u', 'U' #
-                when 'o', 'O' {
+                             } # when 'u', 'U' #
+                when 'o'|'O' {
                                   $arg .=Int;
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
@@ -1106,7 +1074,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $type-prefix {
                                                   $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
                                               } else {
@@ -1114,7 +1082,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                               }
                                           } else {
                                               $fmt ~= '*';
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $type-prefix {
                                                   $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
                                               } else {
@@ -1124,14 +1092,14 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                       } else {
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $type-prefix {
                                                   $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
                                               } else {
                                                   $result ~= sprintf($fmt, $precision, $arg);
                                               }
                                           } else {
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               $result ~= sprintf($fmt, $arg);
                                               if $type-prefix {
                                                   $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
@@ -1141,88 +1109,152 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   } elsif $padding eq ' ' {
-                                      $fmt ~= '#' if $type-prefix;
                                       if $justify eq '^' {
                                           if $width >= 0 {
                                               if $precision >= 0 {
                                                   $fmt ~= '.*';
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               } else {
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               }
                                           } else { # $width < 0 #
                                               if $precision >= 0 {
                                                   $fmt ~= '.*';
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                                  } else {
+                                                      $result ~= sprintf($fmt, $precision, $arg);
+                                                  }
                                               } else {
-                                                  $fmt ~= $spec-char;
+                                                  $fmt ~= $spec-char.lc;
                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                  if $type-prefix {
+                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $arg);
+                                                  } else {
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               }
                                           } # $width < 0 #
                                       } else { # justify is either '-' or '' i.e. left or right #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
-                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  if $type-prefix {
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               } else {
-                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  if $type-prefix {
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               }
                                           } else {
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                  if $type-prefix {
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                  }
                                               } else {
-                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                  if $type-prefix {
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                  } else {
+                                                      $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                  }
                                               }
                                           }
                                       } # justify is either '-' or '' i.e. left or right #
                                   } else { # $padding eq '' #
-                                      $fmt ~= '#' if $type-prefix;
                                       if $justify eq '^' {
                                           if $width >= 0 {
                                               if $precision >= 0 {
                                                   $fmt ~= '.*';
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width);
+                                                  } else {
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                  }
                                               } else {
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= centre(sprintf($fmt, $arg), $width);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                  } else {
+                                                      $result ~= centre(sprintf($fmt, $arg), $width);
+                                                  }
                                               }
                                           } else { # $width < 0 #
                                               if $precision >= 0 {
                                                   $fmt ~= '.*';
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= sprintf($fmt, $precision, $arg);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $precision, $arg);
+                                                  } else {
+                                                      $result ~= sprintf($fmt, $precision, $arg);
+                                                  }
                                               } else {
-                                                  $fmt ~= $spec-char;
-                                                  $result ~= sprintf($fmt, $arg);
+                                                  $fmt ~= $spec-char.lc;
+                                                  if $type-prefix {
+                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $arg);
+                                                  } else {
+                                                      $result ~= sprintf($fmt, $arg);
+                                                  }
                                               }
                                           } # $width < 0 #
                                       } else { # justify is either '-' or '' i.e. left or right #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
-                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                  if $type-prefix {
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width);
+                                                  } else {
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                  }
                                               } else {
-                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                  if $type-prefix {
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width);
+                                                  } else {
+                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                  }
                                               }
                                           } else {
-                                              $fmt ~= $spec-char;
+                                              $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
-                                                  $result ~= left(sprintf($fmt, $arg), $width);
+                                                  if $type-prefix {
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                  } else {
+                                                      $result ~= left(sprintf($fmt, $arg), $width);
+                                                  }
                                               } else {
-                                                  $result ~= right(sprintf($fmt, $arg), $width);
+                                                  if $type-prefix {
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                  } else {
+                                                      $result ~= right(sprintf($fmt, $arg), $width);
+                                                  }
                                               }
                                           }
                                       } # justify is either '-' or '' i.e. left or right #
                                   } # $padding eq '' #
-                              } # when 'o', 'O' #
-                when 'x', 'X' {
+                             } # when 'o', 'O' #
+                when 'x'|'X' {
                                  $arg .=Int;
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
@@ -1348,8 +1380,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
                                  } # $padding eq '' #
-                              } # when 'x', 'X' #
-                when 'e', 'E' {
+                             } # when 'x', 'X' #
+                when 'e'|'E' {
                                   $arg .=Int;
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
@@ -1405,8 +1437,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   }
-                              } # when 'e', 'E' #
-                when 'f', 'F' {
+                             } # when 'e', 'E' #
+                when 'f'|'F' {
                                   $arg .=Int;
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
@@ -1462,8 +1494,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   }
-                              } # when 'f', 'F' #
-                when 'g', 'G' {
+                             } # when 'f', 'F' #
+                when 'g'|'G' {
                                   $arg .=Int;
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
@@ -1519,135 +1551,135 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   }
-                              } # when 'g', 'G' #
-                when 'b' {
-                             $arg .=Int;
-                             my Str:D $fmt = '%';
-                             $fmt ~= '+' if $force-sign;
-                             $fmt ~= '-' if $justify eq '-';
-                             $fmt ~= $padding;
-                             $fmt ~= 'v' if $vector;
-                             if $padding eq '0' {
-                                 if $width >= 0 { # centre etc make no sense here #
-                                     if $precision >= 0 {
-                                         $fmt ~= '*.*';
-                                         $fmt ~= $spec-char;
-                                         if $type-prefix {
-                                             $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
+                             } # when 'g', 'G' #
+                when 'b'|'B' {
+                                 $arg .=Int;
+                                 my Str:D $fmt = '%';
+                                 $fmt ~= '+' if $force-sign;
+                                 $fmt ~= '-' if $justify eq '-';
+                                 $fmt ~= $padding;
+                                 $fmt ~= 'v' if $vector;
+                                 if $padding eq '0' {
+                                     if $width >= 0 { # centre etc make no sense here #
+                                         if $precision >= 0 {
+                                             $fmt ~= '*.*';
+                                             $fmt ~= $spec-char;
+                                             if $type-prefix {
+                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
+                                             } else {
+                                                 $result ~= sprintf($fmt, $width, $precision, $arg);
+                                             }
                                          } else {
-                                             $result ~= sprintf($fmt, $width, $precision, $arg);
+                                             $fmt ~= '*';
+                                             $fmt ~= $spec-char;
+                                             if $type-prefix {
+                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
+                                             } else {
+                                                 $result ~= sprintf($fmt, $width, $arg);
+                                             }
                                          }
                                      } else {
-                                         $fmt ~= '*';
-                                         $fmt ~= $spec-char;
-                                         if $type-prefix {
-                                             $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
-                                         } else {
-                                             $result ~= sprintf($fmt, $width, $arg);
-                                         }
-                                     }
-                                 } else {
-                                     if $precision >= 0 {
-                                         $fmt ~= '.*';
-                                         $fmt ~= $spec-char;
-                                         if $type-prefix {
-                                             $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
-                                         } else {
-                                             $result ~= sprintf($fmt, $precision, $arg);
-                                         }
-                                     } else {
-                                         $fmt ~= $spec-char;
-                                         $result ~= sprintf($fmt, $arg);
-                                         if $type-prefix {
-                                             $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
-                                         } else {
-                                             $result ~= sprintf($fmt, $arg);
-                                         }
-                                     }
-                                 }
-                             } elsif $padding eq ' ' {
-                                 $fmt ~= '#' if $type-prefix;
-                                 if $justify eq '^' {
-                                     if $width >= 0 {
                                          if $precision >= 0 {
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
-                                         } else {
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $arg), $width, $padding);
-                                         }
-                                     } else { # $width < 0 #
-                                         if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
-                                         } else {
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $arg), $width, $padding);
-                                         }
-                                     } # $width < 0 #
-                                 } else { # justify is either '-' or '' i.e. left or right #
-                                     if $precision >= 0 {
-                                         $fmt ~= '.*';
-                                         $fmt ~= $spec-char;
-                                         if $justify eq '-' {
-                                             $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
-                                         } else {
-                                             $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
-                                         }
-                                     } else {
-                                         $fmt ~= $spec-char;
-                                         if $justify eq '-' {
-                                             $result ~= left(sprintf($fmt, $arg), $width, $padding);
-                                         } else {
-                                             $result ~= right(sprintf($fmt, $arg), $width, $padding);
-                                         }
-                                     }
-                                 } # justify is either '-' or '' i.e. left or right #
-                             } else { # $padding eq '' #
-                                 $fmt ~= '#' if $type-prefix;
-                                 if $justify eq '^' {
-                                     if $width >= 0 {
-                                         if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $precision, $arg), $width);
-                                         } else {
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $arg), $width);
-                                         }
-                                     } else { # $width < 0 #
-                                         if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= sprintf($fmt, $precision, $arg);
+                                             if $type-prefix {
+                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                             } else {
+                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                             }
                                          } else {
                                              $fmt ~= $spec-char;
                                              $result ~= sprintf($fmt, $arg);
-                                         }
-                                     } # $width < 0 #
-                                 } else { # justify is either '-' or '' i.e. left or right #
-                                     if $precision >= 0 {
-                                         $fmt ~= '.*';
-                                         $fmt ~= $spec-char;
-                                         if $justify eq '-' {
-                                             $result ~= left(sprintf($fmt, $precision, $arg), $width);
-                                         } else {
-                                             $result ~= right(sprintf($fmt, $precision, $arg), $width);
-                                         }
-                                     } else {
-                                         $fmt ~= $spec-char;
-                                         if $justify eq '-' {
-                                             $result ~= left(sprintf($fmt, $arg), $width);
-                                         } else {
-                                             $result ~= right(sprintf($fmt, $arg), $width);
+                                             if $type-prefix {
+                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
+                                             } else {
+                                                 $result ~= sprintf($fmt, $arg);
+                                             }
                                          }
                                      }
-                                 } # justify is either '-' or '' i.e. left or right #
-                             } # $padding eq '' #
-                         } # when 'b' #
-            }
+                                 } elsif $padding eq ' ' {
+                                     $fmt ~= '#' if $type-prefix;
+                                     if $justify eq '^' {
+                                         if $width >= 0 {
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                             }
+                                         } else { # $width < 0 #
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                             }
+                                         } # $width < 0 #
+                                     } else { # justify is either '-' or '' i.e. left or right #
+                                         if $precision >= 0 {
+                                             $fmt ~= '.*';
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             }
+                                         } else {
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                             }
+                                         }
+                                     } # justify is either '-' or '' i.e. left or right #
+                                 } else { # $padding eq '' #
+                                     $fmt ~= '#' if $type-prefix;
+                                     if $justify eq '^' {
+                                         if $width >= 0 {
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $arg), $width);
+                                             }
+                                         } else { # $width < 0 #
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= sprintf($fmt, $arg);
+                                             }
+                                         } # $width < 0 #
+                                     } else { # justify is either '-' or '' i.e. left or right #
+                                         if $precision >= 0 {
+                                             $fmt ~= '.*';
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                             }
+                                         } else {
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $arg), $width);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $arg), $width);
+                                             }
+                                         }
+                                     } # justify is either '-' or '' i.e. left or right #
+                                 } # $padding eq '' #
+                             } # when 'b' #
+            } # given $spec-char #
         } else {
             BadArg("Error: $?FILE line: $?LINE corrupted arg {@args[$cnt].WHAT.^name}").throw;
         }
