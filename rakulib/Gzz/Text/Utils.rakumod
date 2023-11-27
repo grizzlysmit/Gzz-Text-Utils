@@ -44,7 +44,9 @@ BadArg is a exception type that Sprintf will throw in case of badly specified ar
 =end pod1
 
 class BadArg is Exception is export {
-    
+    method new(Str:D $msg) {
+        self.bless(:message($msg));
+    }
 }
 
 class ArgParityMissMatch is Exception is export {
@@ -71,7 +73,7 @@ grammar FormatBase {
                              ]
                            }
     token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
-    token dollar-directive { \d+ }
+    token dollar-directive { \d+ <?before '$'> }
     token flags            { <flag> ** {1 .. 7} }
     token flag             { [      ' '  #`« pad with spaces »
                                  || '+' #`« put a plus in front of positive values » 
@@ -86,10 +88,10 @@ grammar FormatBase {
                              ] 
                            }
     token width            { [ '*' [ <width-dollar> '$' ]? || <width-int> ] }
-    token width-dollar     { \d+ }
+    token width-dollar     { \d+ <?before '$'> }
     token width-int        { \d+ }
     token precision        { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
-    token prec-dollar      { \d+ }
+    token prec-dollar      { \d+ <?before '$'> }
     token prec-int         { \d+ }
     token modifier         { [           #`« (Note: None of the following have been implemented.) »
                                     'hh' #`« interpret integer as C type "char" or "unsigned char" »
@@ -654,13 +656,24 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
+            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
             $w = 0;
-            for @chunks -> %chunk {
+            my %chunk;
+            my Int:D $i = -1;
+            loop ($i = 0; $i < @chunks.elems; $i++) {
+                %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                last if $w > $precision;
+                if $w > $precision {
+                    last;
+                }
                 $tmp ~= %chunk«val»;
+                #my Str:D $line = "\[$?LINE]";
+                #dd @chunks, $w, $precision, $tmp, $line;
             }
-            $tmp ~= $ellipsis;
+            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
+            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
@@ -678,20 +691,31 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
     return $result;
 } # sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
 
-sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     if $precision > 0 {
         if $w > $precision {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
+            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
             $w = 0;
-            for @chunks -> %chunk {
+            my %chunk;
+            my Int:D $i = -1;
+            loop ($i = 0; $i < @chunks.elems; $i++) {
+                %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                last if $w > $precision;
+                if $w > $precision {
+                    last;
+                }
                 $tmp ~= %chunk«val»;
+                #my Str:D $line = "\[$?LINE]";
+                #dd @chunks, $w, $precision, $tmp, $line;
             }
-            $tmp ~= $ellipsis;
+            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
+            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
@@ -704,20 +728,32 @@ sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = strip-ansi(
     return $result;
 } # sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
 
-sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     if $precision > 0 {
+        dd $precision, $width, $w;
         if $w > $precision {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
+            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
             $w = 0;
-            for @chunks -> %chunk {
+            my %chunk;
+            my Int:D $i = -1;
+            loop ($i = 0; $i < @chunks.elems; $i++) {
+                %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                last if $w > $precision;
+                if $w > $precision {
+                    last;
+                }
                 $tmp ~= %chunk«val»;
+                #my Str:D $line = "\[$?LINE]";
+                #dd @chunks, %chunk, $w, $precision, $tmp, $line;
             }
-            $tmp ~= $ellipsis;
+            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+            #dd @chunks, $w, $precision, $tmp, $line;
+            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
@@ -726,6 +762,7 @@ sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = strip-ansi
     return $text if $width <= 0;
     return $text if $width <= $w;
     my Int:D $l  = $width - $w;
+    #dd $l, $text;
     my Str:D $result = ($fill x $l) ~ $text;
     return $result;
 } # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
@@ -857,7 +894,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             given $spec-char {
                 when 'c' {
                              $arg .=Str;
-                             BadArg("arg should be one codepoint: {$arg.codes} found").throw if $arg.codes != 1;
+                             BadArg.new("arg should be one codepoint: {$arg.codes} found").throw if $arg.codes != 1;
                              if $justify eq '' {
                                  $result ~=  right($arg, $width, $padding, :$ref, :$precision);
                              } elsif $justify eq '-' {
@@ -971,7 +1008,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                  } # when 'd', 'i', 'D' #
                 when 'u'|'U' {
                                  $arg .=Int;
-                                 BadArg("argument cannot be negative for char spec: $spec-char").throw if $arg < 0;
+                                 BadArg.new("argument cannot be negative for char spec: $spec-char").throw if $arg < 0;
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
                                  $fmt ~= '-' if $justify eq '-';
@@ -981,21 +1018,24 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                  if $padding eq '0' {
                                      if $width >= 0 { # centre etc make no sense here #
                                          if $precision >= 0 {
-                                             $fmt ~= '*.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= sprintf($fmt, $width, $precision, $arg);
+                                             $fmt ~= $padding;
+                                             #$fmt ~= '*';
+                                             $fmt ~= $spec-char.lc;
+                                             #dd $arg;
+                                             $result ~= right(sprintf($fmt, $arg), $width, $padding, :$precision, :ellipsis('…'));
                                          } else {
+                                             $fmt ~= $padding;
                                              $fmt ~= '*';
-                                             $fmt ~= $spec-char;
+                                             $fmt ~= $spec-char.lc;
                                              $result ~= sprintf($fmt, $width, $arg);
                                          }
                                      } else {
                                          if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
+                                             $fmt ~= '*';
+                                             $fmt ~= $spec-char.lc;
                                              $result ~= sprintf($fmt, $precision, $arg);
                                          } else {
-                                             $fmt ~= $spec-char;
+                                             $fmt ~= $spec-char.lc;
                                              $result ~= sprintf($fmt, $arg);
                                          }
                                      }
@@ -1003,62 +1043,78 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                      if $justify eq '^' {
                                          if $width >= 0 {
                                              if $precision >= 0 {
-                                                 $fmt ~= '.*';
-                                                 $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $fmt ~= '*';
+                                                 $fmt ~= $spec-char.lc;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$precision);
                                              } else {
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
-                                                 $fmt ~= '.*';
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= '*';
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
                                              } else {
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
                                          if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             $fmt ~= '*';
+                                             $fmt ~= $spec-char.lc;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                             }
                                          } else {
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                             $fmt ~= $spec-char.lc;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                             }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
                                  } else { # $padding eq '' #
                                      if $justify eq '^' {
                                          if $width >= 0 {
                                              if $precision >= 0 {
-                                                 $fmt ~= '.*';
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= '*';
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width);
                                              } else {
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $arg), $width);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
-                                                 $fmt ~= '.*';
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= '*';
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= sprintf($fmt, $precision, $arg);
                                              } else {
-                                                 $fmt ~= $spec-char;
+                                                 $fmt ~= $spec-char.lc;
                                                  $result ~= sprintf($fmt, $arg);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
                                          if $precision >= 0 {
-                                             $fmt ~= '.*';
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                             $fmt ~= '*';
+                                             $fmt ~= $spec-char.lc;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                             }
                                          } else {
-                                             $fmt ~= $spec-char;
-                                             $result ~= centre(sprintf($fmt, $arg), $width);
+                                             $fmt ~= $spec-char.lc;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $arg), $width);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $arg), $width);
+                                             }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
                                  } # $padding eq '' #
@@ -1681,7 +1737,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                              } # when 'b' #
             } # given $spec-char #
         } else {
-            BadArg("Error: $?FILE line: $?LINE corrupted arg {@args[$cnt].WHAT.^name}").throw;
+            BadArg.new("Error: $?FILE line: $?LINE corrupted arg {@args[$cnt].WHAT.^name}").throw;
         }
     } # for @format-str -> $arg #
     return $result;
