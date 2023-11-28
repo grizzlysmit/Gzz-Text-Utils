@@ -37,9 +37,9 @@ or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-t
 
 Fixed the proto type of B<C<left>> etc is now 
 
-=begin code2
+=begin code
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
-=end code2
+=end code
 
 Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» is my new function for striping out ANSI escape sequences so we don't need to supply 
 B<C<:$ref>> unless it contains codes that B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» cannot strip out, if so I would like to know so
