@@ -582,6 +582,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#Introduction">Introduction</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Motivations">Motivations</a></td></tr>
  <tr class="toc-level-4"><td class="toc-text"><a href="#Update">Update</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#Code2">Code2</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#BadArg">BadArg</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
@@ -599,10 +600,11 @@ footer {
 <h2 id="Introduction"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Introduction</a></h2>
 <p>A Raku module to provide text formating services to Raku progarms.</p><p>Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements <strong><code>%U</code></strong> and does octal as <strong><code>0o123</code></strong> or <strong><code>0O123</code></strong> if you choose <strong><code>%O</code></strong> as I hate ambiguity like <strong><code>0123</code></strong> is it an int with leading zeros or an octal number. Also there is <strong><code>%n</code></strong> for a new line and <strong><code>%t</code></strong> for a tab helpful when you want to use single quotes to stop the <strong>num<code>$</code></strong> specs needing back slashes.</p><h3 id="Motivations"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Motivations</a></h3>
 <p>When you embed formatting information into your text such as <strong>bold</strong>, <em>italics</em>, etc ... and <strong>colours</strong> standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.</p><p>Another important thing to note is that even these functions will fail if you include such formatting in the <strong>text</strong> field unless you supply a copy of the text with out the formatting characters in it in the <strong>:ref</strong> field i.e. <strong><code>left($formatted-text, $width, :ref($unformatted-text))</code></strong> or <strong><code>text($formatted-text, $width, :$ref)</code></strong> if the reference text is in a variable called <strong><code>$ref</code></strong> or you can write it as <strong><code>left($formatted-text, $width, ref =&gt; $unformatted-text)</code></strong></p><h4 id="Update"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Update</a></h4>
-<p>Fixed the proto type of <strong><code>left</code></strong> etc is now </p><pre class="pod-block-code">B«
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export
-» 
-</pre><p>Where <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> is my new function for striping out ANSI escape sequences so we don't need to supply <strong><code>:$ref</code></strong> unless it contains codes that <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> cannot strip out, if so I would like to know so I can update it to cope with these new codes.</p></section><section name="pod"><h1 id="BadArg"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">BadArg</a></h1>
+<p>Fixed the proto type of <strong><code>left</code></strong> etc is now </p><section>
+<h1 id="Code2"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">code2</a></h1>
+<p>sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export</p>
+</section>
+<p>Where <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> is my new function for striping out ANSI escape sequences so we don't need to supply <strong><code>:$ref</code></strong> unless it contains codes that <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> cannot strip out, if so I would like to know so I can update it to cope with these new codes.</p></section><section name="pod"><h1 id="BadArg"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">BadArg</a></h1>
 <ul>
 <li><p><strong><code>class BadArg is Exception is export</code></strong></p></li>
 </ul>
@@ -623,7 +625,7 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-28T23:42:03Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-28T23:43:29Z</span></div></footer>
 	</body>
 </html>
 
