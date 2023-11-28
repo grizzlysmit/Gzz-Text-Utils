@@ -33,7 +33,7 @@ Introduction
 
 A Raku module to provide text formating services to Raku progarms.
 
-Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements **`%U`** and does octal as **`0o123`** or **`0O123`** if you choose **`%O`** as I hate ambuguity like **`0123`** is it an int with leading zeros or an octal number. Also there is **`%n`** for a new line helpful when you want to use single quotes to stop the **num`$`** specs needing back slashes.
+Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements **`%U`** and does octal as **`0o123`** or **`0O123`** if you choose **`%O`** as I hate ambiguity like **`0123`** is it an int with leading zeros or an octal number. Also there is **`%n`** for a new line and **`%t`** for a tab helpful when you want to use single quotes to stop the **num`$`** specs needing back slashes.
 
 ### Motivations
 
@@ -43,7 +43,7 @@ Another important thing to note is that even these functions will fail if you in
 
 #### Update Fixed the proto type of **`left`** etc is now **`sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export` ** 
 
-where **`sub strip-ansi(Str:D $text --> Str:D) is export` ** is my new function for striping out ANSI excape sequences so we don't need to supply **`:$ref`** unless it contains codes that **`sub strip-ansi(Str:D $text --> Str:D) is export` ** cannot strip out, if so I would like to know so I can update it to cope with these new codes.
+Where **`sub strip-ansi(Str:D $text --> Str:D) is export` ** is my new function for striping out ANSI escape sequences so we don't need to supply **`:$ref`** unless it contains codes that **`sub strip-ansi(Str:D $text --> Str:D) is export` ** cannot strip out, if so I would like to know so I can update it to cope with these new codes.
 
 BadArg
 ======

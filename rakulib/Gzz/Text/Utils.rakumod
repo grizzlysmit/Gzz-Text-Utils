@@ -17,10 +17,10 @@ A Raku module to provide text formating services to Raku progarms.
 
 Including a sprintf frontend Sprintf that copes better with Ansi highlighted
 text and implements B<C<%U>> and does octal as B<C<0o123>> or B<C<0O123>> if
-you choose B<C<%O>> as I hate ambuguity like B<C<0123>> is it an int with
+you choose B<C<%O>> as I hate ambiguity like B<C<0123>> is it an int with
 leading zeros or an octal number.
-Also there is B<C<%n>> for a new line helpful when you want to use single
-quotes to stop the B<numC<$>> specs needing back slashes.
+Also there is B<C<%n>> for a new line and B<C<%t>> for a tab helpful when
+you want to use single quotes to stop the B<numC<$>> specs needing back slashes.
 
 =head3 Motivations
 
@@ -37,7 +37,7 @@ or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-t
 Fixed the proto type of B<C<left>> etc is now 
 B«C«sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export» » 
 
-where B«C«sub strip-ansi(Str:D $text --> Str:D) is export» » is my new function for striping out ANSI excape sequences so we don't need to supply 
+Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export» » is my new function for striping out ANSI escape sequences so we don't need to supply 
 B<C<:$ref>> unless it contains codes that B«C«sub strip-ansi(Str:D $text --> Str:D) is export» » cannot strip out, if so I would like to know so
 I can update it to cope with these new codes.
 
@@ -96,6 +96,7 @@ grammar FormatBase {
     token format-spec      { [ <fmt-esc> || <fmt-spec> ] }
     token fmt-esc          { [      '%' #`« a literal % »
                                  || 'n' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+                                 || 't' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
                              ]
                            }
     token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
