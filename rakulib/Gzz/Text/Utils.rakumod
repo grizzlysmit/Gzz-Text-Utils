@@ -1052,12 +1052,13 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
+                                                 $fmt ~= $padding;
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
