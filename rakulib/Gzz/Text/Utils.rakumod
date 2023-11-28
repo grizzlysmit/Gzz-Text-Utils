@@ -16,10 +16,11 @@ GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICE
 A Raku module to provide text formating services to Raku progarms.
 
 Including a sprintf frontend Sprintf that copes better with Ansi highlighted
-text and implements %U and does octal as 0o123 or 0O123 if you choose %O as
-I hate ambuguity like 0123 is it an int with leading zeros or an octal number.
-also there is %n for a new line helpful when you want to use single quotes to
-stop the B<numC<$>> specs needing back slashes.
+text and implements B<C<%U>> and does octal as B<C<0o123>> or B<C<0O123>> if
+you choose B<C<%O>> as I hate ambuguity like B<C<0123>> is it an int with
+leading zeros or an octal number.
+Also there is B<C<%n>> for a new line helpful when you want to use single
+quotes to stop the B<numC<$>> specs needing back slashes.
 
 =head3 Motivations
 
