@@ -79,9 +79,6 @@ Format & FormatActions are a grammar and Actions pair that parse out the **%** s
 
 For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
-pod3
-====
-
 `UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`
 -------------------------------------------------------------------------------------
 
@@ -89,14 +86,8 @@ pod3
 
 **`Unhighlight`** & **`UnhighlightActions`** are a grammar & class pair which provide a simple TOP for applying an application of **`UnhighlightBase`** & **`UnhighlightBaseActions`** for use by **`sub strip-ansi(Str:D $text --` Str:D) is export**> to strip out the plain text from a ANSI formatted string
 
-pod4
-====
-
 sub strip-ansi(Str:D $text --> Str:D) is export 
 ------------------------------------------------
-
-pod5
-====
 
 The functions Provided.
 -----------------------
@@ -114,9 +105,6 @@ here are 3 functions provided to **`centre`**, **`left`** and **`right`** justif
   * **`left`** is the same except that except that it puts all the padding on the right of the field.
 
   * **`right`** is again the same except it puts all the padding on the left and the text to the right.
-
-pod6
-====
 
 sub Sprintf(Str:D $format-str, *@args --> Str) is export 
 ---------------------------------------------------------
