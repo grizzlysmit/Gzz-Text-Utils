@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-11-28
+.TH Utils.rakumod 1 2023-11-29
 .SH "NAME"
 Gzz::Text::Utils 
 .SH "AUTHOR"
@@ -22,6 +22,9 @@ Including a sprintf frontend Sprintf that copes better with Ansi highlighted tex
 When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
 
 Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
+.SS Update Fixed the proto type of \fBleft\fR etc is now \fBsub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export \fR 
+
+where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export \fR is my new function for striping out ANSI excape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export \fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
 .SH BadArg
 .IP \(bu 2m
 \fBclass BadArg is Exception is export\fR
@@ -37,9 +40,11 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&
 \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
 
 \fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
-.SS sub strip\-ansi(Str:D $text \-\-> Str:D) is export 
 .SS The functions Provided\&.
-
+.IP \(bu 2m
+\fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR>
+.IP \(bu 2m
+Strips out all the ANSI escapes, at the moment just those provided by the \fBTerminal::ANSI\fR or \fBTerminal::ANSI::OO\fR modules both available as \fBTerminal::ANSI\fR from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them\&. 
 here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
 \fBsub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR

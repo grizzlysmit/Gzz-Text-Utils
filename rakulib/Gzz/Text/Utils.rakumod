@@ -32,12 +32,31 @@ in the B<:ref> field i.e. B<C<left($formatted-text, $width, :ref($unformatted-te
 B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variable called B<C<$ref>>
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
+=head4 Update
+Fixed the proto type of B<C<left>> etc is now 
+B«C«sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export» » 
+
+where B«C«sub strip-ansi(Str:D $text --> Str:D) is export» » is my new function for striping out ANSI excape sequences so we don't need to supply 
+B<C<:$ref>> unless it contains codes that B«C«sub strip-ansi(Str:D $text --> Str:D) is export» » cannot strip out, if so I would like to know so
+I can update it to cope with these new codes.
+
 =end pod
+
+INIT my $debug = False;
+####################################
+#                                  #
+#  To turn On or Off debuggging    #
+#  Comment or Uncomment this       #
+#  following line.                 #
+#                                  #
+####################################
+#INIT $debug = True; use Grammar::Debugger;
+
+#use Grammar::Tracer;
+INIT "Grammar::Debugger is on".say if $debug;
 
 use Terminal::Width;
 use Terminal::WCWidth;
-#use Grammar::Debugger;
-#use Grammar::Tracer;
 
 =begin pod
 
@@ -139,18 +158,18 @@ role FormatBaseActions {
     method dollar-directive($/) {
         my Int $dollar-directive = +$/ - 1;
         BadArg.new("bad \$ spec for arg: cannot be less than 1 ").throw if $dollar-directive < 0;
-        #dd $dollar-directive;
+        dd $dollar-directive if $debug;
         make $dollar-directive;
     }
     method flags($/) {
         my @_flags = $/<flag>».made;
         my $flags = @_flags.join();
-        #dd $flags;
+        dd $flags if $debug;
         make $flags;
     }
     method flag($/) {
         my $flag = ~$/;
-        #dd $flag;
+        dd $flag if $debug;
         make $flag;
     }
     #token width            { [ '*' [ <width-dollar> '$' ]? || <width-int> ] }
@@ -159,12 +178,12 @@ role FormatBaseActions {
     method width-dollar($/) {
         my Int:D $width-dollar = +$/ - 1;
         BadArg.new("bad \$ spec for width: cannot be less than 1 ").throw if $width-dollar < 0;
-        #dd $width-dollar;
+        dd $width-dollar if $debug;
         make $width-dollar;
     }
     method width-int($/) {
         my Int:D $width-int = +$/;
-        #dd $width-int;
+        dd $width-int if $debug;
         make $width-int;
     }
     method width($/) {
@@ -174,7 +193,7 @@ role FormatBaseActions {
         } elsif $/<width-int> {
             %width = kind => 'int', val => $/<width-int>.made;
         }
-        #dd %width;
+        dd %width if $debug;
         make %width;
     }
     #token precision        { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
@@ -183,12 +202,12 @@ role FormatBaseActions {
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
         BadArg.new("bad \$ spec for precision: cannot be less than 1 ").throw if $prec-dollar < 0;
-        #dd $prec-dollar;
+        dd $prec-dollar if $debug;
         make $prec-dollar;
     }
     method prec-int($/) {
         my Int:D $prec-int = +$/;
-        #dd $prec-int;
+        dd $prec-int if $debug;
         make $prec-int;
     }
     method precision($/) {
@@ -198,24 +217,24 @@ role FormatBaseActions {
         } elsif $/<prec-int> {
             %precision = kind => 'int', val => $/<prec-int>.made;
         }
-        #dd %precision;
+        dd %precision if $debug;
         make %precision;
     }
     method modifier($/) {
         my Str $modifier = ~$/;
-        #dd $modifier;
+        dd $modifier if $debug;
         make $modifier;
     }
     method spec-char($/) {
         my Str:D $spec-char = ~$/;
-        #dd $spec-char;
+        dd $spec-char if $debug;
         make $spec-char;
     }
     #token fmt-esc          { [ '%' || 'n' ] }
     method fmt-esc($/) {
         my %fmt-esc = type => 'literal', val => ~$/;
         %fmt-esc«val» = "\n" if %fmt-esc«val» eq 'n'; # %n gives us an newline saves on needing double quotes #
-        #dd %fmt-esc;
+        dd %fmt-esc if $debug;
         make %fmt-esc;
     }
     #token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
@@ -237,7 +256,7 @@ role FormatBaseActions {
         if $/<modifier> {
             %fmt-spec«modifier» = $/<modifier>.made;
         }
-        #dd %fmt-spec;
+        dd %fmt-spec if $debug;
         make %fmt-spec;
     }
     #token format-spec      { [ <fmt-esc> || <fmt-spec> ] }
@@ -248,13 +267,13 @@ role FormatBaseActions {
         } elsif $/<fmt-spec> {
             %format-spec = $/<fmt-spec>.made;
         }
-        #dd %format-spec;
+        dd %format-spec if $debug;
         make %format-spec;
     }
     #token chunk            { <-[%]>+ }
     method chunk($/) {
         my %chunk = type => 'literal', val => ~$/;
-        #dd %chunk;
+        dd %chunk if $debug;
         make %chunk;
     }
     #token chunks           { [ <chunk> || '%' <format-spec> ] }
@@ -265,13 +284,13 @@ role FormatBaseActions {
         } elsif $/<format-spec> {
             %chunks = $/<format-spec>.made;
         }
-        #dd %chunks;
+        dd %chunks if $debug;
         make %chunks;
     }
     #token format           { <chunks>+ }
     method format($/) {
         my @format = $/<chunks>».made;
-        #dd @format;
+        dd @format if $debug;
         make @format;
     }
 } # role FormatBaseActions #
@@ -283,7 +302,7 @@ grammar Format is FormatBase is export {
 class FormatActions does FormatBaseActions is export {
     method TOP($made) {
         my @top = $made<format>.made;
-        #dd @top;
+        dd @top if $debug;
         $made.make: @top;
     }
 } # class FormatActions does FormatBaseActions is export # 
@@ -302,7 +321,16 @@ B<C<sub strip-ansi(Str:D $text --> Str:D) is export>> to strip out the plain tex
 =end pod
 
 grammar UnhighlightBase is export {
-    token text           { <chunks>+ }
+    token text           { ^ [  <empty> <!before . > || <block> ] $ } #`««« the <!before .+ > is vital here as
+                                                                             otherwise empty will match before
+                                                                             anything, and the whole match will
+                                                                             fail, otherwise one could put
+                                                                             <block> before <empty> but then
+                                                                             we will need to do more work whereas
+                                                                             <empty> <!before . > succeeds or
+                                                                             fails much more quickly »»»
+    token block          { <chunks>+ }
+    token empty          { '' }
     token chunks         { [ <chunk> || <ansi> ] }
     token chunk          { <-[ \x[1B] ]>+ }
     token ansi           { [ <clear-screen> || <home> || <move-to> || <reset-scroll-region>
@@ -361,146 +389,182 @@ grammar UnhighlightBase is export {
 role UnhighlightBaseActions is export {
     method clear-screen($/) {
         my %clear-screen = type => 'ansi', sub-type => 'clear-screen', val => ~$/;
+        dd %clear-screen if $debug;
         make %clear-screen;
     }
     method home($/) {
         my %home = type => 'ansi', sub-type => 'home', val => ~$/;
+        dd %home if $debug;
         make %home;
     }
     method move-to($/) {
         my %move-to = type => 'ansi', sub-type => 'move-to', val => ~$/;
+        dd %move-to if $debug;
         make %move-to;
     }
     method reset-scroll-region($/) {
         my %reset-scroll-region = type => 'ansi', sub-type => 'reset-scroll-region', val => ~$/;
+        dd %reset-scroll-region if $debug;
         make %reset-scroll-region;
     }
     method set-scroll-region($/) {
         my %set-scroll-region = type => 'ansi', sub-type => 'set-scroll-region', val => ~$/;
+        dd %set-scroll-region if $debug;
         make %set-scroll-region;
     }
     method scroll-down($/) {
         my %scroll-down = type => 'ansi', sub-type => 'scroll-down', val => ~$/;
+        dd %scroll-down if $debug;
         make %scroll-down;
     }
     method scroll-up($/) {
         my %scroll-up = type => 'ansi', sub-type => 'scroll-up', val => ~$/;
+        dd %scroll-up if $debug;
         make %scroll-up;
     }
     method hide-cursor($/) {
         my %hide-cursor = type => 'ansi', sub-type => 'hide-cursor', val => ~$/;
+        dd %hide-cursor if $debug;
         make %hide-cursor;
     }
     method save-screen($/) {
         my %save-screen = type => 'ansi', sub-type => 'save-screen', val => ~$/;
+        dd %save-screen if $debug;
         make %save-screen;
     }
     method restore-screen($/) {
         my %restore-screen = type => 'ansi', sub-type => 'restore-screen', val => ~$/;
+        dd %restore-screen if $debug;
         make %restore-screen;
     }
     method show-cursor($/) {
         my %show-cursor = type => 'ansi', sub-type => 'show-cursor', val => ~$/;
+        dd %show-cursor if $debug;
         make %show-cursor;
     }
     method cursor-up($/) {
         my %cursor-up = type => 'ansi', sub-type => 'cursor-up', val => ~$/;
+        dd %cursor-up if $debug;
         make %cursor-up;
     }
     method cursor-down($/) {
         my %cursor-down = type => 'ansi', sub-type => 'cursor-down', val => ~$/;
+        dd %cursor-down if $debug;
         make %cursor-down;
     }
     method cursor-right($/) {
         my %cursor-right = type => 'ansi', sub-type => 'cursor-right', val => ~$/;
+        dd %cursor-right if $debug;
         make %cursor-right;
     }
     method cursor-left($/) {
         my %cursor-left = type => 'ansi', sub-type => 'cursor-left', val => ~$/;
+        dd %cursor-left if $debug;
         make %cursor-left;
     }
     method cursor-next-line($/) {
         my %cursor-next-line = type => 'ansi', sub-type => 'cursor-next-line', val => ~$/;
+        dd %cursor-next-line if $debug;
         make %cursor-next-line;
     }
     method cursor-prev-line($/) {
         my %cursor-prev-line = type => 'ansi', sub-type => 'cursor-prev-line', val => ~$/;
+        dd %cursor-prev-line if $debug;
         make %cursor-prev-line;
     }
     method print-at($/) {
         my %print-at = type => 'ansi', sub-type => 'print-at', val => ~$/;
+        dd %print-at if $debug;
         make %print-at;
     }
     method set-fg-color($/) {
         my %set-fg-color = type => 'ansi', sub-type => 'set-fg-color', val => ~$/;
+        dd %set-fg-color if $debug;
         make %set-fg-color;
     }
     method set-fg-rgb-color($/) {
         my %set-fg-rgb-color = type => 'ansi', sub-type => 'set-fg-rgb-color', val => ~$/;
+        dd %set-fg-rgb-color if $debug;
         make %set-fg-rgb-color;
     }
     method set-bg-color($/) {
         my %set-bg-color = type => 'ansi', sub-type => 'set-bg-color', val => ~$/;
+        dd %set-bg-color if $debug;
         make %set-bg-color;
     }
     method set-bg-rgb-color($/) {
         my %set-bg-rgb-color = type => 'ansi', sub-type => 'set-bg-rgb-color', val => ~$/;
+        dd %set-bg-rgb-color if $debug;
         make %set-bg-rgb-color;
     }
     method set-bg-default($/) {
         my %set-bg-default = type => 'ansi', sub-type => 'set-bg-default', val => ~$/;
+        dd %set-bg-default if $debug;
         make %set-bg-default;
     }
     method save-cursor($/) {
         my %save-cursor = type => 'ansi', sub-type => 'save-cursor', val => ~$/;
+        dd %save-cursor if $debug;
         make %save-cursor;
     }
     method restore-cursor($/) {
         my %restore-cursor = type => 'ansi', sub-type => 'restore-cursor', val => ~$/;
+        dd %restore-cursor if $debug;
         make %restore-cursor;
     }
     method start-of-line($/) {
         my %start-of-line = type => 'ansi', sub-type => 'start-of-line', val => ~$/;
+        dd %start-of-line if $debug;
         make %start-of-line;
     }
     method erase-to-end-of-line($/) {
         my %erase-to-end-of-line = type => 'ansi', sub-type => 'erase-to-end-of-line', val => ~$/;
+        dd %erase-to-end-of-line if $debug;
         make %erase-to-end-of-line;
     }
     method normal-video($/) {
         my %normal-video = type => 'ansi', sub-type => 'normal-video', val => ~$/;
+        dd %normal-video if $debug;
         make %normal-video;
     }
     method bold($/) {
         my %bold = type => 'ansi', sub-type => 'bold', val => ~$/;
+        dd %bold if $debug;
         make %bold;
     }
     method faint($/) {
         my %faint = type => 'ansi', sub-type => 'faint', val => ~$/;
+        dd %faint if $debug;
         make %faint;
     }
     method italic($/) {
         my %italic = type => 'ansi', sub-type => 'italic', val => ~$/;
+        dd %italic if $debug;
         make %italic;
     }
     method underline($/) {
         my %underline = type => 'ansi', sub-type => 'underline', val => ~$/;
+        dd %underline if $debug;
         make %underline;
     }
     method blink($/) {
         my %blink = type => 'ansi', sub-type => 'blink', val => ~$/;
+        dd %blink if $debug;
         make %blink;
     }
     method reverse-video($/) {
         my %reverse-video = type => 'ansi', sub-type => 'reverse-video', val => ~$/;
+        dd %reverse-video if $debug;
         make %reverse-video;
     }
     method strike($/) {
         my %strike = type => 'ansi', sub-type => 'strike', val => ~$/;
+        dd %strike if $debug;
         make %strike;
     }
     method alt-font($/) {
         my %alt-font = type => 'ansi', sub-type => 'alt-font', val => ~$/;
+        dd %alt-font if $debug;
         make %alt-font;
     }
     method ansi($/) {
@@ -578,10 +642,12 @@ role UnhighlightBaseActions is export {
         } elsif $/<alt-font> {
             %ansi = $/<alt-font>.made;
         }
+        dd %ansi if $debug;
         make %ansi;
     }
     method chunk($/) {
         my %chunk = type => 'chunk', sub-type => 'chunk', val => ~$/;
+        dd %chunk if $debug;
         make %chunk;
     }
     method chunks($/) {
@@ -591,10 +657,31 @@ role UnhighlightBaseActions is export {
         } elsif $/<ansi> {
             %chunks = $/<ansi>.made;
         }
+        dd %chunks if $debug;
         make %chunks;
     }
+    #token empty          { '' }
+    method empty($/) {
+        my %empty = type => 'chunk', sub-type => 'empty', val => ~$/;
+        dd %empty if $debug;
+        make %empty;
+    }
+    #token block          { <chunks>+ }
+    method block($/) {
+        my @block = $/<chunks>».made;
+        dd @block if $debug;
+        make @block;
+    }
+    #token text           { ^ [  <block> || <empty> ] $ }
     method text($/) {
-        my @text = $/<chunks>».made;
+        my @text;
+        if $/<block> {
+            @text = $/<block>.made;
+        } elsif $/<empty> {
+            my %empt = $/<empty>.made;
+            @text.push(%empt);
+        }
+        dd @text if $debug;
         make @text;
     }
 } # role UnhighlightBaseActions #
@@ -606,17 +693,26 @@ grammar Unhighlight is UnhighlightBase {
 class UnhighlightActions does UnhighlightBaseActions {
     method TOP($made) {
         my @top = $made<text>.made;
+        dd @top if $debug;
         $made.make: @top;
     }
 } # class UnhighlightActions does UnhighlightBaseActions #
 
 =begin pod
 
-=head2 sub strip-ansi(Str:D $text --> Str:D) is export 
+=head2 The functions Provided.
+
+=item B<C<sub strip-ansi(Str:D $text --> Str:D) is export>>
+
+=item Strips out all the ANSI escapes, at the moment just those provided by the B<C<Terminal::ANSI>> 
+or B<C<Terminal::ANSI::OO>> modules both available as B<C<Terminal::ANSI>> from zef etc I am not sure
+how exhastive that is,  but I will implement any more escapes as I become aware of them. 
 
 =end pod
 
 sub strip-ansi(Str:D $text --> Str:D) is export {
+    dd $text if $debug;
+    #return $text if $text.trim eq '';
     my $actions = UnhighlightActions;
     my @stuff = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
     my @cleaned = @stuff.grep( -> %chnk { %chnk«type» eq 'chunk' }).map: -> %chk { %chk«val» };
@@ -628,8 +724,6 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 } #  sub hwcswidth(Str:D $text --> Int:D) is export #
 
 =begin pod
-
-=head2 The functions Provided.
 
 here are 3 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI 
 formatted.
@@ -662,8 +756,10 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
-            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line;
+            }
             $w = 0;
             my %chunk;
             my Int:D $i = -1;
@@ -674,17 +770,21 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
                     last;
                 }
                 $tmp ~= %chunk«val»;
-                #my Str:D $line = "\[$?LINE]";
-                #dd @chunks, $w, $precision, $tmp, $line;
+                if $debug {
+                    my Str:D $line = "\[$?LINE]";
+                    dd @chunks, $w, $precision, $tmp, $line;
+                }
             }
-            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line;
+            }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
     }
-    return $text if $w <= 0;
+    return $text if $w < 0;
     return $text if $width <= $w;
     my Str $result = $text;
     $width -= $w;
@@ -704,8 +804,10 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
-            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line;
+            }
             $w = 0;
             my %chunk;
             my Int:D $i = -1;
@@ -716,17 +818,21 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
                     last;
                 }
                 $tmp ~= %chunk«val»;
-                #my Str:D $line = "\[$?LINE]";
-                #dd @chunks, $w, $precision, $tmp, $line;
+                if $debug {
+                    my Str:D $line = "\[$?LINE]";
+                    dd @chunks, $w, $precision, $tmp, $line;
+                }
             }
-            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line;
+            }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
     }
-    return $text if $w <= 0;
+    return $text if $w < 0;
     return $text if $width <= 0;
     return $text if $width <= $w;
     my Int:D $l  = ($width - $w).abs;
@@ -737,13 +843,15 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     if $precision > 0 {
-        dd $precision, $width, $w;
+        dd $precision, $width, $w if $debug;
         if $w > $precision {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
-            #my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line;
+            }
             $w = 0;
             my %chunk;
             my Int:D $i = -1;
@@ -754,21 +862,25 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
                     last;
                 }
                 $tmp ~= %chunk«val»;
-                #my Str:D $line = "\[$?LINE]";
-                #dd @chunks, %chunk, $w, $precision, $tmp, $line;
+                if $debug {
+                    my Str:D $line = "\[$?LINE]";
+                    dd @chunks, %chunk, $w, $precision, $tmp, $line;
+                }
             }
-            #$line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-            #dd @chunks, $w, $precision, $tmp, $line;
+            if $debug {
+                my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+                dd @chunks, $w, $precision, $tmp, $line if $debug;
+            }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
         $width = $precision if $width > $precision;
     }
-    return $text if $w <= 0;
+    return $text if $w < 0;
     return $text if $width <= 0;
     return $text if $width <= $w;
     my Int:D $l  = $width - $w;
-    #dd $l, $text;
+    dd $l, $text if $debug;
     my Str:D $result = ($fill x $l) ~ $text;
     return $result;
 } # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
@@ -782,7 +894,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 sub Sprintf(Str:D $format-str, *@args --> Str) is export {
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
-    #dd @format-str;
+    dd @format-str if $debug;
     my Int:D $specs = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                                  my Int:D $n = 1;
                                                                                                  $n-- if %e«dollar-directive» > 0;
@@ -793,7 +905,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
     ArgParityMissMatch("Error: argument parity error; expected $specs args got {@args.elems}").throw if $specs != @args.elems;
     my Str:D $result = '';
     my Int:D $cnt = 0;
-    #dd @format-str;
+    dd @format-str if $debug;
     for @format-str -> %elt {
         my Str:D $type = %elt«type»;
         if $type eq 'literal' {
@@ -1027,7 +1139,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                              $fmt ~= $padding;
                                              #$fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
-                                             #dd $arg;
+                                             dd $arg if $debug;
                                              $result ~= right(sprintf($fmt, $arg), $width, $padding, :$precision, :ellipsis('…'));
                                          } else {
                                              $fmt ~= $padding;
