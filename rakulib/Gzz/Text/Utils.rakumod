@@ -34,6 +34,7 @@ B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variabl
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
 =head4 Update
+
 Fixed the proto type of B<C<left>> etc is now 
 B«C«sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export» » 
 
