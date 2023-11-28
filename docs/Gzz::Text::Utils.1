@@ -24,7 +24,9 @@ When you embed formatting information into your text such as \fBbold\fR, \fIital
 Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
 .SS Update
 
-Fixed the proto type of \fBleft\fR etc is now \fBsub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export \fR 
+Fixed the proto type of \fBleft\fR etc is now 
+
+\fBsub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export \fR 
 
 Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export \fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export \fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
 .SH BadArg
