@@ -26,7 +26,7 @@ Another important thing to note is that even these functions will fail if you in
 
 Fixed the proto type of \fBleft\fR etc is now 
 
-\fBsub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export\fR 
+\fB#={sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export}\fR 
 
 Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
 .SH BadArg
