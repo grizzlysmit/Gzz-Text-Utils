@@ -4,7 +4,7 @@ Gzz::Text::Utils
 
 **AUTHOR: Francis Grizzly Smit (grizzly@smit.id.au)**
 
-**VERSION: 0.1.0**
+**VERSION: 0.1.4**
 
 **COPYRIGHT:
 GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)**

@@ -1,10 +1,10 @@
 unit module Gzz::Text::Utils:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
-=begin pod0
+=begin pod
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.0
+=VERSION 0.1.4
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formating services to Raku progarms.
 
@@ -17,7 +17,7 @@ A Raku module to provide text formatting services to Raku programs.
 
 =head3 Motivations
 
-When you in-bed formatting information into your text such as B<bold>, I<italics>, etc ... and B<colours>
+When you embed formatting information into your text such as B<bold>, I<italics>, etc ... and B<colours>
 standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.
 
 Another important thing to note is that even these functions will fail if you include such formatting
@@ -26,14 +26,14 @@ in the B<:ref> field i.e. B<C<left($formatted-text, $width, :ref($unformatted-te
 B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variable called B<C<$ref>>
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
-=end pod0
+=end pod
 
 use Terminal::Width;
 use Terminal::WCWidth;
 #use Grammar::Debugger;
 #use Grammar::Tracer;
 
-=begin pod1
+=begin pod
 
 =head1 BadArg
 
@@ -41,7 +41,7 @@ use Terminal::WCWidth;
 
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
 
-=end pod1
+=end pod
 
 class BadArg is Exception is export {
     method new(Str:D $msg) {
@@ -53,7 +53,7 @@ class ArgParityMissMatch is Exception is export {
     
 }
 
-=begin pod2
+=begin pod
 
 =head1 Format and FormatActions
 
@@ -61,7 +61,7 @@ Format & FormatActions are a grammar and Actions pair that parse out the B<%> sp
 
 For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
-=end pod2
+=end pod
 
 grammar FormatBase {
     token format           { <chunks>+ }
@@ -282,7 +282,7 @@ class FormatActions does FormatBaseActions is export {
     }
 } # class FormatActions does FormatBaseActions is export # 
 
-=begin pod3
+=begin pod
 
 =head2 C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
 
@@ -293,7 +293,7 @@ B<C<Unhighlight>> & B<C<UnhighlightActions>> are a grammar & class pair which pr
 an application of B<C<UnhighlightBase>> & B<C<UnhighlightBaseActions>>  for use by
 B<C<sub strip-ansi(Str:D $text --> Str:D) is export>> to strip out the plain text from a ANSI formatted string
 
-=end pod3
+=end pod
 
 grammar UnhighlightBase is export {
     token text           { <chunks>+ }
@@ -604,11 +604,11 @@ class UnhighlightActions does UnhighlightBaseActions {
     }
 } # class UnhighlightActions does UnhighlightBaseActions #
 
-=begin pod4
+=begin pod
 
 =head2 sub strip-ansi(Str:D $text --> Str:D) is export 
 
-=end pod4
+=end pod
 
 sub strip-ansi(Str:D $text --> Str:D) is export {
     my $actions = UnhighlightActions;
@@ -621,7 +621,7 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
     return wcswidth(strip-ansi($text));
 } #  sub hwcswidth(Str:D $text --> Int:D) is export #
 
-=begin pod5
+=begin pod
 
 =head2 The functions Provided.
 
@@ -646,7 +646,7 @@ colours etc in-bedded in them>.
 
 =item B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
-=end pod5
+=end pod
 
 
 sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
@@ -767,11 +767,11 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
     return $result;
 } # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
 
-=begin pod6
+=begin pod
 
 =head2 sub Sprintf(Str:D $format-str, *@args --> Str) is export 
 
-=end pod6
+=end pod
 
 sub Sprintf(Str:D $format-str, *@args --> Str) is export {
     my $actions = FormatActions;

@@ -1,11 +1,11 @@
 .pc
-.TH Utils.rakumod 1 2023-11-24
+.TH Utils.rakumod 1 2023-11-28
 .SH "NAME"
 Gzz::Text::Utils 
 .SH "AUTHOR"
 Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 .SH "VERSION"
-0\&.1\&.0
+0\&.1\&.4
 .SH "TITLE"
 Gzz::Text::Utils
 .SH "SUBTITLE"
@@ -17,12 +17,31 @@ GPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LIC
 A Raku module to provide text formatting services to Raku programs\&.
 .SS Motivations
 
-When you in\-bed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
+When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
 
 Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
+.SH BadArg
+.IP \(bu 2m
+\fBclass BadArg is Exception is export\fR
+
+BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
+.SH Format and FormatActions
+
+Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.
+
+For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&.
+.SH "POD3"
+.SS UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
+
+\fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
+
+\fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
+.SH "POD4"
+.SS sub strip\-ansi(Str:D $text \-\-> Str:D) is export 
+.SH "POD5"
 .SS The functions Provided\&.
 
-Currently there are 3 functions provided 
+here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
 \fBsub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
 .IP \(bu 2m
@@ -30,8 +49,10 @@ Currently there are 3 functions provided
 .IP \(bu 2m
 \fBsub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
 .IP \(bu 2m
-\fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR by default \fB$fill\fR is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly\&. If it requires an on number padding then the right hand side will get one more char/codepoint\&. The parameter \fB:$ref\fR is by default set to the value of \fB$text\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal: \fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
+\fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR by default \fB$fill\fR is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly\&. If it requires an on number padding then the right hand side will get one more char/codepoint\&. The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal: \fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
 .IP \(bu 2m
 \fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
 .IP \(bu 2m
 \fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
+.SH "POD6"
+.SS sub Sprintf(Str:D $format\-str, *@args \-\-> Str) is export 
