@@ -112,7 +112,7 @@ The functions Provided.
       } #  sub hwcswidth(Str:D $text --> Int:D) is export #
       ```
 
-here are 3 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
+### here are 3 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
   * centre
 

@@ -802,7 +802,7 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 =begin pod
 
-here are 3 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI 
+=head3 here are 3 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI 
 formatted.
 
 =begin item
