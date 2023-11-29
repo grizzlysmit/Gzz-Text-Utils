@@ -54,7 +54,9 @@ Where **`sub strip-ansi(Str:D $text --> Str:D) is export`** is my new function f
 BadArg
 ======
 
-  * **`class BadArg is Exception is export`**
+```raku
+class BadArg is Exception is export
+```
 
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
 

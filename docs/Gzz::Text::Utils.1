@@ -35,9 +35,15 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 .P
 Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
 .SH BadArg
-.IP \(bu 2m
-\fBclass BadArg is Exception is export\fR
 
+.RS 4m
+.EX
+class BadArg is Exception is export
+
+
+.EE
+.RE
+.P
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
 .SH Format and FormatActions
 

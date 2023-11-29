@@ -67,9 +67,15 @@ use Terminal::WCWidth;
 
 =head1 BadArg
 
-=item B<C<class BadArg is Exception is export>>
-
+ 
+=begin code :lang<raku>
+ 
+class BadArg is Exception is export
+ 
+=end code
+ 
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
+ 
 
 =end pod
 
