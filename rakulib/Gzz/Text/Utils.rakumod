@@ -832,7 +832,18 @@ Where:
 =begin item3
 
 B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space; if you set it to any string that is longer than 1 
-code point, it may fail to behave correctly. If  it requires an odd number of padding then the right hand side will get one more char/codepoint.
+code point, it may fail to behave correctly.
+
+=begin item3
+
+=begin item4
+
+If  it requires an odd number of padding then the right hand side will get one more char/codepoint.
+
+=end item4
+
+=begin item3
+
 The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
 this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
 width the text if printed on the current terminal:
