@@ -45,6 +45,19 @@ class BadArg is Exception is export
 .RE
 .P
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
+.SH ArgParityMissMatch
+
+.RS 4m
+.EX
+class ArgParityMissMatch is Exception is export
+
+
+.EE
+.RE
+.P
+ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
+
+\fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
 .SH Format and FormatActions
 
 Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.

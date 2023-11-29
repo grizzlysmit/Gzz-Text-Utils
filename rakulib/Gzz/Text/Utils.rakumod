@@ -80,13 +80,35 @@ BadArg is a exception type that Sprintf will throw in case of badly specified ar
 =end pod
 
 class BadArg is Exception is export {
-    method new(Str:D $msg) {
-        self.bless(:message($msg));
+    has Str:D $.msg = 'Error: bad argument found';
+    method message( --> Str:D) {
+        $!msg;
     }
 }
 
+=begin pod
+
+=head1 ArgParityMissMatch
+
+=begin code :lang<raku>
+
+class ArgParityMissMatch is Exception is export
+
+=end code
+
+ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments
+does not match what the number the format string says there should be.
+
+B<NB: if you use I<C<num$>> argument specs these will not count as they grab from the
+args add hoc, I<C<*>> width and precision spec however do count as they consume argument.>
+
+=end pod
+
 class ArgParityMissMatch is Exception is export {
-    
+    has Str:D $.msg = 'Error: argument paraity error found';
+    method message( --> Str:D) {
+        $!msg;
+    }
 }
 
 =begin pod
@@ -169,7 +191,7 @@ grammar FormatBase {
 role FormatBaseActions {
     method dollar-directive($/) {
         my Int $dollar-directive = +$/ - 1;
-        BadArg.new("bad \$ spec for arg: cannot be less than 1 ").throw if $dollar-directive < 0;
+        BadArg.new(:msg("bad \$ spec for arg: cannot be less than 1 ")).throw if $dollar-directive < 0;
         dd $dollar-directive if $debug;
         make $dollar-directive;
     }
@@ -189,7 +211,7 @@ role FormatBaseActions {
     #token width-int        { \d+ }
     method width-dollar($/) {
         my Int:D $width-dollar = +$/ - 1;
-        BadArg.new("bad \$ spec for width: cannot be less than 1 ").throw if $width-dollar < 0;
+        BadArg.new(:msg("bad \$ spec for width: cannot be less than 1 ")).throw if $width-dollar < 0;
         dd $width-dollar if $debug;
         make $width-dollar;
     }
@@ -213,7 +235,7 @@ role FormatBaseActions {
     #token prec-int         { \d+ }
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
-        BadArg.new("bad \$ spec for precision: cannot be less than 1 ").throw if $prec-dollar < 0;
+        BadArg.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
         dd $prec-dollar if $debug;
         make $prec-dollar;
     }
@@ -914,7 +936,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                                                                  $n++ if %e«precision»«kind» eq 'star';
                                                                                                  $n;
                                                                                              }));
-    ArgParityMissMatch("Error: argument parity error; expected $specs args got {@args.elems}").throw if $specs != @args.elems;
+    ArgParityMissMatch.new(:msg("Error: argument parity error; expected $specs args got {@args.elems}")).throw if $specs != @args.elems;
     my Str:D $result = '';
     my Int:D $cnt = 0;
     dd @format-str if $debug;
@@ -932,7 +954,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             my Int:D $width        = -1;
             my Int:D $precision    = -1;
            if %width-spec«kind» eq 'star' {
-                BadArg.new("arg count out of range not enough args").throw unless $cnt < @args.elems;
+                BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                     $width = @args[$cnt]«arg»;
@@ -944,7 +966,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                 $cnt++;
             }elsif %width-spec«kind» eq 'dollar' {
                 my Int:D $i = %width-spec«val»;
-                BadArg.new("\$ spec for width out of range").throw unless $i ~~ 0..^@args.elems;
+                BadArg.new(:msg("\$ spec for width out of range")).throw unless $i ~~ 0..^@args.elems;
                 my Str:D $name = @args[$i].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                     $width = @args[$i]«arg»;
@@ -957,7 +979,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                 $width = %width-spec«val»;
             }
            if %precision-spec«kind» eq 'star' {
-                BadArg.new("arg count out of range not enough args").throw unless $cnt < @args.elems;
+                BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                     $precision = @args[$cnt]«arg»;
@@ -969,7 +991,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                 $cnt++;
             }elsif %precision-spec«kind» eq 'dollar' {
                 my Int:D $i = %precision-spec«val»;
-                BadArg.new("\$ spec for precision out of range").throw unless $i ~~ 0..^@args.elems;
+                BadArg.new(:msg("\$ spec for precision out of range")).throw unless $i ~~ 0..^@args.elems;
                 my Str:D $name = @args[$i].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                     $precision = @args[$i]«arg»;
@@ -985,7 +1007,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             my $ref;
             my Int:D $dollar-directive = %elt«dollar-directive»;
             my Int:D $i = $dollar-directive;
-            BadArg.new("\$ spec for arg out of range").throw unless $i < @args.elems;
+            BadArg.new(:msg("\$ spec for arg out of range")).throw unless $i < @args.elems;
             if $dollar-directive < 1 {
                 $i = $cnt;
                 $cnt++;
@@ -1024,7 +1046,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             given $spec-char {
                 when 'c' {
                              $arg .=Str;
-                             BadArg.new("arg should be one codepoint: {$arg.codes} found").throw if $arg.codes != 1;
+                             BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
                              if $justify eq '' {
                                  $result ~=  right($arg, $width, $padding, :$ref, :$precision);
                              } elsif $justify eq '-' {
@@ -1138,7 +1160,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                  } # when 'd', 'i', 'D' #
                 when 'u'|'U' {
                                  $arg .=Int;
-                                 BadArg.new("argument cannot be negative for char spec: $spec-char").throw if $arg < 0;
+                                 BadArg.new(:msg("argument cannot be negative for char spec: $spec-char")).throw if $arg < 0;
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
                                  $fmt ~= '-' if $justify eq '-';
@@ -1868,7 +1890,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                              } # when 'b' #
             } # given $spec-char #
         } else {
-            BadArg.new("Error: $?FILE line: $?LINE corrupted arg {@args[$cnt].WHAT.^name}").throw;
+            BadArg.new(:msg("Error: $?FILE line: $?LINE corrupted arg {@args[$cnt].WHAT.^name}")).throw;
         }
     } # for @format-str -> $arg #
     return $result;

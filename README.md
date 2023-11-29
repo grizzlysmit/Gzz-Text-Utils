@@ -60,6 +60,17 @@ class BadArg is Exception is export
 
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
 
+ArgParityMissMatch
+==================
+
+```raku
+class ArgParityMissMatch is Exception is export
+```
+
+ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be.
+
+**NB: if you use *`num$`* argument specs these will not count as they grab from the args add hoc, *`*`* width and precision spec however do count as they consume argument.**
+
 Format and FormatActions
 ========================
 

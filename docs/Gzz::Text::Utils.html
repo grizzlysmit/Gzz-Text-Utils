@@ -583,6 +583,7 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#Motivations">Motivations</a></td></tr>
  <tr class="toc-level-4"><td class="toc-text"><a href="#Update">Update</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#BadArg">BadArg</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#ArgParityMissMatch">ArgParityMissMatch</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#The_functions_Provided.">The functions Provided.</a></td></tr>
@@ -603,7 +604,10 @@ footer {
 </pre><p>Where <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> is my new function for striping out ANSI escape sequences so we don't need to supply <strong><code>:$ref</code></strong> unless it contains codes that <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> cannot strip out, if so I would like to know so I can update it to cope with these new codes.</p></section><section name="pod"><h1 id="BadArg"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">BadArg</a></h1>
 <pre class="pod-block-code">class BadArg is Exception is export
 
-</pre><p>BadArg is a exception type that Sprintf will throw in case of badly specified arguments.</p></section><section name="pod"><h1 id="Format_and_FormatActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Format and FormatActions</a></h1>
+</pre><p>BadArg is a exception type that Sprintf will throw in case of badly specified arguments.</p></section><section name="pod"><h1 id="ArgParityMissMatch"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">ArgParityMissMatch</a></h1>
+<pre class="pod-block-code">class ArgParityMissMatch is Exception is export
+
+</pre><p>ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be.</p><p><strong>NB: if you use <em><code>num$</code></em> argument specs these will not count as they grab from the args add hoc, <em><code>*</code></em> width and precision spec however do count as they consume argument.</strong></p></section><section name="pod"><h1 id="Format_and_FormatActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Format and FormatActions</a></h1>
 <p>Format &amp; FormatActions are a grammar and Actions pair that parse out the <strong>%</strong> spec and normal text chunks of a format string.</p><p>For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.</p></section><section name="pod"><h2 id="UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document"><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></a></h2>
 <p><strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> are a grammar &amp; role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. </p><p><strong><code>Unhighlight</code></strong> &amp; <strong><code>UnhighlightActions</code></strong> are a grammar &amp; class pair which provide a simple TOP for applying an application of <strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> for use by <strong><code>sub strip-ansi(Str:D $text --</code> Str:D) is export</strong>&gt; to strip out the plain text from a ANSI formatted string</p></section><section name="pod"><h2 id="The_functions_Provided."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">The functions Provided.</a></h2>
 <ul>
@@ -620,7 +624,7 @@ footer {
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T00:17:38Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T01:44:53Z</span></div></footer>
 	</body>
 </html>
 
