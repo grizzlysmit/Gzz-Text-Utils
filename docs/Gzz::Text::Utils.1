@@ -95,7 +95,8 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export
 .RE
 .IP
 Same as \fBwcswidth\fR but it copes with ANSI escape sequences unlike \fBwcswidth\fR\&.
-.IP
+.RS 2n
+.IP \(bu 2m
 The secret sauce is that it is defined as:
 .IP
 
@@ -108,6 +109,7 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 
 
 .EE
+.RE
 .RE
 here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
