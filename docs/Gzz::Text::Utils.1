@@ -84,15 +84,48 @@ sub strip\-ansi(Str:D $text \-\-> Str:D) is export
 Strips out all the ANSI escapes, at the moment just those provided by the \fBTerminal::ANSI\fR or \fBTerminal::ANSI::OO\fR modules both available as \fBTerminal::ANSI\fR from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them\&. 
 here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
-\fBsub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
+centre
+.IP
+
+.RS 4m
+.EX
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)
+
+
+.EE
+.RE
 .IP \(bu 2m
-\fBsub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
+left
+.IP
+
+.RS 4m
+.EX
+sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)
+
+
+.EE
+.RE
 .IP \(bu 2m
-\fBsub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)\fR
+right
+.IP
+
+.RS 4m
+.EX
+B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text \-\-> Str)»»
+
+
+.EE
+.RE
+.RS 2n
 .IP \(bu 2m
 \fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR by default \fB$fill\fR is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly\&. If it requires an on number padding then the right hand side will get one more char/codepoint\&. The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal: \fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
+.RE
+.RS 2n
 .IP \(bu 2m
 \fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
+.RE
+.RS 2n
 .IP \(bu 2m
 \fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
+.RE
 .SS sub Sprintf(Str:D $format\-str, *@args \-\-> Str) is export 

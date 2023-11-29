@@ -772,13 +772,46 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 here are 3 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI 
 formatted.
 
-=item B«C«sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+=begin item
 
-=item B«C«sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+centre
 
-=item B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+=begin code :lang<raku>
 
-=item B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+
+=end code
+
+=end item
+
+=begin item
+
+left
+
+=begin code :lang<raku>
+
+sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+
+=end code
+
+=end item
+
+=begin item
+
+right
+
+=begin code :lang<raku>
+
+B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+
+=end code
+
+=end item
+
+=begin item2
+
+
+B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
 by default B<C<$fill>> is set to a single white space; do not set it to any string that is longer than 1 
 code point,  or it will fail to behave correctly. If  it requires an on number padding then the right hand
 side will get one more char/codepoint. The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
@@ -786,9 +819,11 @@ this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>
 width the text if printed on the current terminal: B<NB: C<wcswidth> will return -1 if you pass it text with
 colours etc in-bedded in them>.
 
-=item B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
+=end item2
 
-=item B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
+=item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
+
+=item2       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
 =end pod
 
