@@ -129,12 +129,12 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
 .RE
 .RS 2n
 .IP \(bu 2m
-Were:
+Where:
 .RE
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-\fB$fill\fR is the fill char by default \fB$fill\fR is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly\&. If it requires an on number padding then the right hand side will get one more char/codepoint\&. The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal:
+\fB$fill\fR is the fill char by default \fB$fill\fR is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly\&. If it requires an odd number of padding then the right hand side will get one more char/codepoint\&. The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal:
 .IP
 \fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
 .RE

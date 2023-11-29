@@ -636,9 +636,9 @@ footer {
 </pre></li>
 <ul>
 <li><p><strong><code>centre</code></strong> centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong></p></li>
-<li><p>Were:</p></li>
+<li><p>Where:</p></li>
 <ul>
-<li><p><strong><code>$fill</code></strong> is the fill char by default <strong><code>$fill</code></strong> is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal:</p><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
+<li><p><strong><code>$fill</code></strong> is the fill char by default <strong><code>$fill</code></strong> is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly. If it requires an odd number of padding then the right hand side will get one more char/codepoint. The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal:</p><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
 </ul>
 </ul>
 <li><p>left</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
@@ -656,7 +656,7 @@ footer {
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T02:59:14Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T03:09:48Z</span></div></footer>
 	</body>
 </html>
 

@@ -122,9 +122,9 @@ The functions Provided.
 
     * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
 
-    * Were:
+    * Where:
 
-      * **`$fill`** is the fill char by default **`$fill`** is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`** this is used to obtain the length of the of the text using ***`wcswidth(Str)`*** which is used to obtain the width the text if printed on the current terminal:
+      * **`$fill`** is the fill char by default **`$fill`** is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly. If it requires an odd number of padding then the right hand side will get one more char/codepoint. The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`** this is used to obtain the length of the of the text using ***`wcswidth(Str)`*** which is used to obtain the width the text if printed on the current terminal:
 
         **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
 
