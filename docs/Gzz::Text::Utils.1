@@ -70,8 +70,15 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&
 \fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
 .SS The functions Provided\&.
 .IP \(bu 2m
-\fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR>
-.IP \(bu 2m
+
+.RS 4m
+.EX
+sub strip\-ansi(Str:D $text \-\-> Str:D) is export
+
+
+.EE
+.RE
+.IP
 Strips out all the ANSI escapes, at the moment just those provided by the \fBTerminal::ANSI\fR or \fBTerminal::ANSI::OO\fR modules both available as \fBTerminal::ANSI\fR from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them\&. 
 here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m

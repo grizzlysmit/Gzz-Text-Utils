@@ -736,11 +736,19 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 =head2 The functions Provided.
 
-=item B<C<sub strip-ansi(Str:D $text --> Str:D) is export>>
+=begin item 
 
-=item Strips out all the ANSI escapes, at the moment just those provided by the B<C<Terminal::ANSI>> 
+=begin code :lang<raku>
+
+sub strip-ansi(Str:D $text --> Str:D) is export
+
+=end code
+
+Strips out all the ANSI escapes, at the moment just those provided by the B<C<Terminal::ANSI>> 
 or B<C<Terminal::ANSI::OO>> modules both available as B<C<Terminal::ANSI>> from zef etc I am not sure
 how exhastive that is,  but I will implement any more escapes as I become aware of them. 
+
+=end item
 
 =end pod
 
