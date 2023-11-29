@@ -156,9 +156,27 @@ The functions Provided.
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-  * Sprintf
+  * Sprintf like sprintf only can deal with ANSI highlighted text.
 
     ```raku
     sub Sprintf(Str:D $format-str, *@args --> Str) is export
     ```
+
+    * Where:
+
+      * **`*@args`** is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
+
+        * If a Hash then it should contain two pairs with keys:
+
+          * **`arg`** the actual argument.
+
+          * **`ref`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
+
+        * If a Array then it should contain two values:
+
+          * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
+
+          * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
+
+        * If it's a scalar then it's the argument itself. And **`$ref`** is **`strip-ansi($arg)`** if $arg is a string type i.e. Str or just **C**$arg>> otherwise.
 

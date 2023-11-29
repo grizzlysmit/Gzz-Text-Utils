@@ -1054,7 +1054,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 
 =begin item
 
-Sprintf
+Sprintf like sprintf only can deal with ANSI highlighted text.
 
 =begin code :lang<raku>
 
@@ -1064,20 +1064,111 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export
 
 =end item
 
+=begin item2
+
+Where:
+
+=end item2
+
+=begin item3
+
+B<C<*@args>> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
+
+=end item3
+
+=begin item4
+
+If a Hash then it should contain two pairs with keys:
+
+=end item4
+
+=begin item5
+
+B<C<arg>> the actual argument.
+
+=end item5
+
+=begin item5
+
+B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
+It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
+is a Str or just $arg otherwise.
+
+=end item5
+
+=begin item4
+
+If a Array then it should contain two values:
+
+=end item4
+
+=begin item5
+
+B<C<@args[$i][]>> the actual argument. Where B<C<$i>> is the current index into the array of args.
+
+=end item5
+
+=begin item5
+
+B<C<@args[$i][1]>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
+It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
+is a Str or just $arg otherwise.
+
+=end item5
+
+=begin item4
+
+If it's a scalar then it's the argument itself. And B<C<$ref>> is B<C<strip-ansi($arg)>> if $arg is a string type i.e. Str or
+just B<C>$arg>> otherwise.
+
+=end item4
+
 =end pod
+
+
 
 sub Sprintf(Str:D $format-str, *@args --> Str) is export {
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
     dd @format-str if $debug;
-    my Int:D $specs = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
+    my Int:D $positionals = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                                  my Int:D $n = 1;
                                                                                                  $n-- if %e«dollar-directive» > 0;
                                                                                                  $n++ if %e«width»«kind» eq 'star';
                                                                                                  $n++ if %e«precision»«kind» eq 'star';
                                                                                                  $n;
                                                                                              }));
-    ArgParityMissMatch.new(:msg("Error: argument parity error; expected $specs args got {@args.elems}")).throw if $specs != @args.elems;
+    my %extra-args is SetHash[Int] = (0..^$positionals).list;
+    my Int:D $dollars  = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
+                                                                                          my Int:D $n = 0;
+                                                                                          my Int:D $dollar-directive = %e«dollar-directive»;
+                                                                                          if $dollar-directive > 0
+                                                                                                        && (%extra-args{$dollar-directive}:!exists) {
+                                                                                                $n++;
+                                                                                                #`««« add to SetHash »»»
+                                                                                                %extra-args{$dollar-directive} = True;
+                                                                                          }
+                                                                                          my Int:D $dollar = ((%e«width»«kind» eq 'dollar') ??
+                                                                                                                              %e«width»«val» !! -1);
+                                                                                          if $dollar > 0 && (%extra-args{$dollar}:!exists) {
+                                                                                                $n++;
+                                                                                                #`««« add to SetHash »»»
+                                                                                                %extra-args{$dollar} = True;
+                                                                                          }
+                                                                                          $dollar = ((%e«precision»«kind» eq 'dollar') ??
+                                                                                                                          %e«precision»«val» !! -1);
+                                                                                          if $dollar > 0 && (%extra-args{$dollar}:!exists) {
+                                                                                                $n++;
+                                                                                                #`««« add to SetHash »»»
+                                                                                                %extra-args{$dollar} = True;
+                                                                                          }
+                                                                                          $n;
+                                                                                      }));
+    my Int:D $max = %extra-args.keys.max;
+    ArgParityMissMatch.new(:msg("Error: argument parity error; expected $positionals args got {@args.elems}")).throw if %extra-args.elems == 0 &&
+                                                                                                                         $positionals != @args.elems;
+    ArgParityMissMatch.new(:msg("Error: argument parity error; referenced argument index: {$max + 1} outside the range 1..{@args.elems}")).throw
+                                                                                                                            if $max >= @args.elems;
     my Str:D $result = '';
     my Int:D $cnt = 0;
     dd @format-str if $debug;
@@ -1156,7 +1247,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             my Str:D $name = @args[$i].WHAT.^name;
             if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                 $arg = @args[$i]«arg»;
-                $ref = @args[$i]«ref»;
+                $ref = ((@args[$i]«ref»:exists) ?? @args[$i]«ref» !! (($arg ~~ Str:D) ?? strip-ansi($arg) !! $arg));
             } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
                 $arg = @args[$i][0];
                 if @args[$i].elems == 1 {
@@ -1187,6 +1278,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             given $spec-char {
                 when 'c' {
                              $arg .=Str;
+                             $ref .=Str;
                              BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
                              if $justify eq '' {
                                  $result ~=  right($arg, $width, $padding, :$ref, :$precision);
@@ -1198,6 +1290,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                          }
                 when 's' {
                              $arg .=Str;
+                             $ref .=Str;
                              if $justify eq '' {
                                  $result ~=  right($arg, $width, $padding, :$ref, :$precision, :ellipsis('…'));
                              } elsif $justify eq '-' {
@@ -1218,20 +1311,20 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                            if $width >= 0 { # centre etc make no sense here #
                                                if $precision >= 0 {
                                                    $fmt ~= '*.*';
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $width, $precision, $arg);
                                                } else {
                                                    $fmt ~= '*';
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $width, $arg);
                                                }
                                            } else {
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $precision, $arg);
                                                } else {
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $arg);
                                                }
                                            }
@@ -1240,29 +1333,29 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                if $width >= 0 {
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
                                                    } else {
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $arg), $width, $padding);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
                                                    } else {
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $arg), $width, $padding);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
                                                } else {
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= centre(sprintf($fmt, $arg), $width, $padding);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
@@ -1271,29 +1364,29 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                if $width >= 0 {
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $precision, $arg), $width);
                                                    } else {
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= centre(sprintf($fmt, $arg), $width);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= sprintf($fmt, $precision, $arg);
                                                    } else {
-                                                       $fmt ~= $spec-char;
+                                                       $fmt ~= $spec-char.lc;
                                                        $result ~= sprintf($fmt, $arg);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= centre(sprintf($fmt, $precision, $arg), $width);
                                                } else {
-                                                   $fmt ~= $spec-char;
+                                                   $fmt ~= $spec-char.lc;
                                                    $result ~= centre(sprintf($fmt, $arg), $width);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #

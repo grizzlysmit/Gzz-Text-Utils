@@ -667,12 +667,31 @@ footer {
 </ul>
 </ul>
 </section><section name="pod"><ul>
-<li><p>Sprintf</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export 
+<li><p>Sprintf like sprintf only can deal with ANSI highlighted text.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export 
 
 </pre></li>
+<ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
+<ul>
+<li><p>If a Hash then it should contain two pairs with keys:</p></li>
+<ul>
+<li><p><strong><code>arg</code></strong> the actual argument.</p></li>
+<li><p><strong><code>ref</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
+</ul>
+<li><p>If a Array then it should contain two values:</p></li>
+<ul>
+<li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p></li>
+<li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
+</ul>
+<li><p>If it's a scalar then it's the argument itself. And <strong><code>$ref</code></strong> is <strong><code>strip-ansi($arg)</code></strong> if $arg is a string type i.e. Str or just <strong>C</strong>$arg&gt;&gt; otherwise.</p></li>
+</ul>
+</ul>
+</ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T04:35:11Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T12:09:24Z</span></div></footer>
 	</body>
 </html>
 

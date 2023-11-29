@@ -222,7 +222,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 \fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
 .RE
 .IP \(bu 2m
-Sprintf
+Sprintf like sprintf only can deal with ANSI highlighted text\&.
 .IP
 
 .RS 4m
@@ -231,4 +231,78 @@ sub Sprintf(Str:D $format\-str, *@args \-\-> Str) is export
 
 
 .EE
+.RE
+.RS 2n
+.IP \(bu 2m
+Where:
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB*@args\fR is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Hash then it should contain two pairs with keys:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBarg\fR the actual argument\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Array then it should contain two values:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][]\fR the actual argument\&. Where \fB$i\fR is the current index into the array of args\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][1]\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If it's a scalar then it's the argument itself\&. And \fB$ref\fR is \fBstrip\-ansi($arg)\fR if $arg is a string type i\&.e\&. Str or just \fBC\fR$arg>> otherwise\&.
+.RE
+.RE
 .RE
