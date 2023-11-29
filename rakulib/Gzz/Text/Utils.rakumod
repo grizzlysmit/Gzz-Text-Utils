@@ -37,7 +37,7 @@ or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-t
 
 Fixed the proto type of B<C<left>> etc is now 
 
-=begin code
+=begin code :lang<raku>
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
 =end code
 
