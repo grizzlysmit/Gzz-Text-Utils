@@ -642,7 +642,14 @@ footer {
 <ul>
 <li><p>If it requires an odd number of padding then the right hand side will get one more char/codepoint.</p></li>
 </ul>
-<li><p>The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal:</p><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
+<li><p>The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong></p></li>
+<ul>
+<li><p>This is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> from module <strong>&quot;<code>Terminal::WCWidth</code>&quot;</strong> which is used to obtain the width the text if printed on the current terminal:</p></li>
+<ul>
+<li><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
+<li><p><strong>&quot;<code>Terminal::WCWidth</code>&quot;</strong> is witten by <strong>bluebear94</strong> <a href="https://raku.land/github:bluebear94">github:bluebear94</a> get it with <strong>zef</strong> or whatever</p></li>
+</ul>
+</ul>
 </ul>
 </ul>
 <li><p>left</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
@@ -660,7 +667,7 @@ footer {
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T03:15:05Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T03:56:12Z</span></div></footer>
 	</body>
 </html>
 

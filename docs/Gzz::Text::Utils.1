@@ -148,9 +148,35 @@ If it requires an odd number of padding then the right hand side will get one mo
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal:
-.IP
+The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR from module \fB"Terminal::WCWidth"\fR which is used to obtain the width the text if printed on the current terminal:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
 \fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB"Terminal::WCWidth"\fR is witten by \fBbluebear94\fR github:bluebear94 [https://raku.land/github:bluebear94] get it with \fBzef\fR or whatever
+.RE
+.RE
 .RE
 .RE
 .IP \(bu 2m

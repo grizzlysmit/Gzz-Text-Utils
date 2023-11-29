@@ -845,12 +845,26 @@ If  it requires an odd number of padding then the right hand side will get one m
 =begin item3
 
 The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
-this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
-width the text if printed on the current terminal:
+=end item3
+
+=begin item4
+
+This is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> from module B<"C<Terminal::WCWidth>">
+which is used to obtain the width the text if printed on the current terminal:
+
+=end item4
+
+=begin item5
 
 B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded in them>.
 
-=end item3
+=end item5
+
+=begin item5
+
+B<"C<Terminal::WCWidth>"> is witten by B<bluebear94> L<github:bluebear94|https://raku.land/github:bluebear94> get it with B<zef> or whatever
+
+=end item5
 
 =begin item
 

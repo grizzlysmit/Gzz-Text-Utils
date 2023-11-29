@@ -128,9 +128,13 @@ The functions Provided.
 
         * If it requires an odd number of padding then the right hand side will get one more char/codepoint.
 
-      * The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`** this is used to obtain the length of the of the text using ***`wcswidth(Str)`*** which is used to obtain the width the text if printed on the current terminal:
+      * The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`**
 
-        **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
+        * This is used to obtain the length of the of the text using ***`wcswidth(Str)`*** from module **"`Terminal::WCWidth`"** which is used to obtain the width the text if printed on the current terminal:
+
+          * **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
+
+          * **"`Terminal::WCWidth`"** is witten by **bluebear94** [github:bluebear94](https://raku.land/github:bluebear94) get it with **zef** or whatever
 
   * left
 
