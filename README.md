@@ -132,9 +132,13 @@ The functions Provided.
 
         * This is used to obtain the length of the of the text using ***`wcswidth(Str)`*** from module **"`Terminal::WCWidth`"** which is used to obtain the width the text if printed on the current terminal:
 
-          * **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
+          * **NB: `wcswidth` will return -1 if you pass it text with colours etc embedded in them**.
 
           * **"`Terminal::WCWidth`"** is witten by **bluebear94** [github:bluebear94](https://raku.land/github:bluebear94) get it with **zef** or whatever
+
+      * **`:$precision`** sets the maximum width of the field but if set to **`0`** (The default), will effectively be infinite (∞).
+
+      * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
   * left
 

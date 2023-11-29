@@ -856,7 +856,7 @@ which is used to obtain the width the text if printed on the current terminal:
 
 =begin item5
 
-B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded in them>.
+B<NB: C<wcswidth> will return -1 if you pass it text with colours etc embedded in them>.
 
 =end item5
 
@@ -865,6 +865,18 @@ B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded 
 B<"C<Terminal::WCWidth>"> is witten by B<bluebear94> L<github:bluebear94|https://raku.land/github:bluebear94> get it with B<zef> or whatever
 
 =end item5
+
+=begin item3
+
+B<C<:$precision>> sets the maximum width of the field but if set to B<C<0>> (The default), will effectively be infinite (∞).
+
+=end item3
+
+=begin item3
+
+B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<C<''>> the default or B<C<'…'>>.
+
+=end item3
 
 =begin item
 

@@ -164,7 +164,7 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-\fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
+\fBNB: wcswidth will return \-1 if you pass it text with colours etc embedded in them\fR\&.
 .RE
 .RE
 .RE
@@ -177,6 +177,18 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 \fB"Terminal::WCWidth"\fR is witten by \fBbluebear94\fR github:bluebear94 [https://raku.land/github:bluebear94] get it with \fBzef\fR or whatever
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$precision\fR sets the maximum width of the field but if set to \fB0\fR (The default), will effectively be infinite (∞)\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$ellipsis\fR is used to elide the text if it's too big I recommend either \fB''\fR the default or \fB'…'\fR\&.
 .RE
 .RE
 .IP \(bu 2m
