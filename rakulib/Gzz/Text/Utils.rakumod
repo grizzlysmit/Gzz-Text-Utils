@@ -1051,7 +1051,18 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 
 =begin pod
 
-=head2 sub Sprintf(Str:D $format-str, *@args --> Str) is export 
+
+=begin item
+
+Sprintf
+
+=begin code :lang<raku>
+
+sub Sprintf(Str:D $format-str, *@args --> Str) is export 
+
+=end code
+
+=end item
 
 =end pod
 

@@ -156,6 +156,9 @@ The functions Provided.
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-sub Sprintf(Str:D $format-str, *@args --> Str) is export 
----------------------------------------------------------
+  * Sprintf
+
+    ```raku
+    sub Sprintf(Str:D $format-str, *@args --> Str) is export
+    ```
 
