@@ -104,6 +104,14 @@ The functions Provided.
 
     Same as **`wcswidth`** but it copes with ANSI escape sequences unlike **`wcswidth`**.
 
+    The secret sauce is that it is defined as:
+
+    ```raku
+    sub hwcswidth(Str:D $text --> Int:D) is export {
+        return wcswidth(strip-ansi($text));
+    } #  sub hwcswidth(Str:D $text --> Int:D) is export #
+    ```
+
 here are 3 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
   * centre

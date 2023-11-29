@@ -618,7 +618,12 @@ footer {
 </section><section name="pod"><ul>
 <li><p>hwcswidth</p><pre class="pod-block-code">sub hwcswidth(Str:D $text --&gt; Int:D) is export
 
-</pre><p>Same as <strong><code>wcswidth</code></strong> but it copes with ANSI escape sequences unlike <strong><code>wcswidth</code></strong>.</p></li>
+</pre><p>Same as <strong><code>wcswidth</code></strong> but it copes with ANSI escape sequences unlike <strong><code>wcswidth</code></strong>.</p><p>The secret sauce is that it is defined as:</p><pre class="pod-block-code">sub hwcswidth(Str:D $text --&gt; Int:D) is export {
+    return wcswidth(strip-ansi($text));
+} #  sub hwcswidth(Str:D $text --&gt; Int:D) is export #
+
+
+</pre></li>
 </ul>
 </section><section name="pod"><p>here are 3 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</p><ul>
 <li><p>centre</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
@@ -642,7 +647,7 @@ footer {
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T02:42:49Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T02:46:09Z</span></div></footer>
 	</body>
 </html>
 

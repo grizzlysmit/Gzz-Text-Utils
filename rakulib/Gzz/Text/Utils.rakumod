@@ -777,6 +777,17 @@ sub hwcswidth(Str:D $text --> Int:D) is export
 
 Same as B<C<wcswidth>> but it copes with ANSI escape sequences unlike B<C<wcswidth>>.
 
+The secret sauce is that it is defined as:
+
+=begin code :lang<raku>
+
+sub hwcswidth(Str:D $text --> Int:D) is export {
+    return wcswidth(strip-ansi($text));
+} #  sub hwcswidth(Str:D $text --> Int:D) is export #
+
+
+=end code
+
 =end item
 
 =end pod
