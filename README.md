@@ -88,9 +88,11 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 The functions Provided.
 -----------------------
 
-  * ```raku
-  sub strip-ansi(Str:D $text --> Str:D) is export
-  ```
+  * strip-ansi
+
+    ```raku
+    sub strip-ansi(Str:D $text --> Str:D) is export
+    ```
 
     Strips out all the ANSI escapes, at the moment just those provided by the **`Terminal::ANSI`** or **`Terminal::ANSI::OO`** modules both available as **`Terminal::ANSI`** from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them. 
 

@@ -611,7 +611,7 @@ footer {
 <p>Format &amp; FormatActions are a grammar and Actions pair that parse out the <strong>%</strong> spec and normal text chunks of a format string.</p><p>For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.</p></section><section name="pod"><h2 id="UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document"><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></a></h2>
 <p><strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> are a grammar &amp; role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. </p><p><strong><code>Unhighlight</code></strong> &amp; <strong><code>UnhighlightActions</code></strong> are a grammar &amp; class pair which provide a simple TOP for applying an application of <strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> for use by <strong><code>sub strip-ansi(Str:D $text --</code> Str:D) is export</strong>&gt; to strip out the plain text from a ANSI formatted string</p></section><section name="pod"><h2 id="The_functions_Provided."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">The functions Provided.</a></h2>
 <ul>
-<li><pre class="pod-block-code">sub strip-ansi(Str:D $text --&gt; Str:D) is export
+<li><p>strip-ansi</p><pre class="pod-block-code">sub strip-ansi(Str:D $text --&gt; Str:D) is export
 
 </pre><p>Strips out all the ANSI escapes, at the moment just those provided by the <strong><code>Terminal::ANSI</code></strong> or <strong><code>Terminal::ANSI::OO</code></strong> modules both available as <strong><code>Terminal::ANSI</code></strong> from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them. </p></li>
 </ul>
@@ -625,7 +625,7 @@ footer {
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T01:56:49Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T01:58:12Z</span></div></footer>
 	</body>
 </html>
 

@@ -738,6 +738,8 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 =begin item 
 
+strip-ansi
+
 =begin code :lang<raku>
 
 sub strip-ansi(Str:D $text --> Str:D) is export
