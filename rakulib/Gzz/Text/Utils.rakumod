@@ -834,7 +834,7 @@ Where:
 B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space; if you set it to any string that is longer than 1 
 code point, it may fail to behave correctly.
 
-=begin item3
+=end item3
 
 =begin item4
 

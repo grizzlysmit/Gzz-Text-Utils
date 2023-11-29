@@ -1,0 +1,186 @@
+.pc
+.TH Utils.rakumod 1 2023-11-29
+.SH "NAME"
+Gzz::Text::Utils 
+.SH "AUTHOR"
+Francis Grizzly Smit (grizzly@smit\&.id\&.au)
+.SH "VERSION"
+0\&.1\&.4
+.SH "TITLE"
+Gzz::Text::Utils
+.SH "SUBTITLE"
+A Raku module to provide text formating services to Raku progarms\&.
+.SH "COPYRIGHT"
+GPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE]
+.SS Introduction
+
+A Raku module to provide text formating services to Raku progarms\&.
+
+Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%n\fR for a new line and \fB%t\fR for a tab helpful when you want to use single quotes to stop the \fBnum$\fR specs needing back slashes\&.
+.SS Motivations
+
+When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
+
+Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
+.SS Update
+
+Fixed the proto type of \fBleft\fR etc is now 
+
+.RS 4m
+.EX
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export
+
+.EE
+.RE
+.P
+Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
+.SH BadArg
+
+.RS 4m
+.EX
+class BadArg is Exception is export
+
+
+.EE
+.RE
+.P
+BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
+.SH ArgParityMissMatch
+
+.RS 4m
+.EX
+class ArgParityMissMatch is Exception is export
+
+
+.EE
+.RE
+.P
+ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
+
+\fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
+.SH Format and FormatActions
+
+Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.
+
+For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&.
+.SS UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
+
+\fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
+
+\fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
+.SS The functions Provided\&.
+.IP \(bu 2m
+strip\-ansi
+.IP
+
+.RS 4m
+.EX
+sub strip\-ansi(Str:D $text \-\-> Str:D) is export
+
+
+.EE
+.RE
+.IP
+Strips out all the ANSI escapes, at the moment just those provided by the \fBTerminal::ANSI\fR or \fBTerminal::ANSI::OO\fR modules both available as \fBTerminal::ANSI\fR from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them\&. 
+.IP \(bu 2m
+hwcswidth
+.IP
+
+.RS 4m
+.EX
+sub hwcswidth(Str:D $text \-\-> Int:D) is export
+
+
+.EE
+.RE
+.IP
+Same as \fBwcswidth\fR but it copes with ANSI escape sequences unlike \fBwcswidth\fR\&.
+.RS 2n
+.IP \(bu 2m
+The secret sauce is that it is defined as:
+.IP
+
+.RS 4m
+.EX
+sub hwcswidth(Str:D $text \-\-> Int:D) is export {
+    return wcswidth(strip\-ansi($text));
+} #  sub hwcswidth(Str:D $text \-\-> Int:D) is export #
+
+
+
+.EE
+.RE
+.RE
+.SS here are 3 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
+.IP \(bu 2m
+centre
+.IP
+
+.RS 4m
+.EX
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR
+.RE
+.RS 2n
+.IP \(bu 2m
+Where:
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fill\fR is the fill char by default \fB$fill\fR is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If it requires an odd number of padding then the right hand side will get one more char/codepoint\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR this is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR which is used to obtain the width the text if printed on the current terminal:
+.IP
+\fBNB: wcswidth will return \-1 if you pass it text with colours etc in\-bedded in them\fR\&.
+.RE
+.RE
+.IP \(bu 2m
+left
+.IP
+
+.RS 4m
+.EX
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
+.RE
+.IP \(bu 2m
+right
+.IP
+
+.RS 4m
+.EX
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
+.RE
+.SS sub Sprintf(Str:D $format\-str, *@args \-\-> Str) is export 
