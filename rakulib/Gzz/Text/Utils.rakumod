@@ -763,6 +763,24 @@ sub strip-ansi(Str:D $text --> Str:D) is export {
     return @cleaned.join();
 } # sub strip-ansi(Str:D $text --> Str:D) is export #
 
+=begin pod
+
+=begin item
+
+hwcswidth
+
+=begin code :lang<raku>
+
+sub hwcswidth(Str:D $text --> Int:D) is export
+
+=end code
+
+Same as B<C<wcswidth>> but it copes with ANSI escape sequences unlike B<C<wcswidth>>.
+
+=end item
+
+=end pod
+
 sub hwcswidth(Str:D $text --> Int:D) is export {
     return wcswidth(strip-ansi($text));
 } #  sub hwcswidth(Str:D $text --> Int:D) is export #
@@ -778,9 +796,22 @@ centre
 
 =begin code :lang<raku>
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
+
+=begin item2
+
+B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
+by default B<C<$fill>> is set to a single white space; do not set it to any string that is longer than 1 
+code point,  or it will fail to behave correctly. If  it requires an on number padding then the right hand
+side will get one more char/codepoint. The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
+this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
+width the text if printed on the current terminal:
+
+B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded in them>.
+
+=end item2
 
 =end item
 
@@ -790,9 +821,11 @@ left
 
 =begin code :lang<raku>
 
-sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
+
+=item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
 
 =end item
 
@@ -802,26 +835,11 @@ right
 
 =begin code :lang<raku>
 
-B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
 
 =end item
-
-=begin item2
-
-
-B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
-by default B<C<$fill>> is set to a single white space; do not set it to any string that is longer than 1 
-code point,  or it will fail to behave correctly. If  it requires an on number padding then the right hand
-side will get one more char/codepoint. The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
-this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
-width the text if printed on the current terminal: B<NB: C<wcswidth> will return -1 if you pass it text with
-colours etc in-bedded in them>.
-
-=end item2
-
-=item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
 
 =item2       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
