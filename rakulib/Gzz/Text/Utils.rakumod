@@ -820,15 +820,26 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
 =begin item2
 
 B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
-by default B<C<$fill>> is set to a single white space; do not set it to any string that is longer than 1 
-code point,  or it will fail to behave correctly. If  it requires an on number padding then the right hand
+
+=end item2
+
+=begin item2
+
+Were:
+
+=end item2
+
+=begin item3
+
+B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space; if you set it to any string that is longer than 1 
+code point, it may fail to behave correctly. If  it requires an on number padding then the right hand
 side will get one more char/codepoint. The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
 this is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> which is used to obtain the 
 width the text if printed on the current terminal:
 
 B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded in them>.
 
-=end item2
+=end item3
 
 =begin item
 
