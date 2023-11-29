@@ -841,6 +841,10 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 
 =end item
 
+
+
+
+
 =item2       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
 =end pod
