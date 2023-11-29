@@ -96,29 +96,39 @@ The functions Provided.
 
     Strips out all the ANSI escapes, at the moment just those provided by the **`Terminal::ANSI`** or **`Terminal::ANSI::OO`** modules both available as **`Terminal::ANSI`** from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them. 
 
+  * hwcswidth
+
+    ```raku
+    sub hwcswidth(Str:D $text --> Int:D) is export
+    ```
+
+    Same as **`wcswidth`** but it copes with ANSI escape sequences unlike **`wcswidth`**.
+
 here are 3 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
   * centre
 
     ```raku
-    sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+    sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
+
+        * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`** by default **`$fill`** is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`** this is used to obtain the length of the of the text using ***`wcswidth(Str)`*** which is used to obtain the width the text if printed on the current terminal:
+
+          **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
 
   * left
 
     ```raku
-    sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)
+    sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
+
+        * **`left`** is the same except that except that it puts all the padding on the right of the field.
 
   * right
 
     ```raku
-    B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --> Str)»»
+    sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
-
-    * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`** by default **`$fill`** is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`** this is used to obtain the length of the of the text using ***`wcswidth(Str)`*** which is used to obtain the width the text if printed on the current terminal: **NB: `wcswidth` will return -1 if you pass it text with colours etc in-bedded in them**.
-
-    * **`left`** is the same except that except that it puts all the padding on the right of the field.
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 

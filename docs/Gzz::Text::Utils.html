@@ -615,25 +615,34 @@ footer {
 
 </pre><p>Strips out all the ANSI escapes, at the moment just those provided by the <strong><code>Terminal::ANSI</code></strong> or <strong><code>Terminal::ANSI::OO</code></strong> modules both available as <strong><code>Terminal::ANSI</code></strong> from zef etc I am not sure how exhastive that is, but I will implement any more escapes as I become aware of them. </p></li>
 </ul>
+</section><section name="pod"><ul>
+<li><p>hwcswidth</p><pre class="pod-block-code">sub hwcswidth(Str:D $text --&gt; Int:D) is export
+
+</pre><p>Same as <strong><code>wcswidth</code></strong> but it copes with ANSI escape sequences unlike <strong><code>wcswidth</code></strong>.</p></li>
+</ul>
 </section><section name="pod"><p>here are 3 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</p><ul>
-<li><p>centre</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)
-
-</pre></li>
-<li><p>left</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)
-
-</pre></li>
-<li><p>right</p><pre class="pod-block-code">B«C«sub right(Str:D $text, Int:D $width, Str:D $fill = ' ', Str:D :$ref = $text --&gt; Str)»»
+<li><p>centre</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
 
 </pre></li>
 <ul>
-<li><p><strong><code>centre</code></strong> centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong> by default <strong><code>$fill</code></strong> is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal: <strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
+<li><p><strong><code>centre</code></strong> centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong> by default <strong><code>$fill</code></strong> is set to a single white space; do not set it to any string that is longer than 1 code point, or it will fail to behave correctly. If it requires an on number padding then the right hand side will get one more char/codepoint. The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong> this is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> which is used to obtain the width the text if printed on the current terminal:</p><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc in-bedded in them</strong>.</p></li>
+</ul>
+<li><p>left</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
+
+</pre></li>
+<ul>
 <li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p></li>
+</ul>
+<li><p>right</p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
+
+</pre></li>
+<ul>
 <li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p></li>
 </ul>
 </ul>
 </section><section name="pod"><h2 id="sub_Sprintf(Str:D_$format-str,_*@args_--&gt;_Str)_is_export_"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export </a></h2>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T02:08:35Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-29T02:36:30Z</span></div></footer>
 	</body>
 </html>
 
