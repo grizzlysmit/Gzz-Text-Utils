@@ -800,6 +800,8 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
 
 =end code
 
+=end item
+
 =begin item2
 
 B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
@@ -813,8 +815,6 @@ B<NB: C<wcswidth> will return -1 if you pass it text with colours etc in-bedded 
 
 =end item2
 
-=end item
-
 =begin item
 
 left
@@ -825,9 +825,9 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 
 =end code
 
-=item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
-
 =end item
+
+=item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
 
 =begin item
 
