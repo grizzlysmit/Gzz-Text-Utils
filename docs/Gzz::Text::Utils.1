@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-11-29
+.TH Utils.rakumod 1 2023-11-30
 .SH "NAME"
 Gzz::Text::Utils 
 .SH "AUTHOR"
@@ -16,7 +16,7 @@ GPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LIC
 
 A Raku module to provide text formating services to Raku progarms\&.
 
-Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%n\fR for a new line and \fB%t\fR for a tab helpful when you want to use single quotes to stop the \fBnum$\fR specs needing back slashes\&.
+Including a sprintf frontend Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%N\fR for a new line and \fB%T\fR for a tab helpful when you want to use single quotes to stop the \fBnum$\fR specs needing back slashes\&.
 .SS Motivations
 
 When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
