@@ -589,6 +589,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#The_functions_Provided.">The functions Provided.</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#here_are_3_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">here are 3 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
 </table></div>
 </nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formating services to Raku progarms.</p></div><div class="pod-body"><section name="___top"><section>
 <h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
@@ -670,8 +671,9 @@ footer {
 <li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p></li>
 </ul>
 </ul>
-</section><section name="pod"><ul>
-<li><p>Sprintf like sprintf only can deal with ANSI highlighted text.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export 
+</section><section name="pod"><h3 id="Sprintf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Sprintf</a></h3>
+<ul>
+<li><p>Sprintf like sprintf only it can deal with ANSI highlighted text.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str, *@args --&gt; Str) is export 
 
 </pre></li>
 <ul>
@@ -695,7 +697,7 @@ footer {
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-30T18:55:13Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-11-30T19:02:35Z</span></div></footer>
 	</body>
 </html>
 

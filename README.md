@@ -169,7 +169,9 @@ The functions Provided.
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-  * Sprintf like sprintf only can deal with ANSI highlighted text.
+### Sprintf
+
+  * Sprintf like sprintf only it can deal with ANSI highlighted text.
 
     ```raku
     sub Sprintf(Str:D $format-str, *@args --> Str) is export

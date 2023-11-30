@@ -1156,10 +1156,11 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 
 =begin pod
 
+=head3 Sprintf
 
 =begin item
 
-Sprintf like sprintf only can deal with ANSI highlighted text.
+Sprintf like sprintf only it can deal with ANSI highlighted text.
 
 =begin code :lang<raku>
 
