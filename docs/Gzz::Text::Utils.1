@@ -68,9 +68,11 @@ class FormatSpecErrror is Exception is export
 .EE
 .RE
 .P
-FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification i\&.e\&. \fB%n\fR instead of \fB%N\fR as \fB%n\fR is already taken, the same with using \fB%t\fR instead of \fB%T\fR\&.
+FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification (i\&.e\&. \fB%n\fR instead of \fB%N\fR as \fB%n\fR is already taken, the same with using \fB%t\fR instead of \fB%T\fR)\&.
 
-\fBNB: \fI%N\fR introduces a \fI\n\fR character and \fI%T\fR a tab (i\&.e\&. \fI\t\fR)\&. or anything else wrong with the Format specifier\&.\fR
+Or anything else wrong with the Format specifier\&.
+
+\fBNB: \fI%N\fR introduces a \fI\n\fR character and \fI%T\fR a tab (i\&.e\&. \fI\t\fR)\&.\fR
 .SH Format and FormatActions
 
 Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.

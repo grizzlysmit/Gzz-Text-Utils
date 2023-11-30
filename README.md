@@ -78,9 +78,11 @@ FormatSpecErrror
 class FormatSpecErrror is Exception is export
 ```
 
-FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification i.e. **`%n`** instead of **`%N`** as **`%n`** is already taken, the same with using **`%t`** instead of **`%T`**.
+FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification (i.e. **`%n`** instead of **`%N`** as **`%n`** is already taken, the same with using **`%t`** instead of **`%T`**).
 
-**NB: *`%N`* introduces a *`\n`* character and *`%T`* a tab (i.e. *`\t`*). or anything else wrong with the Format specifier.**
+Or anything else wrong with the Format specifier.
+
+**NB: *`%N`* introduces a *`\n`* character and *`%T`* a tab (i.e. *`\t`*).**
 
 Format and FormatActions
 ========================

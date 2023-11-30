@@ -122,11 +122,12 @@ class FormatSpecErrror is Exception is export
 =end code
 
 FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an
-error in the Format specification i.e. B<C<%n>> instead of B<C<%N>> as B<C<%n>> is already
-taken, the same with using B<C<%t>> instead of B<C<%T>>.
+error in the Format specification (i.e. B<C<%n>> instead of B<C<%N>> as B<C<%n>> is already
+taken, the same with using B<C<%t>> instead of B<C<%T>>).
 
-B<NB: I<C<%N>> introduces a I<C<\n>> character and I<C<%T>> a tab (i.e. I<C<\t>>). or anything
-else wrong with the Format specifier.>
+Or anything else wrong with the Format specifier.
+
+B<NB: I<C<%N>> introduces a I<C<\n>> character and I<C<%T>> a tab (i.e. I<C<\t>>).>
 
 =end pod
 
