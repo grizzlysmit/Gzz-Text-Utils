@@ -113,6 +113,32 @@ class ArgParityMissMatch is Exception is export {
 
 =begin pod
 
+=head1 FormatSpecErrror
+
+=begin code :lang<raku>
+
+class FormatSpecErrror is Exception is export
+
+=end code
+
+FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an
+error in the Format specification i.e. B<C<%n>> instead of B<C<%N>> as B<C<%n>> is already
+taken, the same with using B<C<%t>> instead of B<C<%T>>.
+
+B<NB: I<C<%N>> introduces a I<C<\n>> character and I<C<%T>> a tab (i.e. I<C<\t>>). or anything
+else wrong with the Format specifier.>
+
+=end pod
+
+class FormatSpecErrror is Exception is export {
+    has Str:D $.msg = 'Error: argument paraity error found';
+    method message( --> Str:D) {
+        $!msg;
+    }
+}
+
+=begin pod
+
 =head1 Format and FormatActions
 
 Format & FormatActions are a grammar and Actions pair that parse out the B<%> spec and normal text chunks of a format string.
@@ -129,6 +155,8 @@ grammar FormatBase {
     token fmt-esc           { [      '%' #`« a literal % »
                                   || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
                                   || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+                                  || 'n' #`« not implemented and will not be »
+                                  || 't' #`« not implemented and will not be »
                               ]
                             }
     token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
@@ -328,12 +356,20 @@ role FormatBaseActions {
         dd $spec-char if $debug;
         make $spec-char;
     }
-    #token fmt-esc          { [ '%' || 'n' ] }
+    #token fmt-esc           { [      '%' #`« a literal % »
+    #                              || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+    #                              || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+    #                              || 'n' #`« not implemented and will not be »
+    #                              || 't' #`« not implemented and will not be »
+    #                          ]
+    #                        }
     method fmt-esc($/) {
         my %fmt-esc = type => 'literal', val => ~$/;
         %fmt-esc«val» = "\n" if %fmt-esc«val» eq 'N'; # %N gives us an newline saves on needing double quotes #
         %fmt-esc«val» = "\t" if %fmt-esc«val» eq 'T'; # %T gives us an tab saves on needing double quotes #
         dd %fmt-esc if $debug;
+        FormatSpecErrror.new(:msg("%n not implemented and will not be; did you mean %N.")).throw if %fmt-esc«val» eq 'n'; # not implemented and will not be. #
+        FormatSpecErrror.new(:msg("%t not implemented and will not be; did you mean %T.")).throw if %fmt-esc«val» eq 't'; # not implemented and will not be. #
         make %fmt-esc;
     }
     #token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }

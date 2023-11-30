@@ -71,6 +71,17 @@ ArgParityMissMatch is an exception class that Sprintf throws if the number of ar
 
 **NB: if you use *`num$`* argument specs these will not count as they grab from the args add hoc, *`*`* width and precision spec however do count as they consume argument.**
 
+FormatSpecErrror
+================
+
+```raku
+class FormatSpecErrror is Exception is export
+```
+
+FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification i.e. **`%n`** instead of **`%N`** as **`%n`** is already taken, the same with using **`%t`** instead of **`%T`**.
+
+**NB: *`%N`* introduces a *`\n`* character and *`%T`* a tab (i.e. *`\t`*). or anything else wrong with the Format specifier.**
+
 Format and FormatActions
 ========================
 

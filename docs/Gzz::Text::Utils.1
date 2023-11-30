@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-11-30
+.TH Utils.rakumod 1 2023-12-01
 .SH "NAME"
 Gzz::Text::Utils 
 .SH "AUTHOR"
@@ -58,6 +58,19 @@ class ArgParityMissMatch is Exception is export
 ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
 
 \fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
+.SH FormatSpecErrror
+
+.RS 4m
+.EX
+class FormatSpecErrror is Exception is export
+
+
+.EE
+.RE
+.P
+FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification i\&.e\&. \fB%n\fR instead of \fB%N\fR as \fB%n\fR is already taken, the same with using \fB%t\fR instead of \fB%T\fR\&.
+
+\fBNB: \fI%N\fR introduces a \fI\n\fR character and \fI%T\fR a tab (i\&.e\&. \fI\t\fR)\&. or anything else wrong with the Format specifier\&.\fR
 .SH Format and FormatActions
 
 Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.
