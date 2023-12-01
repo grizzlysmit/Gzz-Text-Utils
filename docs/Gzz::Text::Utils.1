@@ -28,7 +28,7 @@ Fixed the proto type of \fBleft\fR etc is now
 
 .RS 4m
 .EX
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export
 
 .EE
 .RE
@@ -133,7 +133,7 @@ centre
 
 .RS 4m
 .EX
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
 
 
 .EE
@@ -197,7 +197,7 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-\fB:$precision\fR sets the maximum width of the field but if set to \fB0\fR (The default), will effectively be infinite (∞)\&.
+\fB:$max\-width\fR sets the maximum width of the field but if set to \fB0\fR (The default), will effectively be infinite (∞)\&.
 .RE
 .RE
 .RS 2n
@@ -212,7 +212,7 @@ left
 
 .RS 4m
 .EX
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
 
 
 .EE
@@ -227,7 +227,7 @@ right
 
 .RS 4m
 .EX
-sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
 
 
 .EE

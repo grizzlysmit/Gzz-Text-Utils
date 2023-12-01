@@ -38,7 +38,7 @@ or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-t
 Fixed the proto type of B<C<left>> etc is now 
 
 =begin code :lang<raku>
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
 =end code
 
 Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» is my new function for striping out ANSI escape sequences so we don't need to supply 
@@ -160,7 +160,7 @@ grammar FormatBase {
                                   || 't' #`« not implemented and will not be »
                               ]
                             }
-    token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
+    token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
     token dollar-directive  { \d+ <?before '$'> }
     token flags             { <flag> ** {1 .. 20} }
     token flag              { [ <force-sign> || <justify> || <type-prefix> || <vector> || <padding> ] }
@@ -182,6 +182,9 @@ grammar FormatBase {
     token precision         { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
     token prec-dollar       { \d+ <?before '$'> }
     token prec-int          { \d+ }
+    token max-width         { [ '*' [ <max-dollar> '$' ]?  || <max-int>  ] }
+    token max-dollar        { \d+ <?before '$'> }
+    token max-int           { \d+ }
     token modifier          { [           #`« (Note: None of the following have been implemented.) »
                                      'hh' #`« interpret integer as C type "char" or "unsigned char" »
                                   || 'h'  #`« interpret integer as C type "short" or "unsigned short" »
@@ -323,20 +326,20 @@ role FormatBaseActions {
         dd %width if $debug;
         make %width;
     }
-    #token precision        { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
     #token prec-dollar      { \d+ }
-    #token prec-int         { \d+ }
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
-        BadArg.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
+        FormatSpecErrror.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
         dd $prec-dollar if $debug;
         make $prec-dollar;
     }
+    #token prec-int         { \d+ }
     method prec-int($/) {
         my Int:D $prec-int = +$/;
         dd $prec-int if $debug;
         make $prec-int;
     }
+    #token precision        { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
     method precision($/) {
         my %precision = kind => 'star', val => 0;
         if $/<prec-dollar> {
@@ -346,6 +349,30 @@ role FormatBaseActions {
         }
         dd %precision if $debug;
         make %precision;
+    }
+    #token max-dollar        { \d+ <?before '$'> }
+    method max-dollar($/) {
+        my Int:D $max-dollar = +$/ - 1;
+        FormatSpecErrror.new(:msg("bad \$ spec for max-width: cannot be less than 1 ")).throw if $max-dollar < 0;
+        dd $max-dollar if $debug;
+        make $max-dollar;
+    }
+    #token max-int           { \d+ }
+    method max-int($/) {
+        my Int:D $max-int = +$/;
+        dd $max-int if $debug;
+        make $max-int;
+    }
+    #token max-width         { [ '*' [ <max-dollar> '$' ]?  || <max-int>  ] }
+    method max-width($/) {
+        my %max-width = kind => 'star', val => 0;
+        if $/<max-dollar> {
+            %max-width = kind => 'dollar', val => $/<max-dollar>.made;
+        } elsif $/<max-int> {
+            %max-width = kind => 'int', val => $/<max-int>.made;
+        }
+        dd %max-width if $debug;
+        make %max-width;
     }
     method modifier($/) {
         my Str $modifier = ~$/;
@@ -373,10 +400,13 @@ role FormatBaseActions {
         FormatSpecErrror.new(:msg("%t not implemented and will not be; did you mean %T.")).throw if %fmt-esc«val» eq 't'; # not implemented and will not be. #
         make %fmt-esc;
     }
-    #token fmt-spec         { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> ]? <modifier>? <spec-char> }
+    #token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
     method fmt-spec($/) {
-        my %fmt-spec = type => 'fmt-spec', dollar-directive => -1, flags => [], width => { kind => 'empty', val => 0, },
-                                        precision => { kind => 'empty', val => 0, }, modifier => '', spec-char => $/<spec-char>.made;
+        my %fmt-spec = type => 'fmt-spec', dollar-directive => -1, flags => [],
+                                  width => { kind => 'empty', val => 0, },
+                                    precision => { kind => 'empty', val => 0, },
+                                       max-width => { kind => 'empty', val => 0},
+                                         modifier => '', spec-char => $/<spec-char>.made;
         if $/<dollar-directive> {
             %fmt-spec«dollar-directive» = $/<dollar-directive>.made;
         }
@@ -388,6 +418,9 @@ role FormatBaseActions {
         }
         if $/<precision> {
             %fmt-spec«precision» = $/<precision>.made;
+        }
+        if $/<max-width> {
+            %fmt-spec«max-width» = $/<max-width>.made;
         }
         if $/<modifier> {
             %fmt-spec«modifier» = $/<modifier>.made;
@@ -913,7 +946,7 @@ centre
 
 =begin code :lang<raku>
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
 
@@ -970,7 +1003,7 @@ B<"C<Terminal::WCWidth>"> is witten by B<bluebear94> L<github:bluebear94|https:/
 
 =begin item3
 
-B<C<:$precision>> sets the maximum width of the field but if set to B<C<0>> (The default), will effectively be infinite (∞).
+B<C<:$max-width>> sets the maximum width of the field but if set to B<C<0>> (The default), will effectively be infinite (∞).
 
 =end item3
 
@@ -986,7 +1019,7 @@ left
 
 =begin code :lang<raku>
 
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
 
@@ -1000,7 +1033,7 @@ right
 
 =begin code :lang<raku>
 
-sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
 
@@ -1015,17 +1048,17 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 =end pod
 
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
-    dd $w, $width, $precision, $text, $ref if $debug;
-    if $precision > 0 {
-        if $w > $precision {
+    dd $w, $width, $max-width, $text, $ref if $debug;
+    if $max-width > 0 {
+        if $w > $max-width {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
             if $debug {
                 my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line;
+                dd @chunks, $w, $max-width, $tmp, $line;
             }
             $w = 0;
             my %chunk;
@@ -1033,23 +1066,23 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
             loop ($i = 0; $i < @chunks.elems; $i++) {
                 %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                if $w > $precision {
+                if $w > $max-width {
                     last;
                 }
                 $tmp ~= %chunk«val»;
                 if $debug {
                     my Str:D $line = "\[$?LINE]";
-                    dd @chunks, $w, $precision, $tmp, $line;
+                    dd @chunks, $w, $max-width, $tmp, $line;
                 }
             }
             if $debug {
                 my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line;
+                dd @chunks, $w, $max-width, $tmp, $line;
             }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
-        $width = $precision if $width > $precision;
+        $width = $max-width if $width > $max-width;
     }
     return $text if $w < 0;
     return $text if $width <= $w;
@@ -1062,19 +1095,19 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
     my Int:D $l  = $width div 2;
     $result = $fill x $l ~ $result ~ $fill x ($width - $l);
     return $result;
-} # sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
+} # sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
 
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
-    dd $w, $width, $precision, $text, $ref if $debug;
-    if $precision > 0 {
-        if $w > $precision {
+    dd $w, $width, $max-width, $text, $ref if $debug;
+    if $max-width > 0 {
+        if $w > $max-width {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
             if $debug {
                 my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line;
+                dd @chunks, $w, $max-width, $tmp, $line;
             }
             $w = 0;
             my %chunk;
@@ -1082,23 +1115,23 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
             loop ($i = 0; $i < @chunks.elems; $i++) {
                 %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                if $w > $precision {
+                if $w > $max-width {
                     last;
                 }
                 $tmp ~= %chunk«val»;
                 if $debug {
                     my Str:D $line = "\[$?LINE]";
-                    dd @chunks, $w, $precision, $tmp, $line;
+                    dd @chunks, $w, $max-width, $tmp, $line;
                 }
             }
             if $debug {
                 my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line if $debug;
+                dd @chunks, $w, $max-width, $tmp, $line if $debug;
             }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
-        $width = $precision if $width > $precision;
+        $width = $max-width if $width > $max-width;
     }
     return $text if $w < 0;
     return $text if $width <= 0;
@@ -1106,19 +1139,19 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
     my Int:D $l  = ($width - $w).abs;
     my Str:D $result = $text ~ ($fill x $l);
     return $result;
-} # sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
+} # sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
 
-sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
-    if $precision > 0 {
-        dd $precision, $width, $w if $debug;
-        if $w > $precision {
+    if $max-width > 0 {
+        dd $max-width, $width, $w if $debug;
+        if $w > $max-width {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
             my Str:D $tmp = '';
             if $debug {
                 my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line;
+                dd @chunks, $w, $max-width, $tmp, $line;
             }
             $w = 0;
             my %chunk;
@@ -1126,33 +1159,33 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
             loop ($i = 0; $i < @chunks.elems; $i++) {
                 %chunk = @chunks[$i];
                 $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                if $w > $precision {
+                if $w > $max-width {
                     last;
                 }
                 $tmp ~= %chunk«val»;
                 if $debug {
                     my Str:D $line = "\[$?LINE]";
-                    dd @chunks, %chunk, $w, $precision, $tmp, $line;
+                    dd @chunks, %chunk, $w, $max-width, $tmp, $line;
                 }
             }
             if $debug {
                 my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $precision, $tmp, $line if $debug;
+                dd @chunks, $w, $max-width, $tmp, $line if $debug;
             }
             $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
             return $tmp;
         }
-        $width = $precision if $width > $precision;
+        $width = $max-width if $width > $max-width;
     }
     return $text if $w < 0;
     return $text if $width <= 0;
     return $text if $width <= $w;
     my Int:D $l  = $width - $w;
     dd $l, $text if $debug;
-    dd $w, $width, $precision, $text, $ref, $fill if $debug;
+    dd $w, $width, $max-width, $text, $ref, $fill if $debug;
     my Str:D $result = ($fill x $l) ~ $text;
     return $result;
-} # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export #
+} # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
 
 =begin pod
 
@@ -1231,9 +1264,16 @@ just B<C>$arg>> otherwise.
 
 =end pod
 
+our $Sprintf-total-number-of-chars = 0;
+our $Sprintf-total-number-of-visible-chars = 0;
 
+sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $Sprintf-total-number-of-chars         = $number-of-chars;
+    $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
 
-sub Sprintf(Str:D $format-str, *@args --> Str) is export {
+sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars, *@args --> Str) is export {
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
     dd @format-str if $debug;
@@ -1290,8 +1330,10 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             #                   modifier => '', spec-char => $/<spec-char>.made;
             my         %width-spec = %elt«width»;
             my     %precision-spec = %elt«precision»;
+            my     %max-width-spec = %elt«max-width»;
             my Int:D $width        = -1;
             my Int:D $precision    = -1;
+            my Int:D $max-width    = -1;
            if %width-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
@@ -1319,7 +1361,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
             } elsif %width-spec«kind» eq 'int' {
                 $width = %width-spec«val»;
             }
-           if %precision-spec«kind» eq 'star' {
+            if %precision-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
@@ -1343,6 +1385,31 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                 }
             } elsif %precision-spec«kind» eq 'int' {
                 $precision = %precision-spec«val»;
+            }
+            if %max-width-spec«kind» eq 'star' {
+                BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
+                my Str:D $name = @args[$cnt].WHAT.^name;
+                if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
+                    $max-width = @args[$cnt]«arg»;
+                } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
+                    $max-width = @args[$cnt][0];
+                } else {
+                    $max-width = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
+                }
+                $cnt++;
+            }elsif %max-width-spec«kind» eq 'dollar' {
+                my Int:D $i = %max-width-spec«val»;
+                BadArg.new(:msg("\$ spec for max-width out of range")).throw unless $i ~~ 0..^@args.elems;
+                my Str:D $name = @args[$i].WHAT.^name;
+                if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
+                    $max-width = @args[$i]«arg»;
+                } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
+                    $max-width = @args[$i][0];
+                } else {
+                    $max-width = @args[$i]; # @args[$i] is a scalar and should be an Int #
+                }
+            } elsif %max-width-spec«kind» eq 'int' {
+                $max-width = %max-width-spec«val»;
             }
             my $arg;
             my $ref;
@@ -1368,7 +1435,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                 $arg = @args[$i];
                 $ref = (($arg ~~ Str:D) ?? strip-ansi($arg) !! $arg);
             }
-            dd $arg, $ref, %elt, $width, $precision if $debug;
+            dd $arg, $ref, %elt, $width, $precision, $max-width if $debug;
             my        @flags       = |%elt«flags»;
             dd @flags if $debug;
             my Str:D  $padding     = '';
@@ -1406,48 +1473,60 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                              $arg .=Str;
                              $ref .=Str;
                              BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
+                             $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
+                                                                              so munge together.
+                                                                              Traditionally sprintf etc treat precision
+                                                                              as max-width for strings. »
                              if $padding eq '' {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, :$ref, :$precision);
+                                     $result ~=  right($arg, $width, :$ref, :$max-width);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, :$ref, :$precision);
+                                     $result ~=  left($arg, $width, :$ref, :$max-width);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, :$ref, :$precision);
+                                     $result ~=  centre($arg, $width, :$ref, :$max-width);
                                  }
                              } else {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, $padding, :$ref, :$precision);
+                                     $result ~=  right($arg, $width, $padding, :$ref, :$max-width);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, $padding, :$ref, :$precision);
+                                     $result ~=  left($arg, $width, $padding, :$ref, :$max-width);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, $padding, :$ref, :$precision);
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :$max-width);
                                  }
                              }
                          }
                 when 's' {
                              $arg .=Str;
                              $ref .=Str;
-                             dd $arg, $ref, $width, $precision, $justify, $padding if $debug;
+                             $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
+                                                                              so munge together.
+                                                                              Traditionally sprintf etc treat precision
+                                                                              as max-width for strings. »
+                             dd $arg, $ref, $width, $precision, $max-width, $justify, $padding if $debug;
                              if $padding eq '' {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  right($arg, $width, :$ref, :$max-width, :ellipsis('…'));
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  left($arg, $width, :$ref, :$max-width, :ellipsis('…'));
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  centre($arg, $width, :$ref, :$max-width, :ellipsis('…'));
                                  }
                              } else {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, $padding, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  right($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, $padding, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  left($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, $padding, :$ref, :$precision, :ellipsis('…'));
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
                                  }
                              }
                          }
                 when 'd'|'i'|'D' {
                                        $arg .=Int;
+                                       $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
+                                                                                        so munge together.
+                                                                                        Traditionally sprintf etc treat precision
+                                                                                        as max-width for Ints. »
                                        my Str:D $fmt = '%';
                                        $fmt ~= '+' if $force-sign;
                                        $fmt ~= '#' if $type-prefix;
@@ -1456,20 +1535,20 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                            $fmt ~= '-' if $justify eq '-';
                                            $fmt ~= $padding;
                                            if $width >= 0 { # centre etc make no sense here #
-                                               if $precision >= 0 {
+                                               if $max-width >= 0 {
                                                    $fmt ~= '*.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $width, $precision, $arg);
+                                                   $result ~= sprintf($fmt, $width, $max-width, $arg);
                                                } else {
                                                    $fmt ~= '*';
                                                    $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $width, $arg);
                                                }
                                            } else {
-                                               if $precision >= 0 {
+                                               if $max-width >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $precision, $arg);
+                                                   $result ~= sprintf($fmt, $max-width, $arg);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
                                                    $result ~= sprintf($fmt, $arg);
@@ -1479,28 +1558,30 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                            if $justify eq '^' {
                                                if $width >= 0 {
                                                    if $precision >= 0 {
+                                                       $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
+                                                       $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
                                                if $precision >= 0 {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } elsif $padding eq '' {
@@ -1508,18 +1589,18 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                if $width >= 0 {
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, :$precision);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $precision);
+                                                       $result ~= centre(sprintf($fmt, $arg), $precision, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= sprintf($fmt, $arg);
+                                                       $result ~= centre(sprintf($fmt, $arg), $max-width, :$max-width);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
@@ -1527,26 +1608,27 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                   $result ~= centre(sprintf($fmt, $precision, $arg), $width, :$max-width);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } else { # $padding eq something-else #
                                            if $justify eq '^' {
                                                if $width >= 0 {
                                                    if $precision >= 0 {
+                                                       $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $precision, $padding);
+                                                       $result ~= centre(sprintf($fmt, $arg), $precision, $padding, :$max-width);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
                                                        $result ~= sprintf($fmt, $arg);
@@ -1557,25 +1639,29 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                   $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                   $result ~= left(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                }
                                            } else { # justify is '' i.e. right #
                                                if $precision >= 0 {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
-                                       } # $padding eq '' #
+                                       } # $padding eq something-else #
                                  } # when 'd', 'i', 'D' #
                 when 'u'|'U' {
                                  $arg .=Int;
                                  BadArg.new(:msg("argument cannot be negative for char spec: $spec-char")).throw if $arg < 0;
+                                 $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
+                                                                                  so munge together.
+                                                                                  Traditionally sprintf etc treat precision
+                                                                                  as max-width for Ints. »
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
                                  $fmt ~= '#' if $type-prefix;
@@ -1587,7 +1673,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                              #$fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
                                              dd $arg if $debug;
-                                             $result ~= right(sprintf($fmt, $arg), $width, $padding, :$precision, :ellipsis('…'));
+                                             $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width, :ellipsis('…'));
                                          } else {
                                              $fmt ~= $padding;
                                              $fmt ~= '*';
@@ -1612,7 +1698,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                              if $precision >= 0 {
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$precision);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :max-width($precision));
                                              } else {
                                                  $fmt ~= $spec-char.lc;
                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
@@ -1698,7 +1784,7 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= sprintf($fmt, $arg, $padding, :$precision);
+                                                 $result ~= sprintf($fmt, $arg, $padding, :max-width($precision));
                                              } else {
                                                  $fmt ~= $spec-char.lc;
                                                  $result ~= sprintf($fmt, $arg);
@@ -1708,9 +1794,9 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                          if $precision >= 0 {
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($precision));
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding, :max-width($precision));
                                              }
                                          } else {
                                              $fmt ~= $spec-char.lc;
@@ -1779,7 +1865,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                                               $width, $padding, :max-width($width + $precision));
                                                   } else {
                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
                                                   }
@@ -1815,9 +1902,9 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding, :max-width($width + $precision));
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding, :$precision);
+                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($width + $precision));
                                                   }
                                               } else {
                                                   if $type-prefix {
@@ -2162,8 +2249,6 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                   $arg .=Int;
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
-                                  $fmt ~= '-' if $justify eq '-';
-                                  $fmt ~= $padding;
                                   $fmt ~= 'v' if $vector;
                                   $fmt ~= '#' if $type-prefix;
                                   ##########################################################
@@ -2172,6 +2257,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                   #                                                        #
                                   ##########################################################
                                   if $padding eq '0' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
@@ -2193,6 +2280,8 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   } elsif $padding eq ' ' || $padding eq '' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
@@ -2202,6 +2291,37 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char;
                                               $result ~= sprintf($fmt, $width, $arg);
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $precision, $arg);
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $arg);
+                                          }
+                                      }
+                                  } else { # $padding eq something-else #
+                                      if $width >= 0 { # centre etc make sense  here #
+                                          if $precision >= 0 {
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                              } else { # right justification #
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                              }
+                                          } else { # $precision < 0 #
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                              } else { # right justification #
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                              }
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
@@ -2250,6 +2370,27 @@ sub Sprintf(Str:D $format-str, *@args --> Str) is export {
                                           }
                                       }
                                   } elsif $padding eq ' ' || $padding eq '' {
+                                      if $width >= 0 { # centre etc make no sense here #
+                                          if $precision >= 0 {
+                                              $fmt ~= '*.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                          } else {
+                                              $fmt ~= '*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $width, $arg);
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $precision, $arg);
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              $result ~= sprintf($fmt, $arg);
+                                          }
+                                      }
+                                  } else { # $padding eq something-else #
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';

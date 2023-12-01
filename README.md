@@ -46,7 +46,7 @@ Another important thing to note is that even these functions will fail if you in
 Fixed the proto type of **`left`** etc is now 
 
 ```raku
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
 ```
 
 Where **`sub strip-ansi(Str:D $text --> Str:D) is export`** is my new function for striping out ANSI escape sequences so we don't need to supply **`:$ref`** unless it contains codes that **`sub strip-ansi(Str:D $text --> Str:D) is export`** cannot strip out, if so I would like to know so I can update it to cope with these new codes.
@@ -130,7 +130,7 @@ The functions Provided.
   * centre
 
     ```raku
-    sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
+    sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
@@ -149,14 +149,14 @@ The functions Provided.
 
           * **"`Terminal::WCWidth`"** is witten by **bluebear94** [github:bluebear94](https://raku.land/github:bluebear94) get it with **zef** or whatever
 
-      * **`:$precision`** sets the maximum width of the field but if set to **`0`** (The default), will effectively be infinite (∞).
+      * **`:$max-width`** sets the maximum width of the field but if set to **`0`** (The default), will effectively be infinite (∞).
 
       * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
   * left
 
     ```raku
-    sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
+    sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`left`** is the same except that except that it puts all the padding on the right of the field.
@@ -164,7 +164,7 @@ The functions Provided.
   * right
 
     ```raku
-    sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$precision = 0, Str:D :$ellipsis = '' --> Str) is export
+    sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
