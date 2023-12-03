@@ -6,16 +6,16 @@ unit module Gzz::Text::Utils:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@s
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
 =VERSION 0.1.4
 =TITLE Gzz::Text::Utils
-=SUBTITLE A Raku module to provide text formating services to Raku progarms.
+=SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
 =COPYRIGHT
 GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
 
 =head2 Introduction
 
-A Raku module to provide text formating services to Raku progarms.
+A Raku module to provide text formatting services to Raku programs.
 
-Including a sprintf frontend Sprintf that copes better with Ansi highlighted
+Including a sprintf front-end Sprintf that copes better with Ansi highlighted
 text and implements B<C<%U>> and does octal as B<C<0o123>> or B<C<0O123>> if
 you choose B<C<%O>> as I hate ambiguity like B<C<0123>> is it an int with
 leading zeros or an octal number.
@@ -50,7 +50,7 @@ I can update it to cope with these new codes.
 INIT my $debug = False;
 ####################################
 #                                  #
-#  To turn On or Off debuggging    #
+#  To turn On or Off debugging     #
 #  Comment or Uncomment this       #
 #  following line.                 #
 #                                  #
@@ -113,15 +113,15 @@ class ArgParityMissMatch is Exception is export {
 
 =begin pod
 
-=head1 FormatSpecErrror
+=head1 FormatSpecError
 
 =begin code :lang<raku>
 
-class FormatSpecErrror is Exception is export
+class FormatSpecError is Exception is export
 
 =end code
 
-FormatSpecErrror is an exception class that Format (used by Sprintf) throws if there is an
+FormatSpecError is an exception class that Format (used by Sprintf) throws if there is an
 error in the Format specification (i.e. B<C<%n>> instead of B<C<%N>> as B<C<%n>> is already
 taken, the same with using B<C<%t>> instead of B<C<%T>>).
 
@@ -131,12 +131,19 @@ B<NB: I<C<%N>> introduces a I<C<\n>> character and I<C<%T>> a tab (i.e. I<C<\t>>
 
 =end pod
 
-class FormatSpecErrror is Exception is export {
+class FormatSpecError is Exception is export {
     has Str:D $.msg = 'Error: argument paraity error found';
     method message( --> Str:D) {
         $!msg;
     }
 }
+#`««
+if $*RAKU.compiler.name ne 'rakudo' {
+    sub dd(*@args) is export {
+        say @args».raku.join("\n");
+    }
+}
+#»»
 
 =begin pod
 
@@ -160,9 +167,11 @@ grammar FormatBase {
                                   || 't' #`« not implemented and will not be »
                               ]
                             }
-    token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+    token fmt-spec          { [ <false-flags>? <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+    token false-flags       { [ <false-flag>+ <?before \d+ '$' > ] }
+    token false-flag        { [ '+' || '^' || '-' || '#' || 'v' || '0' || ' ' || '[' <-[ <cntrl> \s \[ \] ]>+ ']' ] }
     token dollar-directive  { \d+ <?before '$'> }
-    token flags             { <flag> ** {1 .. 20} }
+    token flags             { [ [ <flag> ** {1 .. 20} ] <!before \d+ '$' > ] }
     token flag              { [ <force-sign> || <justify> || <type-prefix> || <vector> || <padding> ] }
     token force-sign        { '+' } #`« put a plus in front of positive values »
     token justify           { [     '-' #`« left justify right is the default »
@@ -175,7 +184,7 @@ grammar FormatBase {
     token vector            { 'v' #`« vector flag (used only with d directive) » }
     token padding           { [ <old-padding> || '[' <arbitrary-padding> ']' ] }
     token old-padding       { [ '0' || ' ' ] }
-    token arbitrary-padding { [ <-[ <cntrl> \s \[ \] ]> || ' ' ] }
+    token arbitrary-padding { [ <-[ <cntrl> \s \[ \] ]>+ || ' ' ] }
     token width             { [ '*' [ <width-dollar> '$' ]? || <width-int> ] }
     token width-dollar      { \d+ <?before '$'> }
     token width-int         { \d+ }
@@ -195,7 +204,7 @@ grammar FormatBase {
                                   || 'L'  #`« interpret integer as C type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
                                   || 't'  #`« interpret integer as C type "ptrdiff_t" »
                                   || 'z'  #`« interpret integer as C type "size_t" »
-                              ]
+                             ]
                             }
     token spec-char         { [      'c' #`« a character with the given codepoint »
                                   || 's' #`« a string »
@@ -222,9 +231,20 @@ grammar FormatBase {
 } # grammar FormatBase #
 
 role FormatBaseActions {
+    method false-flag($/) {
+        my $false-flag = ~$/;
+        dd $false-flag if $debug;
+        make $false-flag;
+    }
+    method false-flags($/) {
+        my $false-flags = $/<false-flag>».made;
+        dd $false-flags if $debug;
+        FormatSpecError.new(:msg("Error flags belong after <number> '\$' spec not before.")).throw;
+        make $false-flags;
+    }
     method dollar-directive($/) {
         my Int $dollar-directive = +$/ - 1;
-        BadArg.new(:msg("bad \$ spec for arg: cannot be less than 1 ")).throw if $dollar-directive < 0;
+        FormatSpecError.new(:msg("bad \$ spec for arg: cannot be less than 1 ")).throw if $dollar-directive < 0;
         dd $dollar-directive if $debug;
         make $dollar-directive;
     }
@@ -268,9 +288,13 @@ role FormatBaseActions {
         dd $old-padding if $debug;
         make $old-padding;
     }
-    #token arbitrary-padding { [ \w || '-' || ' ' ] }
+    #token arbitrary-padding { [ <-[ <cntrl> \s \[ \] ]>+ || ' ' ] }
     method arbitrary-padding($/) {
         my $arbitrary-padding = ~$/;
+        if $arbitrary-padding.codes != 1 {
+            my Str:D $msg = "Error: should only contain one codepoint/character you supplied {$arbitrary-padding.codes}: [$arbitrary-padding]";
+            FormatSpecError.new(:$msg).throw;
+        }
         dd $arbitrary-padding if $debug;
         make $arbitrary-padding;
     }
@@ -329,7 +353,7 @@ role FormatBaseActions {
     #token prec-dollar      { \d+ }
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
-        FormatSpecErrror.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
+        FormatSpecError.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
         dd $prec-dollar if $debug;
         make $prec-dollar;
     }
@@ -353,7 +377,7 @@ role FormatBaseActions {
     #token max-dollar        { \d+ <?before '$'> }
     method max-dollar($/) {
         my Int:D $max-dollar = +$/ - 1;
-        FormatSpecErrror.new(:msg("bad \$ spec for max-width: cannot be less than 1 ")).throw if $max-dollar < 0;
+        FormatSpecError.new(:msg("bad \$ spec for max-width: cannot be less than 1 ")).throw if $max-dollar < 0;
         dd $max-dollar if $debug;
         make $max-dollar;
     }
@@ -396,8 +420,8 @@ role FormatBaseActions {
         %fmt-esc«val» = "\n" if %fmt-esc«val» eq 'N'; # %N gives us an newline saves on needing double quotes #
         %fmt-esc«val» = "\t" if %fmt-esc«val» eq 'T'; # %T gives us an tab saves on needing double quotes #
         dd %fmt-esc if $debug;
-        FormatSpecErrror.new(:msg("%n not implemented and will not be; did you mean %N.")).throw if %fmt-esc«val» eq 'n'; # not implemented and will not be. #
-        FormatSpecErrror.new(:msg("%t not implemented and will not be; did you mean %T.")).throw if %fmt-esc«val» eq 't'; # not implemented and will not be. #
+        FormatSpecError.new(:msg("%n not implemented and will not be; did you mean %N.")).throw if %fmt-esc«val» eq 'n'; # not implemented and will not be. #
+        FormatSpecError.new(:msg("%t not implemented and will not be; did you mean %T.")).throw if %fmt-esc«val» eq 't'; # not implemented and will not be. #
         make %fmt-esc;
     }
     #token fmt-spec          { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
@@ -883,7 +907,7 @@ sub strip-ansi(Str:D $text --> Str:D) is export
 
 Strips out all the ANSI escapes, at the moment just those provided by the B<C<Terminal::ANSI>> 
 or B<C<Terminal::ANSI::OO>> modules both available as B<C<Terminal::ANSI>> from zef etc I am not sure
-how exhastive that is,  but I will implement any more escapes as I become aware of them. 
+how exhaustive that is,  but I will implement any more escapes as I become aware of them.
 
 =end item
 
@@ -903,7 +927,6 @@ sub strip-ansi(Str:D $text --> Str:D) is export {
 =begin item
 
 hwcswidth
-
 =begin code :lang<raku>
 
 sub hwcswidth(Str:D $text --> Int:D) is export
@@ -946,7 +969,9 @@ centre
 
 =begin code :lang<raku>
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
+                Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
 
 =end code
 
@@ -1019,7 +1044,9 @@ left
 
 =begin code :lang<raku>
 
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
 
 =end code
 
@@ -1033,7 +1060,9 @@ right
 
 =begin code :lang<raku>
 
-sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
 
 =end code
 
@@ -1045,13 +1074,34 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = st
 
 =item2       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
+
+=begin item 
+
+crop-field
+
+=end item
+
+=begin code
+
+sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+                                                Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
+
+=end code
+
+=begin item
+
+=end item
+
 =end pod
 
-
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
-    my Int:D $w  = wcswidth($ref);
-    dd $w, $width, $max-width, $text, $ref if $debug;
+sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+                                                Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
+    if $debug {
+        my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
+        dd $w, $max-width, $text, $line;
+    }
     if $max-width > 0 {
+        $w  = hwcswidth($text); # just in case $w wasn't set correctly on call #
         if $w > $max-width {
             my $actions = UnhighlightActions;
             my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
@@ -1075,117 +1125,145 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = s
                     dd @chunks, $w, $max-width, $tmp, $line;
                 }
             }
+            if hwcswidth($tmp) < $max-width {
+                while %chunk«type» ne 'chunk' && $i < @chunks.elems {
+                    if $debug {
+                        my $t = @chunks[$i];
+                        dd @chunks, $i, $t, %chunk;
+                    }
+                    %chunk = @chunks[$i];
+                    $i++;
+                }
+                $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
+                my Str:D $val = '';
+                if %chunk«type» eq 'chunk' {
+                    $val = %chunk«val»;
+                } else {
+                    $cropped = True;
+                    $tmp ~= "\e[0m";
+                    return $tmp;
+                }
+                while hwcswidth($tmp ~ $val ~ $ellipsis) > $max-width {
+                    last if $val eq '';
+                    $val = $val.substr(0, *-1);
+                }
+                $tmp ~= $val ~ $ellipsis ~ "\e[0m";
+                $cropped = True;
+                $width = $max-width if $width > $max-width;
+                return $tmp;
+            } # if hwcswidth($tmp) < $max-width #
             if $debug {
                 my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
                 dd @chunks, $w, $max-width, $tmp, $line;
             }
-            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
-            return $tmp;
-        }
+            if $i + 1 < @chunks.elems {
+                $tmp ~= $ellipsis ~ "\e[0m";
+                $cropped = True;
+                $width = $max-width if $width > $max-width;
+                return $tmp;
+            }
+        } # if $w > $max-width #
         $width = $max-width if $width > $max-width;
-    }
-    return $text if $w < 0;
-    return $text if $width <= $w;
-    my Str $result = $text;
+    } # if $max-width > 0 #
+    $w  = hwcswidth($text); # insure that $w is set correctly #
+    $cropped = False;
+    return $text;
+} #`««« sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+                                        Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export »»»
+
+our $centre-total-number-of-chars is export = 0;
+our $centre-total-number-of-visible-chars is export = 0;
+our $left-total-number-of-chars is export = 0;
+our $left-total-number-of-visible-chars is export = 0;
+our $right-total-number-of-chars is export = 0;
+our $right-total-number-of-visible-chars is export = 0;
+
+sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $centre-total-number-of-chars         = $number-of-chars;
+    $centre-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+sub left-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $left-total-number-of-chars         = $number-of-chars;
+    $left-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+sub right-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $right-total-number-of-chars         = $number-of-chars;
+    $right-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
+                Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+    my Int:D $w  = wcswidth($ref);
+    dd $w, $width, $max-width, $text, $ref if $debug;
+    my Bool:D $cropped = False;
+    my Str $result = crop-field($text, $w, $width,  $cropped, $max-width, :$ellipsis);
+    return $result if $cropped;
+    return $result if $w < 0;
+    return $result if $width <= $w;
     $width -= $w;
-    return $text if $width <= 0;
+    return $result if $width <= 0;
     my Int:D $fill-width = wcswidth($fill);
     $fill-width = 1 unless $fill-width > 0;
     $width = $width div $fill-width;
     my Int:D $l  = $width div 2;
     $result = $fill x $l ~ $result ~ $fill x ($width - $l);
     return $result;
-} # sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
+    KEEP {
+        &number-of-chars($result.chars, strip-ansi($result).chars);
+    }
+} #`««« sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export »»»
 
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     dd $w, $width, $max-width, $text, $ref if $debug;
-    if $max-width > 0 {
-        if $w > $max-width {
-            my $actions = UnhighlightActions;
-            my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
-            my Str:D $tmp = '';
-            if $debug {
-                my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $max-width, $tmp, $line;
-            }
-            $w = 0;
-            my %chunk;
-            my Int:D $i = -1;
-            loop ($i = 0; $i < @chunks.elems; $i++) {
-                %chunk = @chunks[$i];
-                $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                if $w > $max-width {
-                    last;
-                }
-                $tmp ~= %chunk«val»;
-                if $debug {
-                    my Str:D $line = "\[$?LINE]";
-                    dd @chunks, $w, $max-width, $tmp, $line;
-                }
-            }
-            if $debug {
-                my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $max-width, $tmp, $line if $debug;
-            }
-            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
-            return $tmp;
-        }
-        $width = $max-width if $width > $max-width;
-    }
-    return $text if $w < 0;
-    return $text if $width <= 0;
-    return $text if $width <= $w;
+    my Bool:D $cropped = False;
+    my Str $result = crop-field($text, $w, $width,  $cropped, $max-width, :$ellipsis);
+    return $result if $cropped;
+    return $result if $w < 0;
+    return $result if $width <= 0;
+    return $result if $width <= $w;
     my Int:D $l  = ($width - $w).abs;
-    my Str:D $result = $text ~ ($fill x $l);
+    $result ~= $fill x $l;
     return $result;
-} # sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
-
-sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
-    my Int:D $w  = wcswidth($ref);
-    if $max-width > 0 {
-        dd $max-width, $width, $w if $debug;
-        if $w > $max-width {
-            my $actions = UnhighlightActions;
-            my @chunks = Unhighlight.parse($text, :enc('UTF-8'), :$actions).made;
-            my Str:D $tmp = '';
-            if $debug {
-                my Str:D $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $max-width, $tmp, $line;
-            }
-            $w = 0;
-            my %chunk;
-            my Int:D $i = -1;
-            loop ($i = 0; $i < @chunks.elems; $i++) {
-                %chunk = @chunks[$i];
-                $w = hwcswidth($tmp ~ %chunk«val» ~ $ellipsis);
-                if $w > $max-width {
-                    last;
-                }
-                $tmp ~= %chunk«val»;
-                if $debug {
-                    my Str:D $line = "\[$?LINE]";
-                    dd @chunks, %chunk, $w, $max-width, $tmp, $line;
-                }
-            }
-            if $debug {
-                my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
-                dd @chunks, $w, $max-width, $tmp, $line if $debug;
-            }
-            $tmp ~= $ellipsis if $i + 1 < @chunks.elems;
-            return $tmp;
-        }
-        $width = $max-width if $width > $max-width;
+    KEEP {
+        &number-of-chars($result.chars, strip-ansi($result).chars);
     }
-    return $text if $w < 0;
-    return $text if $width <= 0;
-    return $text if $width <= $w;
+} #`««« sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export »»»
+
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+    my Int:D $w  = wcswidth($ref);
+    my Bool:D $cropped = False;
+    my Str $result = crop-field($text, $w, $width,  $cropped, $max-width, :$ellipsis);
+    return $result if $cropped;
+    return $result if $w < 0;
+    return $result if $width <= 0;
+    return $result if $width <= $w;
     my Int:D $l  = $width - $w;
-    dd $l, $text if $debug;
-    dd $w, $width, $max-width, $text, $ref, $fill if $debug;
-    my Str:D $result = ($fill x $l) ~ $text;
+    dd $l, $result if $debug;
+    dd $w, $width, $max-width, $result, $ref, $fill if $debug;
+    $result = ($fill x $l) ~ $result;
     return $result;
-} # sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export #
+    KEEP {
+        &number-of-chars($result.chars, strip-ansi($result).chars);
+    }
+} #`««« sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars, Str:D
+                        :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export »»»
 
 =begin pod
 
@@ -1197,7 +1275,9 @@ Sprintf like sprintf only it can deal with ANSI highlighted text.
 
 =begin code :lang<raku>
 
-sub Sprintf(Str:D $format-str, *@args --> Str) is export 
+sub Sprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> Str) is export 
 
 =end code
 
@@ -1264,8 +1344,8 @@ just B<C>$arg>> otherwise.
 
 =end pod
 
-our $Sprintf-total-number-of-chars = 0;
-our $Sprintf-total-number-of-visible-chars = 0;
+our $Sprintf-total-number-of-chars is export = 0;
+our $Sprintf-total-number-of-visible-chars is export = 0;
 
 sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $Sprintf-total-number-of-chars         = $number-of-chars;
@@ -1273,7 +1353,9 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
     return True
 }
 
-sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars, *@args --> Str) is export {
+sub Sprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> Str) is export {
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
     dd @format-str if $debug;
@@ -1284,7 +1366,7 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                                                                  $n++ if %e«precision»«kind» eq 'star';
                                                                                                  $n;
                                                                                              }));
-    my %extra-args is SetHash[Int] = (0..^$positionals).list;
+    my %extra-args is SetHash[Int] = (^$positionals).list;
     my Int:D $dollars  = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                           my Int:D $n = 0;
                                                                                           my Int:D $dollar-directive = %e«dollar-directive»;
@@ -1315,6 +1397,14 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                                                                                          $positionals != @args.elems;
     ArgParityMissMatch.new(:msg("Error: argument parity error; referenced argument index: {$max + 1} outside the range 1..{@args.elems}")).throw
                                                                                                                             if $max >= @args.elems;
+    $positionals += $dollars;
+    my Int:D $total-number-of-chars = 0;
+    my Int:D $total-number-of-visible-chars = 0;
+    sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+        $total-number-of-chars += $number-of-chars;
+        $total-number-of-visible-chars += $number-of-visible-chars;
+        return True;
+    } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) #
     my Str:D $result = '';
     my Int:D $cnt = 0;
     dd @format-str if $debug;
@@ -1322,7 +1412,10 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
         my Str:D $type = %elt«type»;
         dd $type, %elt if $debug;
         if $type eq 'literal' {
-            $result ~= %elt«val»;
+            my Str:D $lit = %elt«val»;
+            $total-number-of-chars += $lit.chars;
+            $total-number-of-visible-chars += strip-ansi($lit).chars;
+            $result ~= $lit;
         } elsif $type eq 'fmt-spec' {
             #my %fmt-spec = type => 'fmt-spec', dollar-directive => -1, flags => [],
             #                   width => { kind => 'empty', val => 0, }
@@ -1415,8 +1508,9 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
             my $ref;
             my Int:D $dollar-directive = %elt«dollar-directive»;
             my Int:D $i = $dollar-directive;
+            dd %elt, $dollar-directive, $i, $cnt if $debug;
             BadArg.new(:msg("\$ spec for arg out of range")).throw unless $i < @args.elems;
-            if $dollar-directive < 1 {
+            if $dollar-directive < 0 {
                 $i = $cnt;
                 $cnt++;
             }
@@ -1465,68 +1559,75 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
             $justify               = '-'  if %justify && %justify«val» eq '-';
             $type-prefix           = True if %type-prefix && %type-prefix«val» eq '#';
             $vector                = True if %vector && %vector«val» eq 'v';
-            my Str:D $modifier     = %elt«modifier»; # ignore these for now #
+            #my Str:D $modifier     = %elt«modifier»; # ignore these for now #
             my Str:D $spec-char    = %elt«spec-char»;
             $name = $arg.WHAT.^name;
+            dd $arg, $ref, $ellipsis, $width, $precision, $max-width, $padding, $justify, $type-prefix, $spec-char if $debug;
             given $spec-char {
                 when 'c' {
                              $arg .=Str;
                              $ref .=Str;
                              BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
-                             $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
-                                                                              so munge together.
-                                                                              Traditionally sprintf etc treat precision
-                                                                              as max-width for strings. »
+                             $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                so munge together.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max-width for strings. »
                              if $padding eq '' {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, :$ref, :$max-width);
+                                     $result ~=  right($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, :$ref, :$max-width);
+                                     $result ~=  left($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, :$ref, :$max-width);
+                                     $result ~=  centre($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  }
                              } else {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, $padding, :$ref, :$max-width);
+                                     $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, $padding, :$ref, :$max-width);
+                                     $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, $padding, :$ref, :$max-width);
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
                                  }
                              }
                          }
                 when 's' {
                              $arg .=Str;
                              $ref .=Str;
-                             $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
-                                                                              so munge together.
-                                                                              Traditionally sprintf etc treat precision
-                                                                              as max-width for strings. »
+                             $max-width = max($max-width, $precision, 1) if $max-width > 0; #`« should not really have a both for this
+                                                                                                so munge together.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max-width for strings. »
                              dd $arg, $ref, $width, $precision, $max-width, $justify, $padding if $debug;
                              if $padding eq '' {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  right($arg, $width, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  left($arg, $width, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  centre($arg, $width, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  }
                              } else {
                                  if $justify eq '' {
-                                     $result ~=  right($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  right($arg, $width, $padding, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  } elsif $justify eq '-' {
-                                     $result ~=  left($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  left($arg, $width, $padding, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  } elsif $justify eq '^' {
-                                     $result ~=  centre($arg, $width, $padding, :$ref, :$max-width, :ellipsis('…'));
+                                     $result ~=  centre($arg, $width, $padding, :number-of-chars(&internal-number-of-chars), :$ref,
+                                                                                                             :$max-width, :$ellipsis);
                                  }
                              }
                          }
                 when 'd'|'i'|'D' {
                                        $arg .=Int;
-                                       $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
-                                                                                        so munge together.
-                                                                                        Traditionally sprintf etc treat precision
-                                                                                        as max-width for Ints. »
+                                       $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                          so munge together.
+                                                                                                          Traditionally sprintf etc treat precision
+                                                                                                          as max-width for Ints. »
                                        my Str:D $fmt = '%';
                                        $fmt ~= '+' if $force-sign;
                                        $fmt ~= '#' if $type-prefix;
@@ -1538,20 +1639,28 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                if $max-width >= 0 {
                                                    $fmt ~= '*.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $width, $max-width, $arg);
+                                                   $result ~= right(sprintf($fmt, $width, $max-width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                               :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= '*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $width, $arg);
+                                                   $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                               :$max-width, :$ellipsis);
                                                }
                                            } else {
                                                if $max-width >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $max-width, $arg);
+                                                   $result ~= right(sprintf($fmt, $max-width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                               :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= sprintf($fmt, $arg);
+                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                               :$max-width, :$ellipsis);
                                                }
                                            }
                                        } elsif $padding eq ' ' {
@@ -1560,28 +1669,40 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
                                                if $precision >= 0 {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } elsif $padding eq '' {
@@ -1589,18 +1710,26 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                if $width >= 0 {
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $precision, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $precision,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $max-width, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    }
                                                } # $width < 0 #
                                            } else { # justify is either '-' or '' i.e. left or right #
@@ -1608,10 +1737,13 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $precision, $arg), $width, :$max-width);
+                                                   $result ~= centre(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= centre(sprintf($fmt, $arg), $width, :$max-width);
+                                                   $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars), :$max-width, :$ellipsis);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } else { # $padding eq something-else #
@@ -1620,15 +1752,21 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                    if $precision >= 0 {
                                                        $fmt ~= '.*';
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    }
                                                } else { # $width < 0 #
                                                    if $precision >= 0 {
                                                        $fmt ~= $spec-char.lc;
-                                                       $result ~= centre(sprintf($fmt, $arg), $precision, $padding, :$max-width);
+                                                       $result ~= centre(sprintf($fmt, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                    } else {
                                                        $fmt ~= $spec-char.lc;
                                                        $result ~= sprintf($fmt, $arg);
@@ -1639,18 +1777,26 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                if $precision >= 0 {
                                                    $fmt ~= '.*';
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding, :$max-width);
+                                                   $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= left(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                   $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                }
                                            } else { # justify is '' i.e. right #
                                                if $precision >= 0 {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                } else {
                                                    $fmt ~= $spec-char.lc;
-                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width);
+                                                   $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                }
                                            } # justify is either '-' or '' i.e. left or right #
                                        } # $padding eq something-else #
@@ -1658,10 +1804,10 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                 when 'u'|'U' {
                                  $arg .=Int;
                                  BadArg.new(:msg("argument cannot be negative for char spec: $spec-char")).throw if $arg < 0;
-                                 $max-width = max($max-width, $precision, 0); #`« should not really have a both for this
-                                                                                  so munge together.
-                                                                                  Traditionally sprintf etc treat precision
-                                                                                  as max-width for Ints. »
+                                 $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                    so munge together.
+                                                                                                    Traditionally sprintf etc treat precision
+                                                                                                    as max-width for Ints. »
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
                                  $fmt ~= '#' if $type-prefix;
@@ -1670,24 +1816,32 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                      if $width >= 0 { # centre etc make no sense here #
                                          if $precision >= 0 {
                                              $fmt ~= $padding;
-                                             #$fmt ~= '*';
+                                             $fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
                                              dd $arg if $debug;
-                                             $result ~= right(sprintf($fmt, $arg), $width, $padding, :$max-width, :ellipsis('…'));
+                                             $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                          } else {
                                              $fmt ~= $padding;
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
-                                             $result ~= sprintf($fmt, $width, $arg);
+                                             $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                          }
                                      } else { # $width < 0 #
                                          if $precision >= 0 {
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
-                                             $result ~= sprintf($fmt, $precision, $arg);
+                                             $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                          } else {
                                              $fmt ~= $spec-char.lc;
-                                             $result ~= sprintf($fmt, $arg);
+                                             $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                          }
                                      }
                                  } elsif $padding eq ' ' {
@@ -1698,20 +1852,28 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding, :max-width($precision));
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= $padding;
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -1719,16 +1881,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
@@ -1738,19 +1908,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '*';
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $precision,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= centre(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -1758,16 +1936,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
@@ -1776,15 +1962,21 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                          if $width >= 0 {
                                              if $precision >= 0 {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= $spec-char.lc;
-                                                 $result ~= sprintf($fmt, $arg, $padding, :max-width($precision));
+                                                 $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char.lc;
                                                  $result ~= sprintf($fmt, $arg);
@@ -1794,16 +1986,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                          if $precision >= 0 {
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($precision));
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding, :max-width($precision));
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char.lc;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
@@ -1811,6 +2011,10 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                              } # when 'u', 'U' #
                 when 'o'|'O' {
                                   $arg .=Int;
+                                  $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                     so munge together.
+                                                                                                     Traditionally sprintf etc treat precision
+                                                                                                     as max-width for Ints. »
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
                                   $fmt ~= 'v' if $vector;
@@ -1821,9 +2025,15 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= '*.*';
                                               $fmt ~= $spec-char.lc;
                                               if $type-prefix {
-                                                  $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
+                                                  $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else {
-                                                  $result ~= sprintf($fmt, $width, $precision, $arg);
+                                                  $result ~= right(sprintf($fmt, $width, $precision, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           } else {
                                               $fmt ~= '-' if $justify eq '-';
@@ -1831,9 +2041,15 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char.lc;
                                               if $type-prefix {
-                                                  $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
+                                                  $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else {
-                                                  $result ~= sprintf($fmt, $width, $arg);
+                                                  $result ~= right(sprintf($fmt, $width, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           }
                                       } else { # $width < 0 #
@@ -1843,17 +2059,29 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char.lc;
                                               if $type-prefix {
-                                                  $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                                  $result ~= right('0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else {
-                                                  $result ~= sprintf($fmt, $precision, $arg);
+                                                  $result ~= right(sprintf($fmt, $precision, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           } else {
                                               $fmt ~= $spec-char.lc;
                                               $result ~= sprintf($fmt, $arg);
                                               if $type-prefix {
-                                                  $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
+                                                  $result ~= right('0'~ $spec-char ~ sprintf($fmt, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else {
-                                                  $result ~= sprintf($fmt, $arg);
+                                                  $result ~= right(sprintf($fmt, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           }
                                       }
@@ -1866,16 +2094,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
                                                       $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
-                                                                                               $width, $padding, :max-width($width + $precision));
+                                                                                               $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } else { # $width < 0 #
@@ -1883,17 +2119,29 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                                               $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= sprintf($fmt, $precision, $arg);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg),
+                                                                                               $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
-                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } # $width < 0 #
@@ -1902,32 +2150,51 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding, :max-width($width + $precision));
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                        $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($width + $precision));
+                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                                                         $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } else {
                                               if $justify eq '-' {
                                                   $fmt ~= $spec-char.lc;
-                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding);
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                       $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                       $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           }
@@ -1939,14 +2206,21 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg),
+                                                                                                                $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
                                                       $result ~= centre(sprintf($fmt, $arg), $width);
                                                   }
@@ -1956,16 +2230,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $precision, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= sprintf($fmt, $precision, $arg);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= sprintf($fmt, $arg);
+                                                      $result ~= centre(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } # $width < 0 #
@@ -1975,30 +2257,48 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                                                                   $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg),
+                                                                                                                   $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } else {
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $arg), $width);
+                                                      $result ~= left(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $arg), $width);
+                                                      $result ~= right(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           }
@@ -2010,16 +2310,26 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg),
+                                                                                                        $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                        $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } else { # $width < 0 #
@@ -2028,16 +2338,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                                   $fmt ~= '.*';
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $precision, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg),
+                                                                                                    $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= sprintf($fmt, $precision, $arg);
+                                                      $result ~= centre(sprintf($fmt, $precision, $arg),
+                                                                                                    $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   $fmt ~= $spec-char.lc;
                                                   if $type-prefix {
-                                                      $result ~= '0' ~ $spec-char ~ sprintf($fmt, $arg);
+                                                      $result ~= centre('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                    $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= sprintf($fmt, $arg);
+                                                      $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } # $width < 0 #
@@ -2047,30 +2368,50 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $precision - 2, $arg),
+                                                                                                       $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $precision, $arg),
+                                                                                                       $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                      $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           } else {
                                               $fmt ~= $spec-char.lc;
                                               if $justify eq '-' {
                                                   if $type-prefix {
-                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= left('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                        $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               } else {
                                                   if $type-prefix {
-                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= right('0' ~ $spec-char ~ sprintf($fmt, $arg),
+                                                                                                        $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   } else {
-                                                      $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                      $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                                   }
                                               }
                                           }
@@ -2079,6 +2420,10 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                              } # when 'o', 'O' #
                 when 'x'|'X' {
                                  $arg .=Int;
+                                 $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                  so munge together.
+                                                                                  Traditionally sprintf etc treat precision
+                                                                                  as max-width for Ints. »
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
                                  $fmt ~= 'v' if $vector;
@@ -2090,17 +2435,26 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '*.*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg),
+                                                                           $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $width, $precision, $arg);
+                                                 $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $width, $arg);
+                                                 $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } else {
@@ -2108,17 +2462,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
-                                             $result ~= sprintf($fmt, $arg);
+                                             $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      }
@@ -2130,19 +2494,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -2150,16 +2522,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
@@ -2170,19 +2550,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $precision,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= centre(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -2190,16 +2578,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
@@ -2210,19 +2606,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -2230,23 +2634,35 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
                                  }
                              } # when 'x', 'X' #
                 when 'e'|'E' {
-                                  $arg .=Int;
+                                  $arg .=Num;
+                                  $max-width = max($max-width, $width, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                 so munge together.
+                                                                                                 Traditionally sprintf etc treat precision
+                                                                                                 as max-width for Ints. »
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
                                   $fmt ~= 'v' if $vector;
@@ -2263,43 +2679,127 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       }
-                                  } elsif $padding eq ' ' || $padding eq '' {
+                                  } elsif $padding eq ' ' {
+                                      if $width >= 0 { 
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          }
+                                      }
+                                  } elsif $padding eq '' {
                                       $fmt ~= '-' if $justify eq '-';
                                       $fmt ~= $padding;
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $precision,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              $result ~= right(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       }
                                   } else { # $padding eq something-else #
@@ -2307,118 +2807,295 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                           if $precision >= 0 {
                                               $fmt ~= $spec-char;
                                               if $justify eq '^' {
-                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } elsif $justify eq '-' {
-                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else { # right justification #
-                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding, :max-width($width + 1 + $precision));
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           } else { # $precision < 0 #
                                               $fmt ~= $spec-char;
                                               if $justify eq '^' {
-                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } elsif $justify eq '-' {
-                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               } else { # right justification #
-                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                               }
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       }
                                   }
                              } # when 'e', 'E' #
                 when 'f'|'F' {
-                                  $arg .=Int;
+                                  $arg .=Num;
+                                  $max-width = max($max-width, $width, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                 so munge together.
+                                                                                                 Traditionally sprintf etc treat precision
+                                                                                                 as max-width for Ints. »
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
-                                  $fmt ~= '-' if $justify eq '-';
-                                  $fmt ~= $padding;
                                   $fmt ~= 'v' if $vector;
                                   $fmt ~= '#' if $type-prefix;
+                                  dd $arg, $fmt, $width, $precision, $max-width, $padding, $justify, $type-prefix if $debug;
                                   ##########################################################
                                   #                                                        #
                                   #   centring makes no sense here  so we will not do it   #
                                   #                                                        #
                                   ##########################################################
                                   if $padding eq '0' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       }
                                   } elsif $padding eq ' ' || $padding eq '' {
-                                      if $width >= 0 { # centre etc make no sense here #
+                                      if $width >= 0 { 
                                           if $precision >= 0 {
-                                              $fmt ~= '*.*';
+                                              $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
-                                              $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          }
+                                      }
+                                  } elsif $padding eq '' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
+                                      if $width >= 0 { # centre etc make no sense here #
+                                          if $precision >= 0 {
+                                              $fmt ~= '*.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          } else {
+                                              $fmt ~= '*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       }
                                   } else { # $padding eq something-else #
-                                      if $width >= 0 { # centre etc make no sense here #
+                                      if $width >= 0 { 
                                           if $precision >= 0 {
-                                              $fmt ~= '*.*';
+                                              $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
-                                              $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       }
                                   }
                              } # when 'f', 'F' #
                 when 'g'|'G' {
-                                  $arg .=Int;
+                                  $arg .=Num;
+                                  $max-width = max($max-width, $width, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                 so munge together.
+                                                                                                 Traditionally sprintf etc treat precision
+                                                                                                 as max-width for Ints. »
                                   my Str:D $fmt = '%';
                                   $fmt ~= '+' if $force-sign;
-                                  $fmt ~= '-' if $justify eq '-';
-                                  $fmt ~= $padding;
                                   $fmt ~= 'v' if $vector;
                                   $fmt ~= '#' if $type-prefix;
                                   ##########################################################
@@ -2427,73 +3104,242 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                   #                                                        #
                                   ##########################################################
                                   if $padding eq '0' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
                                       if $width >= 0 { # centre etc make no sense here #
                                           if $precision >= 0 {
                                               $fmt ~= '*.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                           }
                                       }
-                                  } elsif $padding eq ' ' || $padding eq '' {
-                                      if $width >= 0 { # centre etc make no sense here #
+                                  } elsif $padding eq ' ' {
+                                      if $width >= 0 { 
                                           if $precision >= 0 {
-                                              $fmt ~= '*.*';
+                                              $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
-                                              $fmt ~= '*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $width, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       } else { # $width < 0 #
                                           if $precision >= 0 {
                                               $fmt ~= '.*';
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $precision, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           } else {
                                               $fmt ~= $spec-char;
-                                              $result ~= sprintf($fmt, $arg);
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          }
+                                      }
+                                  } elsif $padding eq '' {
+                                      $fmt ~= '-' if $justify eq '-';
+                                      $fmt ~= $padding;
+                                      if $width >= 0 { # centre etc make no sense here #
+                                          if $precision >= 0 {
+                                              $fmt ~= '*.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $width, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          } else {
+                                              $fmt ~= '*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $width, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $precision, $arg), $width, 
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              $result ~= right(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                          }
+                                      }
+                                  } else { # $padding eq something-else #
+                                      if $width >= 0 { 
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          }
+                                      } else { # $width < 0 #
+                                          if $precision >= 0 {
+                                              $fmt ~= '.*';
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $precision, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
+                                          } else {
+                                              $fmt ~= $spec-char;
+                                              if $justify eq '^' {
+                                                  $result ~= centre(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } elsif $justify eq '-' {
+                                                  $result ~= left(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              } else {
+                                                  $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                              }
                                           }
                                       }
                                   }
                              } # when 'g', 'G' #
                 when 'b'|'B' {
                                  $arg .=Int;
+                                 $max-width = max($max-width, $precision, 1) if $max-width > 0; #`« should not really have a both for this
+                                                                                                    so munge together.
+                                                                                                    Traditionally sprintf etc treat precision
+                                                                                                    as max-width for Ints. »
                                  my Str:D $fmt = '%';
                                  $fmt ~= '+' if $force-sign;
-                                 $fmt ~= '-' if $justify eq '-';
-                                 $fmt ~= $padding;
                                  $fmt ~= 'v' if $vector;
                                  if $padding eq '0' {
+                                     $fmt ~= '-' if $justify eq '-';
+                                     $fmt ~= $padding;
                                      if $width >= 0 { # centre etc make no sense here #
                                          if $precision >= 0 {
                                              $fmt ~= '*.*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $precision - 2, $arg),
+                                                                          $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $width, $precision, $arg);
+                                                 $result ~= right(sprintf($fmt, $width, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= '*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $width - 2, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $width, $arg);
+                                                 $result ~= right(sprintf($fmt, $width, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } else {
@@ -2501,17 +3347,24 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $precision - 2, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $precision, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
-                                             $result ~= sprintf($fmt, $arg);
                                              if $type-prefix {
-                                                 $result ~= '0'~ $spec-char ~ sprintf($fmt, $arg);
+                                                 $result ~= right('0'~ $spec-char ~ sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= right(sprintf($fmt, $arg), $max-width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      }
@@ -2522,19 +3375,27 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -2542,39 +3403,55 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding);
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
-                                 } else { # $padding eq '' #
+                                 } elsif $padding eq '' { # $padding eq '' #
                                      $fmt ~= '#' if $type-prefix;
                                      if $justify eq '^' {
                                          if $width >= 0 {
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= centre(sprintf($fmt, $arg), $width);
+                                                 $result ~= centre(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else { # $width < 0 #
                                              if $precision >= 0 {
                                                  $fmt ~= '.*';
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $precision, $arg);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $precision,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
                                                  $fmt ~= $spec-char;
-                                                 $result ~= sprintf($fmt, $arg);
+                                                 $result ~= right(sprintf($fmt, $arg), $max-width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } # $width < 0 #
                                      } else { # justify is either '-' or '' i.e. left or right #
@@ -2582,20 +3459,84 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
                                              $fmt ~= '.*';
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          } else {
                                              $fmt ~= $spec-char;
                                              if $justify eq '-' {
-                                                 $result ~= left(sprintf($fmt, $arg), $width);
+                                                 $result ~= left(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              } else {
-                                                 $result ~= right(sprintf($fmt, $arg), $width);
+                                                 $result ~= right(sprintf($fmt, $arg), $width,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
                                              }
                                          }
                                      } # justify is either '-' or '' i.e. left or right #
-                                 } # $padding eq '' #
+                                 } else { # $padding eq something-else #
+                                     $fmt ~= '#' if $type-prefix;
+                                     if $justify eq '^' {
+                                         if $width >= 0 {
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             }
+                                         } else { # $width < 0 #
+                                             if $precision >= 0 {
+                                                 $fmt ~= '.*';
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             } else {
+                                                 $fmt ~= $spec-char;
+                                                 $result ~= centre(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             }
+                                         } # $width < 0 #
+                                     } else { # justify is either '-' or '' i.e. left or right #
+                                         if $precision >= 0 {
+                                             $fmt ~= '.*';
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $precision, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             }
+                                         } else {
+                                             $fmt ~= $spec-char;
+                                             if $justify eq '-' {
+                                                 $result ~= left(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             } else {
+                                                 $result ~= right(sprintf($fmt, $arg), $width, $padding,
+                                                                               :number-of-chars(&internal-number-of-chars),
+                                                                                                                   :$max-width, :$ellipsis);
+                                             }
+                                         }
+                                     } # justify is either '-' or '' i.e. left or right #
+                                 }
                              } # when 'b' #
             } # given $spec-char #
         } else {
@@ -2603,4 +3544,7 @@ sub Sprintf(Str:D $format-str, :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sp
         }
     } # for @format-str -> $arg #
     return $result;
+    KEEP {
+        &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+    }
 } # sub Sprintf(Str:D $format-str, *@args --> Str) is export #
