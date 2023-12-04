@@ -314,22 +314,22 @@ The functions Provided.
 
       * **`ref`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
 
-i.e.
+        i.e.
 
-```raku
-    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
-                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
-                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
-    dd $test-number-of-chars,  $test-number-of-visible-chars;
-    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
-                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
-                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
-    dd $test-number-of-chars,  $test-number-of-visible-chars;
-```
+        ```raku
+            put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                        ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+            dd $test-number-of-chars,  $test-number-of-visible-chars;
+            put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                        $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+            dd $test-number-of-chars,  $test-number-of-visible-chars;
+        ```
 
-          * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
+        * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
 
-          * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
+        * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
 
         * If it's a scalar then it's the argument itself. And **`$ref`** is **`strip-ansi($arg)`** if $arg is a string type i.e. Str or just **C**$arg>> otherwise.
 

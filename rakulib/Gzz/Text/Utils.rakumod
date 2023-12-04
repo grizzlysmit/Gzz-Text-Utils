@@ -1485,8 +1485,6 @@ B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<ri
 It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
 is a Str or just $arg otherwise.
 
-=end item3
-
 i.e.
 
 =begin code :lang<raku>
@@ -1502,19 +1500,21 @@ i.e.
  
 =end code
 
-=begin item5
+=end item3
+
+=begin item4
 
 B<C<@args[$i][]>> the actual argument. Where B<C<$i>> is the current index into the array of args.
 
-=end item5
+=end item4
 
-=begin item5
+=begin item4
 
 B<C<@args[$i][1]>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
 It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
 is a Str or just $arg otherwise.
 
-=end item5
+=end item4
 
 =begin item4
 
