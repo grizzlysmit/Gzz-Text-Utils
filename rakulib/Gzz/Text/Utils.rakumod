@@ -1500,7 +1500,7 @@ just B<C>$arg>> otherwise.
 
 =end item4
 
-=begin item3
+=begin item5
 
 B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
 It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
@@ -1521,7 +1521,7 @@ i.e.
  
 =end code
 
-=end item3
+=end item5
 
 =begin item3
 
