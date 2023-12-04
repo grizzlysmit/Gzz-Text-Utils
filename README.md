@@ -378,3 +378,7 @@ The functions Provided.
           }
           ```
 
+          *     B<Note: This is a closure we should always use a closure if we want to get the number of characters printed.>
+
+      *     B<C<format-str>> is
+

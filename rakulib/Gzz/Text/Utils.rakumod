@@ -1580,6 +1580,18 @@ sub test( --> True) is export {
 
 =end item4
 
+=begin item5
+
+    B<Note: This is a closure we should always use a closure if we want to get the number of characters printed.> 
+
+=end item5
+
+=begin item3
+
+    B<C<format-str>> is 
+
+=end item3
+
 =end pod
 
 our $Sprintf-total-number-of-chars is export = 0;
