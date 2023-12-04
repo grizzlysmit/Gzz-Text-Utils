@@ -346,9 +346,9 @@ The functions Provided.
         }
         ```
 
-This is exactly the same as the argument by the same name in **`centre`**, **`left`** and **`right`** above.
+        * This is exactly the same as the argument by the same name in **`centre`**, **`left`** and **`right`** above.
 
-        * i.e. 
+          i.e. 
 
           ```raku
           sub test( --> True) is export {

@@ -1542,9 +1542,9 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 
 =end item3
 
-This is exactly the same as the argument by the same name in B<C<centre>>, B<C<left>> and B<C<right>> above.
-
 =begin item4
+
+This is exactly the same as the argument by the same name in B<C<centre>>, B<C<left>> and B<C<right>> above.
 
 i.e. 
 
