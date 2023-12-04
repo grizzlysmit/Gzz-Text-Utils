@@ -484,30 +484,6 @@ If a Array then it should contain two values:
 .RE
 .RS 2n
 .RS 2n
-.IP \(bu 2m
-\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
-.IP
-i\&.e\&.
-.IP
-
-.RS 4m
-.EX
-    put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
-                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
-                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
-    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
-    put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
-                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
-                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
-    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
-
-
-.EE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB@args[$i][]\fR the actual argument\&. Where \fB$i\fR is the current index into the array of args\&.
@@ -527,6 +503,30 @@ i\&.e\&.
 .RS 2n
 .IP \(bu 2m
 If it's a scalar then it's the argument itself\&. And \fB$ref\fR is \fBstrip\-ansi($arg)\fR if $arg is a string type i\&.e\&. Str or just \fBC\fR$arg>> otherwise\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.IP
+i\&.e\&.
+.IP
+
+.RS 4m
+.EX
+    put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+    put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+
+
+.EE
 .RE
 .RE
 .RE

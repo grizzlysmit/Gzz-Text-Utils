@@ -799,6 +799,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <li><p>If a Hash then it should contain two pairs with keys:</p></li>
 <li><p>If a Array then it should contain two values:</p></li>
 <li><p><strong><code>arg</code></strong> the actual argument.</p></li>
+<li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p></li>
+<li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
+<li><p>If it's a scalar then it's the argument itself. And <strong><code>$ref</code></strong> is <strong><code>strip-ansi($arg)</code></strong> if $arg is a string type i.e. Str or just <strong>C</strong>$arg&gt;&gt; otherwise.</p></li>
 </ul>
 <li><p><strong><code>ref</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p><p>i.e.</p><pre class="pod-block-code">    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
                                 ${ arg =&gt; $highlighted, ref =&gt; $text }, $text, 30, 14, $highlighted, 13,
@@ -810,11 +813,6 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
     dd $test-number-of-chars,  $test-number-of-visible-chars;
 
 </pre></li>
-<ul>
-<li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p></li>
-<li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
-<li><p>If it's a scalar then it's the argument itself. And <strong><code>$ref</code></strong> is <strong><code>strip-ansi($arg)</code></strong> if $arg is a string type i.e. Str or just <strong>C</strong>$arg&gt;&gt; otherwise.</p></li>
-</ul>
 </ul>
 </ul>
 </ul>
@@ -845,7 +843,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 }
 
 </pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T18:27:46Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T18:59:40Z</span></div></footer>
 	</body>
 </html>
 

@@ -1479,6 +1479,27 @@ B<C<arg>> the actual argument.
 
 =end item4
 
+=begin item4
+
+B<C<@args[$i][]>> the actual argument. Where B<C<$i>> is the current index into the array of args.
+
+=end item4
+
+=begin item4
+
+B<C<@args[$i][1]>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
+It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
+is a Str or just $arg otherwise.
+
+=end item4
+
+=begin item4
+
+If it's a scalar then it's the argument itself. And B<C<$ref>> is B<C<strip-ansi($arg)>> if $arg is a string type i.e. Str or
+just B<C>$arg>> otherwise.
+
+=end item4
+
 =begin item3
 
 B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
@@ -1501,27 +1522,6 @@ i.e.
 =end code
 
 =end item3
-
-=begin item4
-
-B<C<@args[$i][]>> the actual argument. Where B<C<$i>> is the current index into the array of args.
-
-=end item4
-
-=begin item4
-
-B<C<@args[$i][1]>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
-It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
-is a Str or just $arg otherwise.
-
-=end item4
-
-=begin item4
-
-If it's a scalar then it's the argument itself. And B<C<$ref>> is B<C<strip-ansi($arg)>> if $arg is a string type i.e. Str or
-just B<C>$arg>> otherwise.
-
-=end item4
 
 =begin code :lang<raku>
     

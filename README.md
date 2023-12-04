@@ -312,6 +312,12 @@ The functions Provided.
 
         * **`arg`** the actual argument.
 
+        * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
+
+        * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
+
+        * If it's a scalar then it's the argument itself. And **`$ref`** is **`strip-ansi($arg)`** if $arg is a string type i.e. Str or just **C**$arg>> otherwise.
+
       * **`ref`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
 
         i.e.
@@ -326,12 +332,6 @@ The functions Provided.
                                                                                     :number-of-chars(&test-number-of-chars), :ellipsis('…'));
             dd $test-number-of-chars,  $test-number-of-visible-chars;
         ```
-
-        * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
-
-        * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
-
-        * If it's a scalar then it's the argument itself. And **`$ref`** is **`strip-ansi($arg)`** if $arg is a string type i.e. Str or just **C**$arg>> otherwise.
 
 ```raku
 sub test( --> True) is export {
