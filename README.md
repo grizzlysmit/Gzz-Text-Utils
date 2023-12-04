@@ -182,7 +182,21 @@ The functions Provided.
                                                     Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
     ```
 
-    * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary.
+    * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary. Copes with ANSI escape codes.
+
+      * **Where**
+
+        * **`$text`** is the text to be cropped possibly, wit ANSI escapes embedded. 
+
+        * **`$w`** is used to hold the width of **`$text`** is read-write so will return that value.
+
+        * **`$width`** is the desired width. Will be used to return the updated width.
+
+        * **`$cropped`** is used to return the status of whether or not **`$text`** was truncated.
+
+        * **`$max-width`** is the maximum width we are allowing.
+
+        * **`$ellipsis`** is used to supply a eliding . Empty string by default.
 
 ### Sprintf
 

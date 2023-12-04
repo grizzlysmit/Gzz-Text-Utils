@@ -681,7 +681,18 @@ footer {
 
 </pre></li>
 <ul>
-<li><p><strong><code>crop-field</code></strong> used by <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> to crop their input if necessary.</p></li>
+<li><p><strong><code>crop-field</code></strong> used by <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> to crop their input if necessary. Copes with ANSI escape codes.</p></li>
+<ul>
+<li><p><strong>Where</strong></p></li>
+<ul>
+<li><p><strong><code>$text</code></strong> is the text to be cropped possibly, wit ANSI escapes embedded. </p></li>
+<li><p><strong><code>$w</code></strong> is used to hold the width of <strong><code>$text</code></strong> is read-write so will return that value.</p></li>
+<li><p><strong><code>$width</code></strong> is the desired width. Will be used to return the updated width.</p></li>
+<li><p><strong><code>$cropped</code></strong> is used to return the status of whether or not <strong><code>$text</code></strong> was truncated.</p></li>
+<li><p><strong><code>$max-width</code></strong> is the maximum width we are allowing.</p></li>
+<li><p><strong><code>$ellipsis</code></strong> is used to supply a eliding . Empty string by default.</p></li>
+</ul>
+</ul>
 </ul>
 </ul>
 </section><section name="pod"><h3 id="Sprintf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Sprintf</a></h3>
@@ -712,7 +723,7 @@ footer {
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T00:27:10Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T01:05:35Z</span></div></footer>
 	</body>
 </html>
 

@@ -1090,9 +1090,52 @@ sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped 
 
 =begin item2
 
-B<C<crop-field>> used by B<C<centre>>, B<C<left>> and B<C<right>> to crop their input if necessary.
+B<C<crop-field>> used by B<C<centre>>, B<C<left>> and B<C<right>> to crop their input if necessary. Copes with
+ANSI escape codes.
 
 =end item2
+
+=begin item3
+
+B<Where>
+
+=end item3
+
+=begin item4 
+
+B<C<$text>> is the text to be cropped possibly, wit ANSI escapes embedded. 
+
+=end item4
+
+=begin item4
+
+B<C<$w>> is used to hold the width of B<C<$text>> is read-write so will return that value.
+
+=end item4
+
+=begin item4 
+
+B<C<$width>> is the desired width. Will be used to return the updated width.
+
+=end item4
+
+=begin item4 
+
+B<C<$cropped>> is used to return the status of whether or not B<C<$text>> was truncated.
+
+=end item4
+
+=begin item4 
+
+B<C<$max-width>> is the maximum width we are allowing.
+
+=end item4
+
+=begin item4 
+
+B<C<$ellipsis>> is used to supply a eliding . Empty string by default.
+
+=end item4
 
 =end pod
 

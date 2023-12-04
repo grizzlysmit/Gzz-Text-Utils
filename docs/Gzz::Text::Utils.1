@@ -256,7 +256,61 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RS 2n
 .IP \(bu 2m
-\fBcrop\-field\fR used by \fBcentre\fR, \fBleft\fR and \fBright\fR to crop their input if necessary\&.
+\fBcrop\-field\fR used by \fBcentre\fR, \fBleft\fR and \fBright\fR to crop their input if necessary\&. Copes with ANSI escape codes\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBWhere\fR
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$text\fR is the text to be cropped possibly, wit ANSI escapes embedded\&. 
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$w\fR is used to hold the width of \fB$text\fR is read\-write so will return that value\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$width\fR is the desired width\&. Will be used to return the updated width\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$cropped\fR is used to return the status of whether or not \fB$text\fR was truncated\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$max\-width\fR is the maximum width we are allowing\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$ellipsis\fR is used to supply a eliding \&. Empty string by default\&.
+.RE
+.RE
 .RE
 .SS Sprintf
 .IP \(bu 2m
