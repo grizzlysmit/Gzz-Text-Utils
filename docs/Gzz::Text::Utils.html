@@ -813,10 +813,24 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
     dd $test-number-of-chars,  $test-number-of-visible-chars;
 
 </pre></li>
+<li><p><strong><code>:&amp;number-of-chars</code></strong> is an optional named argument which takes a function with a signature <strong><code>:(Int:D, Int:D --</code> Bool:D)</strong>&gt; if not specified it will have the value of <strong><code>&amp;Sprintf-global-number-of-chars</code></strong> which is defined as:</p><pre class="pod-block-code">our $Sprintf-total-number-of-chars is export = 0;
+our $Sprintf-total-number-of-visible-chars is export = 0;
+
+sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+    $Sprintf-total-number-of-chars         = $number-of-chars;
+    $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+</pre></li>
 </ul>
 </ul>
 </ul>
-<pre class="pod-block-code">sub test( --&gt; True) is export {
+<p>This is exactly the same as the argument by the same name in <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> above.</p><ul>
+<ul>
+<ul>
+<ul>
+<li><p>i.e. </p><pre class="pod-block-code">sub test( --&gt; True) is export {
     ...
     ...
     ...
@@ -842,8 +856,13 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
     ...
 }
 
-</pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T18:59:40Z</span></div></footer>
+</pre></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T19:17:18Z</span></div></footer>
 	</body>
 </html>
 

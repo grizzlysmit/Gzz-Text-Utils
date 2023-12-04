@@ -1523,6 +1523,31 @@ i.e.
 
 =end item3
 
+=begin item3
+
+B<C<:&number-of-chars>> is an optional named argument which takes a function with a signature B<C<:(Int:D, Int:D --> Bool:D)>> if not specified it will have the value of B<C<&Sprintf-global-number-of-chars>> which is defined as:
+
+=begin code :lang<raku>
+
+our $Sprintf-total-number-of-chars is export = 0;
+our $Sprintf-total-number-of-visible-chars is export = 0;
+
+sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $Sprintf-total-number-of-chars         = $number-of-chars;
+    $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+=end code
+
+=end item3
+
+This is exactly the same as the argument by the same name in B<C<centre>>, B<C<left>> and B<C<right>> above.
+
+=begin item4
+
+i.e. 
+
 =begin code :lang<raku>
     
 sub test( --> True) is export {
@@ -1552,6 +1577,8 @@ sub test( --> True) is export {
 }
  
 =end code
+
+=end item4
 
 =end pod
 

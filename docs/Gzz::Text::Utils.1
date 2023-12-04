@@ -530,6 +530,36 @@ i\&.e\&.
 .RE
 .RE
 .RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:&number\-of\-chars\fR is an optional named argument which takes a function with a signature \fB:(Int:D, Int:D \-\- Bool:D)\fR> if not specified it will have the value of \fB&Sprintf\-global\-number\-of\-chars\fR which is defined as:
+.IP
+
+.RS 4m
+.EX
+our $Sprintf\-total\-number\-of\-chars is export = 0;
+our $Sprintf\-total\-number\-of\-visible\-chars is export = 0;
+
+sub Sprintf\-global\-number\-of\-chars(Int:D $number\-of\-chars, Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+    $Sprintf\-total\-number\-of\-chars         = $number\-of\-chars;
+    $Sprintf\-total\-number\-of\-visible\-chars = $number\-of\-visible\-chars;
+    return True
+}
+
+
+.EE
+.RE
+.RE
+.RE
+
+This is exactly the same as the argument by the same name in \fBcentre\fR, \fBleft\fR and \fBright\fR above\&.
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+i\&.e\&. 
+.IP
 
 .RS 4m
 .EX
@@ -561,4 +591,7 @@ sub test( \-\-> True) is export {
 
 
 .EE
+.RE
+.RE
+.RE
 .RE

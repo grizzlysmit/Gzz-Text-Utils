@@ -333,31 +333,48 @@ The functions Provided.
             dd $test-number-of-chars,  $test-number-of-visible-chars;
         ```
 
-```raku
-sub test( --> True) is export {
-    ...
-    ...
-    ...
-    my $test-number-of-chars = 0;
-    my $test-number-of-visible-chars = 0;
+      * **`:&number-of-chars`** is an optional named argument which takes a function with a signature **`:(Int:D, Int:D --` Bool:D)**> if not specified it will have the value of **`&Sprintf-global-number-of-chars`** which is defined as:
 
-    sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
-        $test-number-of-chars         = $number-of-chars;
-        $test-number-of-visible-chars = $number-of-visible-chars;
-        return True
-    }
+        ```raku
+        our $Sprintf-total-number-of-chars is export = 0;
+        our $Sprintf-total-number-of-visible-chars is export = 0;
 
-    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
-                                        ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
-                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
-    dd $test-number-of-chars,  $test-number-of-visible-chars;
-    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
-                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
-                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
-    dd $test-number-of-chars,  $test-number-of-visible-chars;
-    ...
-    ...
-    ...
-}
-```
+        sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+            $Sprintf-total-number-of-chars         = $number-of-chars;
+            $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
+            return True
+        }
+        ```
+
+This is exactly the same as the argument by the same name in **`centre`**, **`left`** and **`right`** above.
+
+        * i.e. 
+
+          ```raku
+          sub test( --> True) is export {
+              ...
+              ...
+              ...
+              my $test-number-of-chars = 0;
+              my $test-number-of-visible-chars = 0;
+
+              sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+                  $test-number-of-chars         = $number-of-chars;
+                  $test-number-of-visible-chars = $number-of-visible-chars;
+                  return True
+              }
+
+              put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                                  ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                              :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+              dd $test-number-of-chars,  $test-number-of-visible-chars;
+              put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                          $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                              :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+              dd $test-number-of-chars,  $test-number-of-visible-chars;
+              ...
+              ...
+              ...
+          }
+          ```
 
