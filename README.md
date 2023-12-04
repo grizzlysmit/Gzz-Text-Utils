@@ -125,9 +125,9 @@ The functions Provided.
       } #  sub hwcswidth(Str:D $text --> Int:D) is export #
       ```
 
-### here are 3 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
+### Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
-  * centre
+  * **centre**
 
     ```raku
     sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
@@ -137,11 +137,104 @@ The functions Provided.
 
     * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
 
-    * Where:
+    * **Where:**
 
-      * **`$fill`** is the fill char by default **`$fill`** is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly.
+      * **`$fill`** is the fill char by default **`$fill`** is set to a single white space.
 
         * If it requires an odd number of padding then the right hand side will get one more char/codepoint.
+
+      * **`&number-of-chars`** takes a function which takes 2 **`Int:D`**'s and returns a **`Bool:D`**.
+
+        * By default this is equal to the closure **`centre-global-number-of-chars`** which looks like:
+
+          ```raku
+          our $centre-total-number-of-chars is export = 0;
+          our $centre-total-number-of-visible-chars is export = 0;
+
+          sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+              $centre-total-number-of-chars         = $number-of-chars;
+              $centre-total-number-of-visible-chars = $number-of-visible-chars;
+              return True
+          }
+          ```
+
+          * Which is a closure around the variables: **`$centre-total-number-of-chars`** and **`$centre-total-number-of-visible-chars`**, these are global **`our`** variables that **`Gzz::Text::Utils`** exports. But you can just use **`my`** variables from with a scope, just as well. And make the **`sub`** local to the same scope.
+
+            i.e.
+
+            ```raku
+            sub Sprintf(Str:D $format-str,
+                            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                                    Str:D :$ellipsis = '', *@args --> Str) is export {
+                ...
+                ...
+                ...
+                my Int:D $total-number-of-chars = 0;
+                my Int:D $total-number-of-visible-chars = 0;
+                sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+                    $total-number-of-chars += $number-of-chars;
+                    $total-number-of-visible-chars += $number-of-visible-chars;
+                    return True;
+                } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) #
+                ...
+                ...
+                ...
+                for @format-str -> %elt {
+                    my Str:D $type = %elt«type»;
+                    if $type eq 'literal' {
+                        my Str:D $lit = %elt«val»;
+                        $total-number-of-chars += $lit.chars;
+                        $total-number-of-visible-chars += strip-ansi($lit).chars;
+                        $result ~= $lit;
+                    } elsif $type eq 'fmt-spec' {
+                        ...
+                        ...
+                        ...
+                        given $spec-char {
+                            when 'c' {
+                                         $arg .=Str;
+                                         $ref .=Str;
+                                         BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
+                                         $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                            so munge together.
+                                                                                                            Traditionally sprintf etc treat precision
+                                                                                                            as max-width for strings. »
+                                         if $padding eq '' {
+                                             if $justify eq '' {
+                                                 $result ~=  right($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             } elsif $justify eq '-' {
+                                                 $result ~=  left($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             } elsif $justify eq '^' {
+                                                 $result ~=  centre($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             }
+                                         } else {
+                                             if $justify eq '' {
+                                                 $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             } elsif $justify eq '-' {
+                                                 $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             } elsif $justify eq '^' {
+                                                 $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                             }
+                                         }
+                                     }
+                            when 's' {
+                                        ...
+                                        ...
+                                        ...
+                    ...
+                    ...
+                    ...
+                ...
+                ...
+                ...
+                return $result;
+                KEEP {
+                    &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+                }
+            } #`««« sub Sprintf(Str:D $format-str,
+                            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                                    Str:D :$ellipsis = '', *@args --> Str) is export »»»
+            ```
 
       * The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`**
 
@@ -155,7 +248,7 @@ The functions Provided.
 
       * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
-  * left
+  * **left**
 
     ```raku
     sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
@@ -165,7 +258,7 @@ The functions Provided.
 
     * **`left`** is the same except that except that it puts all the padding on the right of the field.
 
-  * right
+  * **right**
 
     ```raku
     sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
@@ -175,7 +268,7 @@ The functions Provided.
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-  * crop-field
+  * **crop-field**
 
     ```raku
     sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
@@ -200,7 +293,7 @@ The functions Provided.
 
 ### Sprintf
 
-  * Sprintf like sprintf only it can deal with ANSI highlighted text.
+  * Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a **`$max-width`** using **`width.precision.max-width`**, which can be **`.*`**, **C*<<num>$**>, **`.*`**, or **C<<num>**>
 
     ```raku
     sub Sprintf(Str:D $format-str,
@@ -214,15 +307,56 @@ The functions Provided.
 
         * If a Hash then it should contain two pairs with keys:
 
-          * **`arg`** the actual argument.
-
-          * **`ref`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
-
         * If a Array then it should contain two values:
+
+        * **`arg`** the actual argument.
+
+      * **`ref`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
+
+i.e.
+
+```raku
+    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+```
 
           * **`@args[$i][]`** the actual argument. Where **`$i`** is the current index into the array of args.
 
           * **`@args[$i][1]`** the reference argument, as in the **`:$ref`** arg of the **left**, **right** and **centre** functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to **`strip-ansi($arg)`** if $arg is a Str or just $arg otherwise.
 
         * If it's a scalar then it's the argument itself. And **`$ref`** is **`strip-ansi($arg)`** if $arg is a string type i.e. Str or just **C**$arg>> otherwise.
+
+```raku
+sub test( --> True) is export {
+    ...
+    ...
+    ...
+    my $test-number-of-chars = 0;
+    my $test-number-of-visible-chars = 0;
+
+    sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+        $test-number-of-chars         = $number-of-chars;
+        $test-number-of-visible-chars = $number-of-visible-chars;
+        return True
+    }
+
+    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                        ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    ...
+    ...
+    ...
+}
+```
 

@@ -588,7 +588,7 @@ footer {
  <tr class="toc-level-1"><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#The_functions_Provided.">The functions Provided.</a></td></tr>
- <tr class="toc-level-3"><td class="toc-text"><a href="#here_are_3_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">here are 3 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
 </table></div>
 </nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formatting services to Raku programs.</p></div><div class="pod-body"><section name="___top"><section>
@@ -633,20 +633,108 @@ footer {
 </pre></li>
 </ul>
 </ul>
-</section><section name="pod"><h3 id="here_are_3_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">here are 3 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h3>
+</section><section name="pod"><h3 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h3>
 <ul>
-<li><p>centre</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+<li><p><strong>centre</strong></p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
                 Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
 
 </pre></li>
 <ul>
 <li><p><strong><code>centre</code></strong> centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong></p></li>
-<li><p>Where:</p></li>
+<li><p><strong>Where:</strong></p></li>
 <ul>
-<li><p><strong><code>$fill</code></strong> is the fill char by default <strong><code>$fill</code></strong> is set to a single white space; if you set it to any string that is longer than 1 code point, it may fail to behave correctly.</p></li>
+<li><p><strong><code>$fill</code></strong> is the fill char by default <strong><code>$fill</code></strong> is set to a single white space.</p></li>
 <ul>
 <li><p>If it requires an odd number of padding then the right hand side will get one more char/codepoint.</p></li>
+</ul>
+<li><p><strong><code>&amp;number-of-chars</code></strong> takes a function which takes 2 <strong><code>Int:D</code></strong>'s and returns a <strong><code>Bool:D</code></strong>.</p></li>
+<ul>
+<li><p>By default this is equal to the closure <strong><code>centre-global-number-of-chars</code></strong> which looks like:</p><pre class="pod-block-code">our $centre-total-number-of-chars is export = 0;
+our $centre-total-number-of-visible-chars is export = 0;
+
+sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+    $centre-total-number-of-chars         = $number-of-chars;
+    $centre-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+</pre></li>
+<ul>
+<li><p>Which is a closure around the variables: <strong><code>$centre-total-number-of-chars</code></strong> and <strong><code>$centre-total-number-of-visible-chars</code></strong>, these are global <strong><code>our</code></strong> variables that <strong><code>Gzz::Text::Utils</code></strong> exports. But you can just use <strong><code>my</code></strong> variables from with a scope, just as well. And make the <strong><code>sub</code></strong> local to the same scope.</p><p>i.e.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; Str) is export {
+    ...
+    ...
+    ...
+    my Int:D $total-number-of-chars = 0;
+    my Int:D $total-number-of-visible-chars = 0;
+    sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+        $total-number-of-chars += $number-of-chars;
+        $total-number-of-visible-chars += $number-of-visible-chars;
+        return True;
+    } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) #
+    ...
+    ...
+    ...
+    for @format-str -&gt; %elt {
+        my Str:D $type = %elt«type»;
+        if $type eq 'literal' {
+            my Str:D $lit = %elt«val»;
+            $total-number-of-chars += $lit.chars;
+            $total-number-of-visible-chars += strip-ansi($lit).chars;
+            $result ~= $lit;
+        } elsif $type eq 'fmt-spec' {
+            ...
+            ...
+            ...
+            given $spec-char {
+                when 'c' {
+                             $arg .=Str;
+                             $ref .=Str;
+                             BadArg.new(:msg(&quot;arg should be one codepoint: {$arg.codes} found&quot;)).throw if $arg.codes != 1;
+                             $max-width = max($max-width, $precision, 0) if $max-width &gt; 0; #`« should not really have a both for this
+                                                                                                so munge together.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max-width for strings. »
+                             if $padding eq '' {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '-' {
+                                     $result ~=  left($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 }
+                             } else {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '-' {
+                                     $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 }
+                             }
+                         }
+                when 's' {
+                            ...
+                            ...
+                            ...
+        ...
+        ...
+        ...
+    ...
+    ...
+    ...
+    return $result;
+    KEEP {
+        &amp;number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+    }
+} #`««« sub Sprintf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; Str) is export »»»
+
+</pre></li>
+</ul>
 </ul>
 <li><p>The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong></p></li>
 <ul>
@@ -660,7 +748,7 @@ footer {
 <li><p><strong><code>:$ellipsis</code></strong> is used to elide the text if it's too big I recommend either <strong><code>''</code></strong> the default or <strong><code>'…'</code></strong>.</p></li>
 </ul>
 </ul>
-<li><p>left</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+<li><p><strong>left</strong></p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
                     Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
 
@@ -668,7 +756,7 @@ footer {
 <ul>
 <li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p></li>
 </ul>
-<li><p>right</p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+<li><p><strong>right</strong></p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                     :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;right-global-number-of-chars,
                         Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
 
@@ -676,7 +764,7 @@ footer {
 <ul>
 <li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p></li>
 </ul>
-<li><p>crop-field</p><pre class="pod-block-code">sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+<li><p><strong>crop-field</strong></p><pre class="pod-block-code">sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
                                                 Int:D $max-width, Str:D :$ellipsis = '' --&gt; Str:D) is export {
 
 </pre></li>
@@ -697,7 +785,7 @@ footer {
 </ul>
 </section><section name="pod"><h3 id="Sprintf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Sprintf</a></h3>
 <ul>
-<li><p>Sprintf like sprintf only it can deal with ANSI highlighted text.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+<li><p>Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a <strong><code>$max-width</code></strong> using <strong><code>width.precision.max-width</code></strong>, which can be <strong><code>.*</code></strong>, <strong>C*&lt;&lt;num&gt;$</strong>&gt;, <strong><code>.*</code></strong>, or <strong>C&lt;&lt;num&gt;</strong>&gt;</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --&gt; Str) is export 
 
@@ -708,11 +796,26 @@ footer {
 <li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
 <ul>
 <li><p>If a Hash then it should contain two pairs with keys:</p></li>
-<ul>
+<li><p>If a Array then it should contain two values:</p></li>
 <li><p><strong><code>arg</code></strong> the actual argument.</p></li>
+</ul>
 <li><p><strong><code>ref</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
 </ul>
-<li><p>If a Array then it should contain two values:</p></li>
+</ul>
+</ul>
+<p>i.e.</p><pre class="pod-block-code">    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                ${ arg =&gt; $highlighted, ref =&gt; $text }, $text, 30, 14, $highlighted, 13,
+                                                                            :number-of-chars(&amp;test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                            :number-of-chars(&amp;test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+
+</pre><ul>
+<ul>
+<ul>
+<ul>
 <ul>
 <li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p></li>
 <li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
@@ -722,8 +825,34 @@ footer {
 </ul>
 </ul>
 </ul>
-</section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T01:19:04Z</span></div></footer>
+<pre class="pod-block-code">sub test( --&gt; True) is export {
+    ...
+    ...
+    ...
+    my $test-number-of-chars = 0;
+    my $test-number-of-visible-chars = 0;
+
+    sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+        $test-number-of-chars         = $number-of-chars;
+        $test-number-of-visible-chars = $number-of-visible-chars;
+        return True
+    }
+
+    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                        ${ arg =&gt; $highlighted, ref =&gt; $text }, $text, 30, 14, $highlighted, 13,
+                                                                    :number-of-chars(&amp;test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                    :number-of-chars(&amp;test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    ...
+    ...
+    ...
+}
+
+</pre></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T04:55:38Z</span></div></footer>
 	</body>
 </html>
 

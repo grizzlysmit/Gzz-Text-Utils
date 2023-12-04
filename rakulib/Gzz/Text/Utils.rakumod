@@ -960,12 +960,16 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 =begin pod
 
-=head3 here are 3 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI 
-formatted.
+=begin head3
+
+Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when
+it is ANSI formatted.
+
+=end head3
 
 =begin item
 
-centre
+B<centre>
 
 =begin code :lang<raku>
 
@@ -985,14 +989,13 @@ B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> paddi
 
 =begin item2
 
-Where:
+B<Where:>
 
 =end item2
 
 =begin item3
 
-B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space; if you set it to any string that is longer than 1 
-code point, it may fail to behave correctly.
+B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space.
 
 =end item3
 
@@ -1001,6 +1004,117 @@ code point, it may fail to behave correctly.
 If  it requires an odd number of padding then the right hand side will get one more char/codepoint.
 
 =end item4
+
+=begin item3
+
+B<C<&number-of-chars>> takes a function which takes 2 B<C<Int:D>>'s and returns a B<C<Bool:D>>.
+
+=end item3
+
+=begin item4
+
+By default this is equal to the closure B<C<centre-global-number-of-chars>> which looks like:
+
+=begin code :lang<raku>
+
+our $centre-total-number-of-chars is export = 0;
+our $centre-total-number-of-visible-chars is export = 0;
+
+sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+    $centre-total-number-of-chars         = $number-of-chars;
+    $centre-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+=end code
+
+=end item4
+
+=begin item5 
+
+Which is a closure around the variables: B<C<$centre-total-number-of-chars>> and B<C<$centre-total-number-of-visible-chars>>, 
+these are global B<C<our>> variables that B<C<Gzz::Text::Utils>> exports.
+But you can just use B<C<my>> variables from with a scope, just as well. And make the B<C<sub>> local to the same scope.
+
+i.e.
+
+=begin code :lang<raku>
+    
+sub Sprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> Str) is export {
+    ...
+    ...
+    ...
+    my Int:D $total-number-of-chars = 0;
+    my Int:D $total-number-of-visible-chars = 0;
+    sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+        $total-number-of-chars += $number-of-chars;
+        $total-number-of-visible-chars += $number-of-visible-chars;
+        return True;
+    } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) #
+    ...
+    ...
+    ...
+    for @format-str -> %elt {
+        my Str:D $type = %elt«type»;
+        if $type eq 'literal' {
+            my Str:D $lit = %elt«val»;
+            $total-number-of-chars += $lit.chars;
+            $total-number-of-visible-chars += strip-ansi($lit).chars;
+            $result ~= $lit;
+        } elsif $type eq 'fmt-spec' {
+            ...
+            ...
+            ...
+            given $spec-char {
+                when 'c' {
+                             $arg .=Str;
+                             $ref .=Str;
+                             BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
+                             $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                so munge together.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max-width for strings. »
+                             if $padding eq '' {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '-' {
+                                     $result ~=  left($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 }
+                             } else {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '-' {
+                                     $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                 }
+                             }
+                         }
+                when 's' {
+                            ...
+                            ...
+                            ...
+        ...
+        ...
+        ...
+    ...
+    ...
+    ...
+    return $result;
+    KEEP {
+        &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+    }
+} #`««« sub Sprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> Str) is export »»»
+ 
+=end code
+
+=end item5
 
 =begin item3
 
@@ -1040,7 +1154,7 @@ B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<
 
 =begin item
 
-left
+B<left>
 
 =begin code :lang<raku>
 
@@ -1056,7 +1170,7 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =begin item
 
-right
+B<right>
 
 =begin code :lang<raku>
 
@@ -1077,7 +1191,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =begin item 
 
-crop-field
+B<crop-field>
 
 =begin code :lang<raku>
 
@@ -1221,10 +1335,6 @@ sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped 
 
 our $centre-total-number-of-chars is export = 0;
 our $centre-total-number-of-visible-chars is export = 0;
-our $left-total-number-of-chars is export = 0;
-our $left-total-number-of-visible-chars is export = 0;
-our $right-total-number-of-chars is export = 0;
-our $right-total-number-of-visible-chars is export = 0;
 
 sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $centre-total-number-of-chars         = $number-of-chars;
@@ -1232,11 +1342,17 @@ sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visib
     return True
 }
 
+our $left-total-number-of-chars is export = 0;
+our $left-total-number-of-visible-chars is export = 0;
+
 sub left-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $left-total-number-of-chars         = $number-of-chars;
     $left-total-number-of-visible-chars = $number-of-visible-chars;
     return True
 }
+
+our $right-total-number-of-chars is export = 0;
+our $right-total-number-of-visible-chars is export = 0;
 
 sub right-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $right-total-number-of-chars         = $number-of-chars;
@@ -1319,7 +1435,8 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =begin item
 
-Sprintf like sprintf only it can deal with ANSI highlighted text.
+Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability
+to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can be B<C<.*>>, B<C*<<num>$>>, B<C<.*>>,  or B<C<<num>>>
 
 =begin code :lang<raku>
 
@@ -1349,25 +1466,40 @@ If a Hash then it should contain two pairs with keys:
 
 =end item4
 
-=begin item5
-
-B<C<arg>> the actual argument.
-
-=end item5
-
-=begin item5
-
-B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
-It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
-is a Str or just $arg otherwise.
-
-=end item5
-
 =begin item4
 
 If a Array then it should contain two values:
 
 =end item4
+
+=begin item4
+
+B<C<arg>> the actual argument.
+
+=end item4
+
+=begin item3
+
+B<C<ref>> the reference argument, as in the B<C<:$ref>> arg of the B<left>, B<right> and B<centre> functions which it uses.
+It only makes sense if your talking strings possibly formatted if not present will be set to B<C<strip-ansi($arg)>> if $arg
+is a Str or just $arg otherwise.
+
+=end item3
+
+i.e.
+
+=begin code :lang<raku>
+
+    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                            :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+ 
+=end code
 
 =begin item5
 
@@ -1389,6 +1521,36 @@ If it's a scalar then it's the argument itself. And B<C<$ref>> is B<C<strip-ansi
 just B<C>$arg>> otherwise.
 
 =end item4
+
+=begin code :lang<raku>
+    
+sub test( --> True) is export {
+    ...
+    ...
+    ...
+    my $test-number-of-chars = 0;
+    my $test-number-of-visible-chars = 0;
+
+    sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+        $test-number-of-chars         = $number-of-chars;
+        $test-number-of-visible-chars = $number-of-visible-chars;
+        return True
+    }
+
+    put Sprintf('%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                        ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf('%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                    :number-of-chars(&test-number-of-chars), :ellipsis('…'));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    ...
+    ...
+    ...
+}
+ 
+=end code
 
 =end pod
 
@@ -3595,4 +3757,6 @@ sub Sprintf(Str:D $format-str,
     KEEP {
         &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
     }
-} # sub Sprintf(Str:D $format-str, *@args --> Str) is export #
+} #`««« sub Sprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> Str) is export »»»
