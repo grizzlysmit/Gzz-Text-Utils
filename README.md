@@ -151,7 +151,8 @@ The functions Provided.
           our $centre-total-number-of-chars is export = 0;
           our $centre-total-number-of-visible-chars is export = 0;
 
-          sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+          sub centre-global-number-of-chars(Int:D $number-of-chars,
+                                          Int:D $number-of-visible-chars --> Bool:D) {
               $centre-total-number-of-chars         = $number-of-chars;
               $centre-total-number-of-visible-chars = $number-of-visible-chars;
               return True
