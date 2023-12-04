@@ -244,6 +244,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 .RE
 .IP \(bu 2m
 crop\-field
+.IP
 
 .RS 4m
 .EX
@@ -253,8 +254,10 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 
 .EE
 .RE
+.RS 2n
 .IP \(bu 2m
-
+\fBcrop\-field\fR used by \fBcentre\fR, \fBleft\fR and \fBright\fR to crop their input if necessary\&.
+.RE
 .SS Sprintf
 .IP \(bu 2m
 Sprintf like sprintf only it can deal with ANSI highlighted text\&.

@@ -1079,18 +1079,20 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 crop-field
 
-=end item
-
-=begin code
+=begin code :lang<raku>
 
 sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
                                                 Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
 
 =end code
 
-=begin item
-
 =end item
+
+=begin item2
+
+B<C<crop-field>> used by B<C<centre>>, B<C<left>> and B<C<right>> to crop their input if necessary.
+
+=end item2
 
 =end pod
 
