@@ -607,7 +607,21 @@ Where
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-\fB[ <char> ]\fR pad with character char where char is \fB<\-[ <cntrl> \s \[ \] ]>+ || ' '\fR i\&.e\&. anything except control characters white space (apart from the basic white space (i\&.e\&. \x20 or the one with ord 32)), and \fB[\fR and finally \fB]\fR\&.
+\fB[ <char> ]\fR pad with character char where char matches:
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB<\-[ <cntrl> \s \[ \] ]> || ' '\fR i\&.e\&. anything except control characters white space (apart from the basic white space (i\&.e\&. \x20 or the one with ord 32)), and \fB[\fR and finally \fB]\fR\&.
+.RE
 .RE
 .RE
 .RE

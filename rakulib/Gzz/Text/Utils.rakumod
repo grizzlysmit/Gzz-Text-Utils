@@ -185,7 +185,7 @@ grammar FormatBase {
     token vector            { 'v' #`« vector flag (used only with d directive) » }
     token padding           { [ <old-padding> || '[' <arbitrary-padding> ']' ] }
     token old-padding       { [ '0' || ' ' ] }
-    token arbitrary-padding { [ <-[ <cntrl> \s \[ \] ]>+ || ' ' ] }
+    token arbitrary-padding { [ <-[ <cntrl> \s \[ \] ]>+ || ' '+ ] }
     token width             { [ '*' [ <width-dollar> '$' ]? || <width-int> ] }
     token width-dollar      { \d+ <?before '$'> }
     token width-int         { \d+ }
@@ -1560,11 +1560,17 @@ B<C<0>> pad with zeros.
 
 =begin item6
 
-B«C«[ <char> ]»» pad with character char where char is B«C«<-[ <cntrl> \s \[ \] ]>+ || ' '»»
-i.e. anything except control characters white space (apart from the basic
-white space (i.e. \x20 or the one with ord 32)), and B<C<[>> and finally B<C<]>>.
+B«C«[ <char> ]»» pad with character char where char matches:
 
 =end item6                        
+
+=begin item7
+
+B«C«<-[ <cntrl> \s \[ \] ]> || ' '»» i.e. anything except control characters white
+space (apart from the basic white space (i.e. \x20 or the one with ord 32)),
+and B<C<[>> and finally B<C<]>>.
+
+=end item7
 
 =begin item5
 

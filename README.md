@@ -343,7 +343,9 @@ The functions Provided.
 
             * **`0`** pad with zeros.
 
-            * **`[ <char> ]`** pad with character char where char is **`<-[ <cntrl> \s \[ \] ]>+ || ' '`** i.e. anything except control characters white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
+            * **`[ <char> ]`** pad with character char where char matches:
+
+              * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
 
           * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 0 and a '$'.
 
