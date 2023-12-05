@@ -980,25 +980,25 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 <ul>
 <li><p>defined as</p><pre class="pod-block-code">multi sub Printf(Str:D $format-str,
         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                       Str:D :$ellipsis = '', *@args --&gt; True) is export {
+                                      Str:D :$ellipsis = '', *@args --&gt; True) is export {
     Sprintf($format-str, :number-of-chars(&amp;number-of-chars), :$ellipsis, |@args).print;
 } #`««« sub Fprintf(Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                       Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+                                      Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
 multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                       Str:D :$ellipsis = '', *@args --&gt; True) is export {
+                                      Str:D :$ellipsis = '', *@args --&gt; True) is export {
     $fp.print: Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args);
 } #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                       Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+                                      Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
 </pre></li>
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:57:28Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T09:01:11Z</span></div></footer>
 	</body>
 </html>
 
