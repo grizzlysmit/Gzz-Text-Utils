@@ -1493,235 +1493,235 @@ Where
 
 =end item5
 
-=begin item6
+=begin item5
 
 B<C<dollar-directive>> is a integer >= 1
 
-=end item6                        
+=end item5                        
 
-=begin item6
+=begin item5
 
 B<C<flags>> is any zero or more of:
 
-=end item6                        
+=end item5                        
 
-=begin item7
+=begin item6
 
 B<C<+>> put a plus in front of positive values.
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<->> left justify right is the default
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<^>>  centre justify.
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<#>> ensure the leading B<C<0>> for any octal, prefix non-zero hexadecimal
 with B<C<0x>> or B<C<0X>>, prefix non-zero binary with B<C<0b>> or B<C<0B>>
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<v>> vector flag (used only with d directive)
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<' '>> pad with spaces.
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B<C<0>> pad with zeros.
 
-=end item7                        
+=end item6                        
 
 
-=begin item7
+=begin item6
 
 B«C«[ <char> ]»» pad with character char where char is B«C«<-[ <cntrl> \s \[ \] ]>+ || ' '»»
 i.e. anything except control characters white space (apart from the basic
 white space (i.e. \x20 or the one with ord 32)), and B<C<[>> and finally B<C<]>>.
 
-=end item7                        
+=end item6                        
 
-=begin item6
+=begin item5
 
 B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an integer >= 0 and a '$'.
 
-=end item6                        
+=end item5                        
 
 
-=begin item6
+=begin item5
 
 B<C<precision>> is a B<C<.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
 followed by an integer >= 0 and a '$'.
 
-=end item6                        
+=end item5                        
 
 
-=begin item6
+=begin item5
 
 B<C<max-width>> is a B<C<.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
 followed by an integer >= 0 and a '$'.
 
-=end item6                        
+=end item5                        
 
-=begin item6
+=begin item5
 
 B<C<modifier>> is a integer >= 1
 
+=end item5                        
+
+=begin item5
+
+B<C<spec-char>> or the conversion character is one of:
+
+=end item5                        
+
+=begin item6
+
+B<C<c>> a character with the given codepoint.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<s>> a string.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<d>> a signed integer, in decimal.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<u>> an unsigned integer, in decimal.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<o>> an unsigned integer, in octal, with a B<C<0o>> prepended if the B<C<#>> flag is present.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<x>> an unsigned integer, in hexadecimal, with a B<C<0x>> prepended if the B<C<#>> flag is present.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<e>> a floating-point number, in scientific notation.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<f>> a floating-point number, in fixed decimal notation.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<g>> a floating-point number, in %e or %f notation.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<X>> like B<C<x>>, but using uppercase letters, with a B<C<0X>> prepended if the B<C<#>> flag is present.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<E>> like B<C<e>>, but using an uppercase B<C<E>>.
+
+=end item6                        
+
+
+=begin item6
+
+B<C<G>> like B<C<g>>, but with an uppercase B<C<E>> (if applicable).
+
+=end item6                        
+
+
+=begin item6
+
+B<C<b>> an unsigned integer, in binary, with a B<C<0b>> prepended if the B<C<#>> flag is present.
+
 =end item6                        
 
 =begin item6
 
-B<C<spec-char>> or the conversion character is one of:
+B<C<B>> an unsigned integer, in binary, with a B<C<0B>> prepended if the B<C<#>> flag is present.
 
 =end item6                        
 
-=begin item7
-
-B<C<c>> a character with the given codepoint.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<s>> a string.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<d>> a signed integer, in decimal.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<u>> an unsigned integer, in decimal.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<o>> an unsigned integer, in octal, with a B<C<0o>> prepended if the B<C<#>> flag is present.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<x>> an unsigned integer, in hexadecimal, with a B<C<0x>> prepended if the B<C<#>> flag is present.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<e>> a floating-point number, in scientific notation.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<f>> a floating-point number, in fixed decimal notation.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<g>> a floating-point number, in %e or %f notation.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<X>> like B<C<x>>, but using uppercase letters, with a B<C<0X>> prepended if the B<C<#>> flag is present.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<E>> like B<C<e>>, but using an uppercase B<C<E>>.
-
-=end item7                        
-
-
-=begin item7
-
-B<C<G>> like B<C<g>>, but with an uppercase B<C<E>> (if applicable).
-
-=end item7                        
-
-
-=begin item7
-
-B<C<b>> an unsigned integer, in binary, with a B<C<0b>> prepended if the B<C<#>> flag is present.
-
-=end item7                        
-
-=begin item7
-
-B<C<B>> an unsigned integer, in binary, with a B<C<0B>> prepended if the B<C<#>> flag is present.
-
-=end item7                        
-
-=begin item7
+=begin item6
 
 B<C<i>> a synonym for B<C<%d>>.
 
-=end item7                        
+=end item6                        
 
-=begin item7
+=begin item6
 
 B<C<D>> a synonym for B<C<%ld>>.
 
-=end item7                        
+=end item6                        
 
-=begin item7
+=begin item6
 
 B<C<U>> a synonym for B<C<%lu>>.
 
-=end item7                        
+=end item6                        
 
-=begin item7
+=begin item6
 
 B<C<O>> a synonym for B<C<%lo>>.
 
-=end item7                        
+=end item6                        
 
-=begin item7
+=begin item6
 
 B<C<F>> a synonym for B<C<%f>>.
 
-=end item7                        
+=end item6                        
 
 =begin item3
 
