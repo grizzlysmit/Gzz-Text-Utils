@@ -1840,7 +1840,7 @@ B<C<F>> a synonym for B<C<%f>>.
 
 =end item6                        
 
-L<Top of Document|#>
+=item4 L<Top of Document|#>
 
 =begin item3
 
@@ -1905,7 +1905,7 @@ B<Note: This is a closure we should always use a closure if we want to get the n
 
 =end item5
 
-L<Top of Document|#>
+=item4 L<Top of Document|#>
 
 =begin item3
 

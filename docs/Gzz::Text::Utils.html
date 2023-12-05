@@ -902,13 +902,8 @@ token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&g
 <li><p><strong><code>F</code></strong> a synonym for <strong><code>%f</code></strong>.</p></li>
 </ul>
 </ul>
+<li><p><a href="#.html">Top of Document</a></p></li>
 </ul>
-</ul>
-</ul>
-</ul>
-<p><a href="#.html">Top of Document</a></p><ul>
-<ul>
-<ul>
 <li><p><strong><code>:&amp;number-of-chars</code></strong> is an optional named argument which takes a function with a signature <strong><code>:(Int:D, Int:D --</code> Bool:D)</strong>&gt; if not specified it will have the value of <strong><code>&amp;Sprintf-global-number-of-chars</code></strong> which is defined as:</p><pre class="pod-block-code">our $Sprintf-total-number-of-chars is export = 0;
 our $Sprintf-total-number-of-visible-chars is export = 0;
 
@@ -950,13 +945,8 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 <ul>
 <li><p><strong>Note: This is a closure we should always use a closure if we want to get the number of characters printed.</strong> </p></li>
 </ul>
+<li><p><a href="#.html">Top of Document</a></p></li>
 </ul>
-</ul>
-</ul>
-</ul>
-<p><a href="#.html">Top of Document</a></p><ul>
-<ul>
-<ul>
 <li><p><strong><code>:$ellipsis</code></strong> this is an optional argument of type <strong><code>Str:D</code></strong> which defaults to <strong><code>''</code></strong>, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of <strong><code>max-width</code></strong> (note <strong><code>max-width</code></strong> defaults to <strong><code>0</code></strong> which means infinity). The recommended value would be something like <strong><code>…</code></strong>.</p></li>
 <li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
 <ul>
@@ -1006,7 +996,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:40:14Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:42:08Z</span></div></footer>
 	</body>
 </html>
 

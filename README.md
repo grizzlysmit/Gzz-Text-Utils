@@ -481,7 +481,7 @@ Sprintf
 
             * **`F`** a synonym for **`%f`**.
 
-[Top of Document](#)
+        * [Top of Document](#)
 
       * **`:&number-of-chars`** is an optional named argument which takes a function with a signature **`:(Int:D, Int:D --` Bool:D)**> if not specified it will have the value of **`&Sprintf-global-number-of-chars`** which is defined as:
 
@@ -530,7 +530,7 @@ Sprintf
 
           * **Note: This is a closure we should always use a closure if we want to get the number of characters printed.** 
 
-[Top of Document](#)
+        * [Top of Document](#)
 
       * **`:$ellipsis`** this is an optional argument of type **`Str:D`** which defaults to **`''`**, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of **`max-width`** (note **`max-width`** defaults to **`0`** which means infinity). The recommended value would be something like **`…`**.
 
