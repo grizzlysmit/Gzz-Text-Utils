@@ -1865,13 +1865,17 @@ B<C<*@args>> is an arbitrary long list of values each argument can be either a s
 
 =begin item4
 
-If a Hash then it should contain two pairs with keys:
+If a Hash then it should contain two pairs with keys: B<C<arg>> and B<C<ref>>; denoting the actual argument and a reference
+argument respectively, the ref argument should be the same as B<C<arg>> but with no ANSI formatting etc to mess up the counting.
+As this ruins formatting spacing. If not present will be set to B<C<strip-ansi($arg)>>, only bother with all this if
+B<C<strip-ansi($arg)>> isn't good enough.
 
 =end item4
 
 =begin item4
 
-If a Array then it should contain two values:
+If a Array then it should contain two values. The first being  B<C<arg>> and the other being B<C<ref>>; everything else is
+the same as above.
 
 =end item4
 

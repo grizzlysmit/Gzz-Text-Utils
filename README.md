@@ -464,9 +464,9 @@ The functions Provided.
 
       * **`*@args`** is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
 
-        * If a Hash then it should contain two pairs with keys:
+        * If a Hash then it should contain two pairs with keys: **`arg`** and **`ref`**; denoting the actual argument and a reference argument respectively, the ref argument should be the same as **`arg`** but with no ANSI formatting etc to mess up the counting. As this ruins formatting spacing. If not present will be set to **`strip-ansi($arg)`**, only bother with all this if **`strip-ansi($arg)`** isn't good enough.
 
-        * If a Array then it should contain two values:
+        * If a Array then it should contain two values. The first being **`arg`** and the other being **`ref`**; everything else is the same as above.
 
         * **`arg`** the actual argument.
 

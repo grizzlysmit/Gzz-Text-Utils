@@ -1104,7 +1104,7 @@ sub test( \-\-> True) is export {
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-If a Hash then it should contain two pairs with keys:
+If a Hash then it should contain two pairs with keys: \fBarg\fR and \fBref\fR; denoting the actual argument and a reference argument respectively, the ref argument should be the same as \fBarg\fR but with no ANSI formatting etc to mess up the counting\&. As this ruins formatting spacing\&. If not present will be set to \fBstrip\-ansi($arg)\fR, only bother with all this if \fBstrip\-ansi($arg)\fR isn't good enough\&.
 .RE
 .RE
 .RE
@@ -1112,7 +1112,7 @@ If a Hash then it should contain two pairs with keys:
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-If a Array then it should contain two values:
+If a Array then it should contain two values\&. The first being \fBarg\fR and the other being \fBref\fR; everything else is the same as above\&.
 .RE
 .RE
 .RE

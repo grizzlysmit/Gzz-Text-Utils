@@ -912,8 +912,8 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 <li><p><strong><code>:$ellipsis</code></strong> this is an optional argument of type <strong><code>Str:D</code></strong> which defaults to <strong><code>''</code></strong>, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of <strong><code>max-width</code></strong> (note <strong><code>max-width</code></strong> defaults to <strong><code>0</code></strong> which means infinity). The recommended value would be something like <strong><code>…</code></strong>.</p></li>
 <li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
 <ul>
-<li><p>If a Hash then it should contain two pairs with keys:</p></li>
-<li><p>If a Array then it should contain two values:</p></li>
+<li><p>If a Hash then it should contain two pairs with keys: <strong><code>arg</code></strong> and <strong><code>ref</code></strong>; denoting the actual argument and a reference argument respectively, the ref argument should be the same as <strong><code>arg</code></strong> but with no ANSI formatting etc to mess up the counting. As this ruins formatting spacing. If not present will be set to <strong><code>strip-ansi($arg)</code></strong>, only bother with all this if <strong><code>strip-ansi($arg)</code></strong> isn't good enough.</p></li>
+<li><p>If a Array then it should contain two values. The first being <strong><code>arg</code></strong> and the other being <strong><code>ref</code></strong>; everything else is the same as above.</p></li>
 <li><p><strong><code>arg</code></strong> the actual argument.</p></li>
 <li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p></li>
 <li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p></li>
@@ -935,7 +935,7 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T04:09:06Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T04:27:44Z</span></div></footer>
 	</body>
 </html>
 
