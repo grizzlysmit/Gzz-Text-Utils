@@ -1016,88 +1016,6 @@ Where
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-\fB*@args\fR is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-If a Hash then it should contain two pairs with keys:
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-If a Array then it should contain two values:
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-\fBarg\fR the actual argument\&.
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-\fB@args[$i][]\fR the actual argument\&. Where \fB$i\fR is the current index into the array of args\&.
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-\fB@args[$i][1]\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-If it's a scalar then it's the argument itself\&. And \fB$ref\fR is \fBstrip\-ansi($arg)\fR if $arg is a string type i\&.e\&. Str or just \fBC\fR$arg>> otherwise\&.
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
-.IP
-i\&.e\&.
-.IP
-
-.RS 4m
-.EX
-    put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
-                                ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
-                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
-    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
-    put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
-                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
-                                                                            :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
-    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
-
-
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.IP \(bu 2m
 \fB:&number\-of\-chars\fR is an optional named argument which takes a function with a signature \fB:(Int:D, Int:D \-\- Bool:D)\fR> if not specified it will have the value of \fB&Sprintf\-global\-number\-of\-chars\fR which is defined as:
 .IP
 
@@ -1165,10 +1083,93 @@ sub test( \-\-> True) is export {
 .RS 2n
 .RS 2n
 .IP \(bu 2m
+\fBNote: This is a closure we should always use a closure if we want to get the number of characters printed\&.\fR 
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$ellipsis\fR this is an optional argument of type \fBStr:D\fR which defaults to \fB''\fR, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of \fBmax\-width\fR (note \fBmax\-width\fR defaults to \fB0\fR which means infinity)\&. The recommended value would be something like \fB…\fR\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB*@args\fR is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Hash then it should contain two pairs with keys:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Array then it should contain two values:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBarg\fR the actual argument\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][]\fR the actual argument\&. Where \fB$i\fR is the current index into the array of args\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][1]\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If it's a scalar then it's the argument itself\&. And \fB$ref\fR is \fBstrip\-ansi($arg)\fR if $arg is a string type i\&.e\&. Str or just \fBC\fR$arg>> otherwise\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.IP
+i\&.e\&.
+.IP
 
 .RS 4m
 .EX
-B<Note: This is a closure we should always use a closure if we want to get the number of characters printed\&.> 
+put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                            ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                        :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                            $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                        :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+
+
 .EE
 .RE
 .RE
