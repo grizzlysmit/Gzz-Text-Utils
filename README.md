@@ -393,7 +393,7 @@ Sprintf
 
           * Where
 
-          * **`dollar-directive`** is a integer >= 1
+            * **`dollar-directive`** is a integer >= 1
 
           * **`flags`** is any zero or more of:
 

@@ -1550,11 +1550,11 @@ Where
 
 =end item5
 
-=begin item5
+=begin item6
 
 B<C<dollar-directive>> is a integer >= 1
 
-=end item5                        
+=end item6                        
 
 =begin item5
 
