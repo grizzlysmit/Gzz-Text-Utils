@@ -72,8 +72,9 @@ Fixed the proto type of B<C<left>> etc is now
 
 =begin code :lang<raku>
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
+            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+               Str:D :$ref = strip-ansi($text), Int:D
+                                :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
 =end code
 
 Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» is my new function for striping out ANSI escape sequences so we don't need to supply 

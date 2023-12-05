@@ -92,8 +92,9 @@ Fixed the proto type of \fBleft\fR etc is now
 .RS 4m
 .EX
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
-                    Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+            :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
+               Str:D :$ref = strip\-ansi($text), Int:D
+                                :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
 
 .EE
 .RE

@@ -633,8 +633,9 @@ footer {
 <p>A Raku module to provide text formatting services to Raku programs.</p><p>Including a sprintf front-end Sprintf that copes better with Ansi highlighted text and implements <strong><code>%U</code></strong> and does octal as <strong><code>0o123</code></strong> or <strong><code>0O123</code></strong> if you choose <strong><code>%O</code></strong> as I hate ambiguity like <strong><code>0123</code></strong> is it an int with leading zeros or an octal number. Also there is <strong><code>%N</code></strong> for a new line and <strong><code>%T</code></strong> for a tab helpful when you want to use single quotes to stop the <strong>num<code>$</code></strong> specs needing back slashes.</p><p><a href="#.html">Top of Document</a></p><h2 id="Motivations"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Motivations</a></h2>
 <p>When you embed formatting information into your text such as <strong>bold</strong>, <em>italics</em>, etc ... and <strong>colours</strong> standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.</p><p>Another important thing to note is that even these functions will fail if you include such formatting in the <strong>text</strong> field unless you supply a copy of the text with out the formatting characters in it in the <strong>:ref</strong> field i.e. <strong><code>left($formatted-text, $width, :ref($unformatted-text))</code></strong> or <strong><code>text($formatted-text, $width, :$ref)</code></strong> if the reference text is in a variable called <strong><code>$ref</code></strong> or you can write it as <strong><code>left($formatted-text, $width, ref =&gt; $unformatted-text)</code></strong></p><p><a href="#.html">Top of Document</a></p><h3 id="Update"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Update</a></h3>
 <p>Fixed the proto type of <strong><code>left</code></strong> etc is now </p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
+            :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
+               Str:D :$ref = strip-ansi($text), Int:D
+                                :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
 </pre><p>Where <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> is my new function for striping out ANSI escape sequences so we don't need to supply <strong><code>:$ref</code></strong> unless it contains codes that <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> cannot strip out, if so I would like to know so I can update it to cope with these new codes.</p><p><a href="#.html">Top of Document</a></p></section><section name="pod"><h1 id="Exceptions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Exceptions</a></h1>
 <h2 id="BadArg"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">BadArg</a></h2>
 <pre class="pod-block-code">class BadArg is Exception is export
@@ -991,7 +992,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:23:07Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:25:39Z</span></div></footer>
 	</body>
 </html>
 
