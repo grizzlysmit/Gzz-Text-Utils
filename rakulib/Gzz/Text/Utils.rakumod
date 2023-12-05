@@ -4226,7 +4226,7 @@ defined as
 multi sub Printf(Str:D $format-str,
         :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --> True) is export {
-    Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
+    Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args).print;
 } #`««« sub Printf(Str:D $format-str,
          :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --> True) is export »»»
@@ -4250,7 +4250,7 @@ L<Top of Document|#table-of-contents>
 multi sub Printf(Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --> True) is export {
-    Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
+    Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args).print;
 } #`««« sub Printf(Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --> True) is export »»»
