@@ -828,7 +828,18 @@ token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&g
 <li><p><strong><code>width</code></strong> is either an integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
 <li><p><strong><code>precision</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
 <li><p><strong><code>max-width</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
-<li><p><strong><code>modifier</code></strong> is a integer &gt;= 1</p></li>
+<li><p><strong><code>modifier</code></strong> These are not implemented but is one of:</p></li>
+<ul>
+<li><p><strong><code>hh</code></strong> interpret integer as a type <strong><code>char</code></strong> or <strong><code>unsigned char</code></strong>.</p></li>
+<li><p><strong><code>h</code></strong> interpret integer as a type <strong><code>short</code></strong> or <strong><code>unsigned short</code></strong>.</p></li>
+<li><p><strong><code>j</code></strong> interpret integer as a type <strong><code>intmax_t</code></strong>, only with a C99 compiler (unportable).</p></li>
+<li><p><strong><code>l</code></strong> interpret integer as a type <strong><code>long</code></strong> or <strong><code>unsigned long</code></strong>.</p></li>
+<li><p><strong><code>ll</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p></li>
+<li><p><strong><code>q</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p></li>
+<li><p><strong><code>L</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p></li>
+<li><p><strong><code>t</code></strong> interpret integer as a type <strong><code>ptrdiff_t</code></strong>.</p></li>
+<li><p><strong><code>z</code></strong> interpret integer as a type <strong><code>size_t</code></strong>.</p></li>
+</ul>
 <li><p><strong><code>spec-char</code></strong> or the conversion character is one of:</p></li>
 <ul>
 <li><p><strong><code>c</code></strong> a character with the given codepoint.</p></li>
@@ -920,7 +931,7 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T03:00:53Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T03:18:10Z</span></div></footer>
 	</body>
 </html>
 

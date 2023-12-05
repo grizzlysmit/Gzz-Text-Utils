@@ -351,7 +351,25 @@ The functions Provided.
 
           * **`max-width`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 0 and a '$'.
 
-          * **`modifier`** is a integer >= 1
+          * **`modifier`** These are not implemented but is one of:
+
+            * **`hh`** interpret integer as a type **`char`** or **`unsigned char`**.
+
+            * **`h`** interpret integer as a type **`short`** or **`unsigned short`**.
+
+            * **`j`** interpret integer as a type **`intmax_t`**, only with a C99 compiler (unportable).
+
+            * **`l`** interpret integer as a type **`long`** or **`unsigned long`**.
+
+            * **`ll`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+
+            * **`q`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+
+            * **`L`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+
+            * **`t`** interpret integer as a type **`ptrdiff_t`**.
+
+            * **`z`** interpret integer as a type **`size_t`**.
 
           * **`spec-char`** or the conversion character is one of:
 

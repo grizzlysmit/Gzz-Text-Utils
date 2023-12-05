@@ -196,15 +196,15 @@ grammar FormatBase {
     token max-dollar        { \d+ <?before '$'> }
     token max-int           { \d+ }
     token modifier          { [           #`« (Note: None of the following have been implemented.) »
-                                     'hh' #`« interpret integer as C type "char" or "unsigned char" »
-                                  || 'h'  #`« interpret integer as C type "short" or "unsigned short" »
-                                  || 'j'  #`« interpret integer as C type "intmax_t", only with a C99 compiler (unportable) »
-                                  || 'l'  #`« interpret integer as C type "long" or "unsigned long" »
-                                  || 'll' #`« interpret integer as C type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
-                                  || 'q'  #`« interpret integer as C type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
-                                  || 'L'  #`« interpret integer as C type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
-                                  || 't'  #`« interpret integer as C type "ptrdiff_t" »
-                                  || 'z'  #`« interpret integer as C type "size_t" »
+                                     'hh' #`« interpret integer as a type "char" or "unsigned char" »
+                                  || 'h'  #`« interpret integer as a type "short" or "unsigned short" »
+                                  || 'j'  #`« interpret integer as a type "intmax_t", only with a C99 compiler (unportable) »
+                                  || 'l'  #`« interpret integer as a type "long" or "unsigned long" »
+                                  || 'll' #`« interpret integer as a type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
+                                  || 'q'  #`« interpret integer as a type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
+                                  || 'L'  #`« interpret integer as a type "long long", "unsigned long long", or "quad" (typically 64-bit integers) »
+                                  || 't'  #`« interpret integer as a type "ptrdiff_t" »
+                                  || 'z'  #`« interpret integer as a type "size_t" »
                              ]
                             }
     token spec-char         { [      'c' #`« a character with the given codepoint »
@@ -1590,9 +1590,63 @@ followed by an integer >= 0 and a '$'.
 
 =begin item5
 
-B<C<modifier>> is a integer >= 1
+B<C<modifier>> These are not implemented but is one of:
 
 =end item5                        
+
+=begin item6
+
+B<C<hh>> interpret integer as a type B<C<char>> or B<C<unsigned char>>.
+
+=end item6
+
+=begin item6
+
+B<C<h>> interpret integer as a type B<C<short>> or B<C<unsigned short>>.
+
+=end item6
+
+=begin item6
+
+B<C<j>> interpret integer as a type B<C<intmax_t>>, only with a C99 compiler (unportable).
+
+=end item6
+
+=begin item6
+
+B<C<l>> interpret integer as a type B<C<long>> or B<C<unsigned long>>.
+
+=end item6
+
+=begin item6
+
+B<C<ll>> interpret integer as a type B<C<long long>>, B<C<unsigned long long>>, or B<C<quad>> (typically 64-bit integers).
+
+=end item6
+
+=begin item6
+
+B<C<q>> interpret integer as a type B<C<long long>>, B<C<unsigned long long>>, or B<C<quad>> (typically 64-bit integers).
+
+=end item6
+
+=begin item6
+
+B<C<L>> interpret integer as a type B<C<long long>>, B<C<unsigned long long>>, or B<C<quad>> (typically 64-bit integers).
+
+=end item6
+
+=begin item6
+
+B<C<t>> interpret integer as a type B<C<ptrdiff_t>>.
+
+=end item6
+
+=begin item6
+
+B<C<z>> interpret integer as a type B<C<size_t>>.
+
+=end item6
 
 =begin item5
 
