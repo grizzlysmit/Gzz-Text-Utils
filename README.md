@@ -9,9 +9,9 @@ Table of Contents
 
   * [TITLE](#title)
 
-  * [COPYRIGHT](#copyright)
-
   * [SUBTITLE](#subtitle)
+
+  * [COPYRIGHT](#copyright)
 
   * [Introduction](#introduction)
 

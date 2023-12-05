@@ -12,8 +12,8 @@ Table of  Contents
 =item L<AUTHOR|#author>
 =item L<VERSION|#version>
 =item L<TITLE|#title>
-=item L<COPYRIGHT|#copyright>
 =item L<SUBTITLE|#subtitle>
+=item L<COPYRIGHT|#copyright>
 =item L<Introduction|#introduction>
 =item2 L<Motivations|#motivations>
 =item3 L<Update|#update>
