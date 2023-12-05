@@ -2,21 +2,18 @@ unit module Gzz::Text::Utils:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@s
 
 =begin pod
 
-=NAME Gzz::Text::Utils 
-=AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.4
-=TITLE Gzz::Text::Utils
-=SUBTITLE A Raku module to provide text formatting services to Raku programs.
-
-=COPYRIGHT
-GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
-
 =begin head2
 
 Table of  Contents
 
 =end head2
 
+=item L<NAME|#name>
+=item L<AUTHOR|#author>
+=item L<VERSION|#version>
+=item L<TITLE|#title>
+=item L<COPYRIGHT|#copyright>
+=item L<SUBTITLE|#subtitle>
 =item L<Introduction|#introduction>
 =item2 L<Motivations|#motivations>
 =item3 L<Update|#update>
@@ -33,6 +30,15 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =item2 L<Sprintf|#sprintf>
 =item2 L<Printf|#printf>
+
+=NAME Gzz::Text::Utils 
+=AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
+=VERSION 0.1.4
+=TITLE Gzz::Text::Utils
+=SUBTITLE A Raku module to provide text formatting services to Raku programs.
+
+=COPYRIGHT
+GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
 
 =head1 Introduction
 

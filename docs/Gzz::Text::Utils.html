@@ -577,9 +577,9 @@ footer {
 </svg>
 <h1 class="title">Gzz::Text::Utils</h1></header><div class="pod-content"><nav><div id="TOC"><table>
 <caption>Table of Contents</caption>
-<tr class="toc-level-1"><td class="toc-text"><a href="#Name">Name</a></td></tr>
+<tr class="toc-level-2"><td class="toc-text"><a href="#Table_of_Contents">Table of Contents</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#Name">Name</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Copyright">Copyright</a></td></tr>
- <tr class="toc-level-2"><td class="toc-text"><a href="#Table_of_Contents">Table of Contents</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Introduction">Introduction</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Motivations">Motivations</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Update">Update</a></td></tr>
@@ -594,16 +594,14 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
 </table></div>
-</nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formatting services to Raku programs.</p></div><div class="pod-body"><section name="___top"><section>
-<h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
-<p>Gzz::Text::Utils </p>
-</section>
-<section>
-<h1 id="Copyright"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">COPYRIGHT</a></h1>
-<p>GPL V3.0+ <a href="https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE">LICENSE</a></p>
-</section>
-<h2 id="Table_of_Contents"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Table of Contents</a></h2>
+</nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formatting services to Raku programs.</p></div><div class="pod-body"><section name="___top"><h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
 <ul>
+<li><p><a href="#name">NAME</a></p></li>
+<li><p><a href="#author">AUTHOR</a></p></li>
+<li><p><a href="#version">VERSION</a></p></li>
+<li><p><a href="#title">TITLE</a></p></li>
+<li><p><a href="#copyright">COPYRIGHT</a></p></li>
+<li><p><a href="#subtitle">SUBTITLE</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <ul>
 <li><p><a href="#motivations">Motivations</a></p></li>
@@ -623,6 +621,14 @@ footer {
 <li><p><a href="#printf">Printf</a></p></li>
 </ul>
 </ul>
+<section>
+<h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
+<p>Gzz::Text::Utils </p>
+</section>
+<section>
+<h1 id="Copyright"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">COPYRIGHT</a></h1>
+<p>GPL V3.0+ <a href="https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE">LICENSE</a></p>
+</section>
 <h1 id="Introduction"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Introduction</a></h1>
 <p>A Raku module to provide text formatting services to Raku programs.</p><p>Including a sprintf front-end Sprintf that copes better with Ansi highlighted text and implements <strong><code>%U</code></strong> and does octal as <strong><code>0o123</code></strong> or <strong><code>0O123</code></strong> if you choose <strong><code>%O</code></strong> as I hate ambiguity like <strong><code>0123</code></strong> is it an int with leading zeros or an octal number. Also there is <strong><code>%N</code></strong> for a new line and <strong><code>%T</code></strong> for a tab helpful when you want to use single quotes to stop the <strong>num<code>$</code></strong> specs needing back slashes.</p><p><a href="#.html">Top of Document</a></p><h2 id="Motivations"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Motivations</a></h2>
 <p>When you embed formatting information into your text such as <strong>bold</strong>, <em>italics</em>, etc ... and <strong>colours</strong> standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.</p><p>Another important thing to note is that even these functions will fail if you include such formatting in the <strong>text</strong> field unless you supply a copy of the text with out the formatting characters in it in the <strong>:ref</strong> field i.e. <strong><code>left($formatted-text, $width, :ref($unformatted-text))</code></strong> or <strong><code>text($formatted-text, $width, :$ref)</code></strong> if the reference text is in a variable called <strong><code>$ref</code></strong> or you can write it as <strong><code>left($formatted-text, $width, ref =&gt; $unformatted-text)</code></strong></p><p><a href="#.html">Top of Document</a></p><h3 id="Update"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Update</a></h3>
@@ -983,7 +989,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:09:24Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:17:33Z</span></div></footer>
 	</body>
 </html>
 

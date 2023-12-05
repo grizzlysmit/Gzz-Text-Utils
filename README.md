@@ -1,3 +1,42 @@
+Table of Contents
+-----------------
+
+  * [NAME](#name)
+
+  * [AUTHOR](#author)
+
+  * [VERSION](#version)
+
+  * [TITLE](#title)
+
+  * [COPYRIGHT](#copyright)
+
+  * [SUBTITLE](#subtitle)
+
+  * [Introduction](#introduction)
+
+    * [Motivations](#motivations)
+
+      * [Update](#update)
+
+  * [Exceptions](#exceptions)
+
+    * [BadArg](#badarg)
+
+    * [ArgParityMissMatch](#argparitymissmatch)
+
+    * [FormatSpecError](#formatspecerror)
+
+    * [`UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`](#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions)
+
+    * [The Functions Provided](#the-functions-provided)
+
+    * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
+
+    * [Sprintf](#sprintf)
+
+    * [Printf](#printf)
+
 NAME
 ====
 
@@ -27,33 +66,6 @@ COPYRIGHT
 =========
 
 GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)
-
-Table of Contents
------------------
-
-  * [Introduction](#introduction)
-
-    * [Motivations](#motivations)
-
-      * [Update](#update)
-
-  * [Exceptions](#exceptions)
-
-    * [BadArg](#badarg)
-
-    * [ArgParityMissMatch](#argparitymissmatch)
-
-    * [FormatSpecError](#formatspecerror)
-
-    * [`UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`](#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions)
-
-    * [The Functions Provided](#the-functions-provided)
-
-    * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
-
-    * [Sprintf](#sprintf)
-
-    * [Printf](#printf)
 
 Introduction
 ============
