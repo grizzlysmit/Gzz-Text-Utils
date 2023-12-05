@@ -50,7 +50,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.4
+0.1.5
 
 TITLE
 =====
@@ -65,7 +65,7 @@ A Raku module to provide text formatting services to Raku programs.
 COPYRIGHT
 =========
 
-GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)
+LGPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)
 
 Introduction
 ============

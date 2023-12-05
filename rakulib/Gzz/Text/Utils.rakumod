@@ -33,12 +33,12 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.4
+=VERSION 0.1.5
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
 =COPYRIGHT
-GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
+LGPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
 
 =head1 Introduction
 
@@ -218,7 +218,8 @@ grammar FormatBase {
                                   || 't' #`« not implemented and will not be »
                               ]
                             }
-    token fmt-spec          { [ <false-flags>? <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision>? [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+    token fmt-spec          { [ <false-flags>? <dollar-directive> '$' ]? <flags>?  <width>? 
+                             [ [ '.' <precision>? || ',' <false-percn>? ] [ '.' <max-width> || ',' <false-max> ]? ]? <modifier>? <spec-char> }
     token false-flags       { [ <false-flag>+ <?before \d+ '$' > ] } #`«« make sure that we don't see flags
                                                                           before the <dollar-directive> '$' »»
     token false-flag        { [ '+' || '^' || '-' || '#' || 'v' || '0' || ' ' || '[' <-[ <cntrl> \s \[ \] ]>+ ']' ] }
@@ -243,6 +244,8 @@ grammar FormatBase {
     token precision         { [ '*' [ <prec-dollar> '$' ]?  || <prec-int>  ] }
     token prec-dollar       { \d+ <?before '$'> }
     token prec-int          { \d+ }
+    token false-percn       { [ '*' [ \d+ '$' ]? || \d+ ] }
+    token false-max         { [ '*' [ \d+ '$' ]? || \d+ ] }
     token max-width         { [ '*' [ <max-dollar> '$' ]?  || <max-int>  ] }
     token max-dollar        { \d+ <?before '$'> }
     token max-int           { \d+ }
@@ -425,6 +428,20 @@ role FormatBaseActions {
         }
         dd %precision if $debug;
         make %precision;
+    }
+    #token false-percn       { [ '*' [ \d+ '$' ]? || \d+ ] }
+    method false-percn($/) {
+        my Str:D $false-percn = ~$/;
+        FormatSpecError.new(:msg("Error: found comma (',') instead of dot ('.') before precision in '%' spec.")).throw;
+        dd $false-percn if $debug;
+        make $false-percn;
+    }
+    #token false-max         { [ '*' [ \d+ '$' ]? || \d+ ] }
+    method false-max($/) {
+        my Str:D $false-max = ~$/;
+        FormatSpecError.new(:msg("Error: found comma (',') instead of dot ('.') before max-width in '%' spec.")).throw;
+        dd $false-max if $debug;
+        make $false-max;
     }
     #token max-dollar        { \d+ <?before '$'> }
     method max-dollar($/) {
@@ -2018,6 +2035,7 @@ sub Sprintf(Str:D $format-str,
     my $actions = FormatActions;
     my @format-str = Format.parse($format-str, :enc('UTF-8'), :$actions).made;
     dd @format-str if $debug;
+    FormatSpecError.new(:msg("Error bad format-str arg did not parse!")).throw if !@format-str || @format-str[0] === Any;
     my Int:D $positionals = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                                  my Int:D $n = 1;
                                                                                                  $n-- if %e«dollar-directive» > 0;
@@ -2089,13 +2107,17 @@ sub Sprintf(Str:D $format-str,
            if %width-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
+                my $tmp;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $width = @args[$cnt]«arg»;
+                    $tmp = @args[$cnt]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $width = @args[$cnt][0];
+                    $tmp = @args[$cnt][0];
                 } else {
-                    $width = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
+                    $tmp = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad star argument width not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $width   = $tmp;
                 $cnt++;
             }elsif %width-spec«kind» eq 'dollar' {
                 my Int:D $i = %width-spec«val»;
@@ -2103,65 +2125,91 @@ sub Sprintf(Str:D $format-str,
                 BadArg.new(:msg("\$ spec for width out of range")).throw unless $i ~~ 0..^@args.elems;
                 my Str:D $name = @args[$i].WHAT.^name;
                 dd $name if $debug;
+                my $tmp;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $width = @args[$i]«arg»;
+                    $tmp = @args[$i]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $width = @args[$i][0];
+                    $tmp = @args[$i][0];
                 } else {
-                    $width = @args[$i]; # @args[$i] is a scalar and should be an Int #
+                    $tmp = @args[$i]; # @args[$i] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad star argument width not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $width   = $tmp;
             } elsif %width-spec«kind» eq 'int' {
-                $width = %width-spec«val»;
+                my $tmp  = %width-spec«val»;
+                BadArg.new(:msg("bad star argument width not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $width   = $tmp;
             }
             if %precision-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
+                my $tmp;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $precision = @args[$cnt]«arg»;
+                    $tmp   = @args[$cnt]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $precision = @args[$cnt][0];
+                    $tmp   = @args[$cnt][0];
                 } else {
-                    $precision = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
+                    $tmp   = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad star argument precision not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $precision = $tmp;
                 $cnt++;
             }elsif %precision-spec«kind» eq 'dollar' {
                 my Int:D $i = %precision-spec«val»;
                 BadArg.new(:msg("\$ spec for precision out of range")).throw unless $i ~~ 0..^@args.elems;
                 my Str:D $name = @args[$i].WHAT.^name;
+                my $tmp;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $precision = @args[$i]«arg»;
+                    $tmp   = @args[$i]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $precision = @args[$i][0];
+                    $tmp   = @args[$i][0];
                 } else {
-                    $precision = @args[$i]; # @args[$i] is a scalar and should be an Int #
+                    $tmp   = @args[$i]; # @args[$i] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad star argument precision not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $precision = $tmp;
             } elsif %precision-spec«kind» eq 'int' {
-                $precision = %precision-spec«val»;
+                my $tmp    = %precision-spec«val»;
+                BadArg.new(:msg("bad star argument precision not an Int:D >= -1\nNB: -1 is the same as not being there.")).throw
+                                                                                                                    if $tmp !~~ FUInt:D;
+                $precision = $tmp;
             }
             if %max-width-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
+                my $tmp;
                 my Str:D $name = @args[$cnt].WHAT.^name;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $max-width = @args[$cnt]«arg»;
+                    $tmp   = @args[$cnt]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $max-width = @args[$cnt][0];
+                    $tmp   = @args[$cnt][0];
                 } else {
-                    $max-width = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
+                    $tmp   = @args[$cnt]; # @args[$cnt] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad star argument max-width not an UInt:D")).throw if $tmp !~~ UInt:D;
+                $max-width = $tmp;
                 $cnt++;
             }elsif %max-width-spec«kind» eq 'dollar' {
                 my Int:D $i = %max-width-spec«val»;
                 BadArg.new(:msg("\$ spec for max-width out of range")).throw unless $i ~~ 0..^@args.elems;
                 my Str:D $name = @args[$i].WHAT.^name;
+                my $tmp;
                 if $name eq 'Hash' || $name ~~ rx/ ^ 'Hash[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $max-width = @args[$i]«arg»;
+                    $tmp   = @args[$i]«arg»;
                 } elsif $name eq 'Array' || $name ~~ rx/ ^ 'Array[' [ \w+ [ [ '-' || '::' || ':' ] \w+ ]* ] ']' $ / {
-                    $max-width = @args[$i][0];
+                    $tmp   = @args[$i][0];
                 } else {
-                    $max-width = @args[$i]; # @args[$i] is a scalar and should be an Int #
+                    $tmp   = @args[$i]; # @args[$i] is a scalar and should be an Int #
                 }
+                BadArg.new(:msg("bad dollar argument max-width not an UInt:D")).throw if $tmp !~~ UInt:D;
+                $max-width = $tmp;
             } elsif %max-width-spec«kind» eq 'int' {
-                $max-width = %max-width-spec«val»;
+                my $tmp    = %max-width-spec«val»;
+                BadArg.new(:msg("bad dollar argument max-width not an UInt:D")).throw if $tmp !~~ UInt:D;
+                $max-width = $tmp;
             }
             my $arg;
             my $ref;
