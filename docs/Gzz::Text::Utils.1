@@ -73,14 +73,14 @@ A Raku module to provide text formatting services to Raku programs\&.
 
 Including a sprintf front\-end Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%N\fR for a new line and \fB%T\fR for a tab helpful when you want to use single quotes to stop the \fBnum$\fR specs needing back slashes\&.
 
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SS Motivations
 
 When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
 
 Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
 
-Top of Document [#]
+Top of Document [#able-of-contents]
 .SS Update
 
 Fixed the proto type of \fBleft\fR etc is now 
@@ -97,7 +97,7 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 .P
 Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
 
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SH Exceptions
 .SS BadArg
 
@@ -111,7 +111,7 @@ class BadArg is Exception is export
 .P
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
 
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SS ArgParityMissMatch
 
 .RS 4m
@@ -125,7 +125,7 @@ class ArgParityMissMatch is Exception is export
 ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
 
 \fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SS FormatSpecError
 
 .RS 4m
@@ -141,19 +141,19 @@ FormatSpecError is an exception class that Format (used by Sprintf) throws if th
 Or anything else wrong with the Format specifier\&.
 
 \fBNB: \fI%N\fR introduces a \fI\n\fR character and \fI%T\fR a tab (i\&.e\&. \fI\t\fR)\&.\fR
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SH Format and FormatActions
 
 Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.
 
 For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&.
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SH UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
 
 \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
 
 \fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SH The Functions Provided
 .IP \(bu 2m
 strip\-ansi
@@ -197,7 +197,7 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 .EE
 .RE
 .RE
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SH Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
 \fBcentre\fR
@@ -506,7 +506,7 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SS Sprintf
 .IP \(bu 2m
 Sprintf like sprintf only it can deal with ANSI highlighted text\&. And has lots of other options, including the ability to specify a \fB$max\-width\fR using \fBwidth\&.precision\&.max\-width\fR, which can be \fB\&.*\fR, \fBC*<<num>$\fR>, \fB\&.*\fR, or \fBC<<num>\fR>
@@ -564,7 +564,7 @@ token fmt\-spec   { [ <dollar\-directive> '$' ]? <flags>?  <width>? [ '\&.' <pre
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-Top of Document [#]
+Top of Document [#table-of-contents]
 .RE
 .RE
 .RE
@@ -737,7 +737,7 @@ Where
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-Top of Document [#]
+Top of Document [#table-of-contents]
 .RE
 .RE
 .RE
@@ -924,7 +924,7 @@ Top of Document [#]
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-Top of Document [#]
+Top of Document [#table-of-contents]
 .RE
 .RE
 .RE
@@ -1212,7 +1212,7 @@ Top of Document [#]
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-Top of Document [#]
+Top of Document [#table-of-contents]
 .RE
 .RE
 .RE
@@ -1295,7 +1295,7 @@ sub test( \-\-> True) is export {
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-Top of Document [#]
+Top of Document [#table-of-contents]
 .RE
 .RE
 .RE
@@ -1387,7 +1387,7 @@ dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
 .RE
 .RE
 .RE
-Top of Document [#]
+Top of Document [#table-of-contents]
 .SS Printf
 .IP \(bu 2m
 Same as \fBSprintf\fR but writes it's output to \fB$*OUT\fR or an arbitary filehandle if you choose\&.
@@ -1419,4 +1419,4 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format\-str,
 .RE
 .RE
 
-Top of Document [#]
+Top of Document [#table-of-contents]

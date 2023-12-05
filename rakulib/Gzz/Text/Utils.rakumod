@@ -51,7 +51,7 @@ leading zeros or an octal number.
 Also there is B<C<%N>> for a new line and B<C<%T>> for a tab helpful when
 you want to use single quotes to stop the B<numC<$>> specs needing back slashes.
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head2 Motivations
 
@@ -64,7 +64,7 @@ in the B<:ref> field i.e. B<C<left($formatted-text, $width, :ref($unformatted-te
 B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variable called B<C<$ref>>
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
-L<Top of Document|#>
+L<Top of Document|#able-of-contents>
 
 =head3 Update
 
@@ -81,7 +81,7 @@ Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» is my new functi
 B<C<:$ref>> unless it contains codes that B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» cannot strip out, if so I would like to know so
 I can update it to cope with these new codes.
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -116,7 +116,7 @@ class BadArg is Exception is export
  
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
  
 
 =end pod
@@ -155,7 +155,7 @@ class ArgParityMissMatch is Exception is export {
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head2 FormatSpecError
 
@@ -191,7 +191,7 @@ if $*RAKU.compiler.name ne 'rakudo' {
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head1 Format and FormatActions
 
@@ -549,7 +549,7 @@ class FormatActions does FormatBaseActions is export {
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head1 C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
 
@@ -942,7 +942,7 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head1 The Functions Provided
 
@@ -1011,7 +1011,7 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =begin head1
 
@@ -1485,7 +1485,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head2 Sprintf
 
@@ -1543,7 +1543,7 @@ token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precisi
 
 =end item4
 
-=item4 L<Top of Document|#>
+=item4 L<Top of Document|#table-of-contents>
 
 
 =begin item5
@@ -1628,7 +1628,7 @@ and B<C<[>> and finally B<C<]>>.
 
 =end item8
 
-=item7 L<Top of Document|#>
+=item7 L<Top of Document|#table-of-contents>
 
 =begin item6
 
@@ -1712,7 +1712,7 @@ B<C<z>> interpret integer as a type B<C<size_t>>.
 
 =end item7
 
-=item6 L<Top of Document|#>
+=item6 L<Top of Document|#table-of-contents>
 
 =begin item6
 
@@ -1846,7 +1846,7 @@ B<C<F>> a synonym for B<C<%f>>.
 
 =end item7                        
 
-=item4 L<Top of Document|#>
+=item4 L<Top of Document|#table-of-contents>
 
 =begin item3
 
@@ -1911,7 +1911,7 @@ B<Note: This is a closure we should always use a closure if we want to get the n
 
 =end item5
 
-=item4 L<Top of Document|#>
+=item4 L<Top of Document|#table-of-contents>
 
 =begin item3
 
@@ -4207,7 +4207,7 @@ sub Sprintf(Str:D $format-str,
 
 =begin pod
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =head2 Printf
 
@@ -4243,7 +4243,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 
 =end item2
 
-L<Top of Document|#>
+L<Top of Document|#table-of-contents>
 
 =end pod
 
