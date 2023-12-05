@@ -395,91 +395,91 @@ Sprintf
 
             * **`dollar-directive`** is a integer >= 1
 
-          * **`flags`** is any zero or more of:
+            * **`flags`** is any zero or more of:
 
-            * **`+`** put a plus in front of positive values.
+              * **`+`** put a plus in front of positive values.
 
-            * **`-`** left justify, right is the default
+              * **`-`** left justify, right is the default
 
-            * **`^`** centre justify.
+              * **`^`** centre justify.
 
-            * **`#`** ensure the leading **`0`** for any octal, prefix non-zero hexadecimal with **`0x`** or **`0X`**, prefix non-zero binary with **`0b`** or **`0B`**
+              * **`#`** ensure the leading **`0`** for any octal, prefix non-zero hexadecimal with **`0x`** or **`0X`**, prefix non-zero binary with **`0b`** or **`0B`**
 
-            * **`v`** vector flag (used only with d directive)
+              * **`v`** vector flag (used only with d directive)
 
-            * **`' '`** pad with spaces.
+              * **`' '`** pad with spaces.
 
-            * **`0`** pad with zeros.
+              * **`0`** pad with zeros.
 
-            * **`[ <char> ]`** pad with character char where char matches:
+              * **`[ <char> ]`** pad with character char where char matches:
 
-              * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
+                * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
 
-          * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
+            * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
-          * **`precision`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
+            * **`precision`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
-          * **`max-width`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
+            * **`max-width`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
-          * **`modifier`** These are not implemented but is one of:
+            * **`modifier`** These are not implemented but is one of:
 
-            * **`hh`** interpret integer as a type **`char`** or **`unsigned char`**.
+              * **`hh`** interpret integer as a type **`char`** or **`unsigned char`**.
 
-            * **`h`** interpret integer as a type **`short`** or **`unsigned short`**.
+              * **`h`** interpret integer as a type **`short`** or **`unsigned short`**.
 
-            * **`j`** interpret integer as a type **`intmax_t`**, only with a C99 compiler (unportable).
+              * **`j`** interpret integer as a type **`intmax_t`**, only with a C99 compiler (unportable).
 
-            * **`l`** interpret integer as a type **`long`** or **`unsigned long`**.
+              * **`l`** interpret integer as a type **`long`** or **`unsigned long`**.
 
-            * **`ll`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+              * **`ll`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
 
-            * **`q`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+              * **`q`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
 
-            * **`L`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
+              * **`L`** interpret integer as a type **`long long`**, **`unsigned long long`**, or **`quad`** (typically 64-bit integers).
 
-            * **`t`** interpret integer as a type **`ptrdiff_t`**.
+              * **`t`** interpret integer as a type **`ptrdiff_t`**.
 
-            * **`z`** interpret integer as a type **`size_t`**.
+              * **`z`** interpret integer as a type **`size_t`**.
 
-          * **`spec-char`** or the conversion character is one of:
+            * **`spec-char`** or the conversion character is one of:
 
-            * **`c`** a character with the given codepoint.
+              * **`c`** a character with the given codepoint.
 
-            * **`s`** a string.
+              * **`s`** a string.
 
-            * **`d`** a signed integer, in decimal.
+              * **`d`** a signed integer, in decimal.
 
-            * **`u`** an unsigned integer, in decimal.
+              * **`u`** an unsigned integer, in decimal.
 
-            * **`o`** an unsigned integer, in octal, with a **`0o`** prepended if the **`#`** flag is present.
+              * **`o`** an unsigned integer, in octal, with a **`0o`** prepended if the **`#`** flag is present.
 
-            * **`x`** an unsigned integer, in hexadecimal, with a **`0x`** prepended if the **`#`** flag is present.
+              * **`x`** an unsigned integer, in hexadecimal, with a **`0x`** prepended if the **`#`** flag is present.
 
-            * **`e`** a floating-point number, in scientific notation.
+              * **`e`** a floating-point number, in scientific notation.
 
-            * **`f`** a floating-point number, in fixed decimal notation.
+              * **`f`** a floating-point number, in fixed decimal notation.
 
-            * **`g`** a floating-point number, in %e or %f notation.
+              * **`g`** a floating-point number, in %e or %f notation.
 
-            * **`X`** like **`x`**, but using uppercase letters, with a **`0X`** prepended if the **`#`** flag is present.
+              * **`X`** like **`x`**, but using uppercase letters, with a **`0X`** prepended if the **`#`** flag is present.
 
-            * **`E`** like **`e`**, but using an uppercase **`E`**.
+              * **`E`** like **`e`**, but using an uppercase **`E`**.
 
-            * **`G`** like **`g`**, but with an uppercase **`E`** (if applicable).
+              * **`G`** like **`g`**, but with an uppercase **`E`** (if applicable).
 
-            * **`b`** an unsigned integer, in binary, with a **`0b`** prepended if the **`#`** flag is present.
+              * **`b`** an unsigned integer, in binary, with a **`0b`** prepended if the **`#`** flag is present.
 
-            * **`B`** an unsigned integer, in binary, with a **`0B`** prepended if the **`#`** flag is present.
+              * **`B`** an unsigned integer, in binary, with a **`0B`** prepended if the **`#`** flag is present.
 
-            * **`i`** a synonym for **`%d`**.
+              * **`i`** a synonym for **`%d`**.
 
-            * **`D`** a synonym for **`%ld`**.
+              * **`D`** a synonym for **`%ld`**.
 
-            * **`U`** a synonym for **`%lu`**.
+              * **`U`** a synonym for **`%lu`**.
 
-            * **`O`** a synonym for **`%lo`**.
+              * **`O`** a synonym for **`%lo`**.
 
-            * **`F`** a synonym for **`%f`**.
+              * **`F`** a synonym for **`%f`**.
 
         * [Top of Document](#)
 
