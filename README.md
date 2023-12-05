@@ -323,7 +323,7 @@ The functions Provided.
             token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
         ```
 
-              Where
+          Where
 
           * **`dollar-directive`** is a integer >= 1
 

@@ -1485,7 +1485,7 @@ The format string looks like this:
 
 =end code
 
-           Where
+Where
 
 =end item4
 
