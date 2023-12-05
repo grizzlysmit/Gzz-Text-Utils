@@ -1712,6 +1712,8 @@ B<C<z>> interpret integer as a type B<C<size_t>>.
 
 =end item7
 
+=item6 L<Top of Document|#>
+
 =begin item6
 
 B<C<spec-char>> or the conversion character is one of:

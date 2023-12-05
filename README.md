@@ -445,6 +445,8 @@ Sprintf
 
               * **`z`** interpret integer as a type **`size_t`**.
 
+            * [Top of Document](#)
+
             * **`spec-char`** or the conversion character is one of:
 
               * **`c`** a character with the given codepoint.
