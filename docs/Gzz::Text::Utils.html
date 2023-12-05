@@ -979,13 +979,13 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 </ul>
 </section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h2 id="Printf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Printf</a></h2>
 <ul>
-<li><p>Same as <strong><code>Sprintf</code></strong> but writes it's output to <strong><code>$*OUT</code></strong> or an arbitary filehandle if you choose.</p></li>
+<li><p>Same as <strong><code>Sprintf</code></strong> but writes it's output to <strong><code>$*OUT</code></strong> or an arbitrary filehandle if you choose.</p></li>
 <ul>
 <li><p>defined as</p><pre class="pod-block-code">multi sub Printf(Str:D $format-str,
         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --&gt; True) is export {
     Sprintf($format-str, :number-of-chars(&amp;number-of-chars), :$ellipsis, |@args).print;
-} #`««« sub Fprintf(Str:D $format-str,
+} #`««« sub Printf(Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
@@ -993,7 +993,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --&gt; True) is export {
     $fp.print: Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args);
-} #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
+} #`««« sub Printf(my IO::Handle:D $fp, Str:D $format-str,
          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                       Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
@@ -1001,7 +1001,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T09:38:28Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T10:28:31Z</span></div></footer>
 	</body>
 </html>
 
