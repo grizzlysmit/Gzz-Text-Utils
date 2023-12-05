@@ -817,7 +817,7 @@ token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&g
 <li><p><strong><code>flags</code></strong> is any zero or more of:</p></li>
 <ul>
 <li><p><strong><code>+</code></strong> put a plus in front of positive values.</p></li>
-<li><p><strong><code>-</code></strong> left justify right is the default</p></li>
+<li><p><strong><code>-</code></strong> left justify, right is the default</p></li>
 <li><p><strong><code>^</code></strong> centre justify.</p></li>
 <li><p><strong><code>#</code></strong> ensure the leading <strong><code>0</code></strong> for any octal, prefix non-zero hexadecimal with <strong><code>0x</code></strong> or <strong><code>0X</code></strong>, prefix non-zero binary with <strong><code>0b</code></strong> or <strong><code>0B</code></strong></p></li>
 <li><p><strong><code>v</code></strong> vector flag (used only with d directive)</p></li>
@@ -825,12 +825,12 @@ token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&g
 <li><p><strong><code>0</code></strong> pad with zeros.</p></li>
 <li><p><strong><code>[ &lt;char&gt; ]</code></strong> pad with character char where char matches:</p></li>
 <ul>
-<li><p><strong><code>&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt; || ' '</code></strong> i.e. anything except control characters white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and <strong><code>[</code></strong> and finally <strong><code>]</code></strong>.</p></li>
+<li><p><strong><code>&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt; || ' '</code></strong> i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and <strong><code>[</code></strong> and finally <strong><code>]</code></strong>.</p></li>
 </ul>
 </ul>
-<li><p><strong><code>width</code></strong> is either an integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
-<li><p><strong><code>precision</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
-<li><p><strong><code>max-width</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
+<li><p><strong><code>width</code></strong> is either an integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a '$'.</p></li>
+<li><p><strong><code>precision</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a '$'.</p></li>
+<li><p><strong><code>max-width</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a '$'.</p></li>
 <li><p><strong><code>modifier</code></strong> These are not implemented but is one of:</p></li>
 <ul>
 <li><p><strong><code>hh</code></strong> interpret integer as a type <strong><code>char</code></strong> or <strong><code>unsigned char</code></strong>.</p></li>
@@ -934,7 +934,7 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T03:25:49Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T03:33:10Z</span></div></footer>
 	</body>
 </html>
 

@@ -1517,7 +1517,7 @@ B<C<+>> put a plus in front of positive values.
 
 =begin item6
 
-B<C<->> left justify right is the default
+B<C<->> left justify, right is the default
 
 =end item6                        
 
@@ -1566,7 +1566,7 @@ B«C«[ <char> ]»» pad with character char where char matches:
 
 =begin item7
 
-B«C«<-[ <cntrl> \s \[ \] ]> || ' '»» i.e. anything except control characters white
+B«C«<-[ <cntrl> \s \[ \] ]> || ' '»» i.e. anything except control characters, white
 space (apart from the basic white space (i.e. \x20 or the one with ord 32)),
 and B<C<[>> and finally B<C<]>>.
 
@@ -1574,7 +1574,7 @@ and B<C<[>> and finally B<C<]>>.
 
 =begin item5
 
-B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an integer >= 0 and a '$'.
+B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an integer >= 1 and a '$'.
 
 =end item5                        
 
@@ -1582,7 +1582,7 @@ B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an intege
 =begin item5
 
 B<C<precision>> is a B<C<.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
-followed by an integer >= 0 and a '$'.
+followed by an integer >= 1 and a '$'.
 
 =end item5                        
 
@@ -1590,7 +1590,7 @@ followed by an integer >= 0 and a '$'.
 =begin item5
 
 B<C<max-width>> is a B<C<.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
-followed by an integer >= 0 and a '$'.
+followed by an integer >= 1 and a '$'.
 
 =end item5                        
 

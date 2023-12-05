@@ -331,7 +331,7 @@ The functions Provided.
 
             * **`+`** put a plus in front of positive values.
 
-            * **`-`** left justify right is the default
+            * **`-`** left justify, right is the default
 
             * **`^`** centre justify.
 
@@ -345,13 +345,13 @@ The functions Provided.
 
             * **`[ <char> ]`** pad with character char where char matches:
 
-              * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
+              * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
 
-          * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 0 and a '$'.
+          * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
-          * **`precision`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 0 and a '$'.
+          * **`precision`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
-          * **`max-width`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 0 and a '$'.
+          * **`max-width`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
           * **`modifier`** These are not implemented but is one of:
 
