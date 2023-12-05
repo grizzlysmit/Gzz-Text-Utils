@@ -11,7 +11,30 @@ unit module Gzz::Text::Utils:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@s
 =COPYRIGHT
 GPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE>
 
-=head2 Introduction
+=begin head2
+
+Table of  Contents
+
+=end head2
+
+=item L<Introduction|#introduction>
+=item2 L<Motivations|#motivations>
+=item3 L<Update|#update>
+=item L<Exceptions|#exceptions>
+=item2 L<BadArg|#badarg>
+=item2 L<ArgParityMissMatch|#argparitymissmatch>
+=item2 L<FormatSpecError|#formatspecerror>
+=item2 L<C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>|#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions>
+=item2 L<The Functions Provided|#the-functions-provided>
+
+=begin item2
+L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI formatted|#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted>
+=end item2
+
+=item2 L<Sprintf|#sprintf>
+=item2 L<Printf|#printf>
+
+=head1 Introduction
 
 A Raku module to provide text formatting services to Raku programs.
 
@@ -22,7 +45,7 @@ leading zeros or an octal number.
 Also there is B<C<%N>> for a new line and B<C<%T>> for a tab helpful when
 you want to use single quotes to stop the B<numC<$>> specs needing back slashes.
 
-=head3 Motivations
+=head2 Motivations
 
 When you embed formatting information into your text such as B<bold>, I<italics>, etc ... and B<colours>
 standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.
@@ -33,7 +56,7 @@ in the B<:ref> field i.e. B<C<left($formatted-text, $width, :ref($unformatted-te
 B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variable called B<C<$ref>>
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
-=head4 Update
+=head3 Update
 
 Fixed the proto type of B<C<left>> etc is now 
 
@@ -65,7 +88,9 @@ use Terminal::WCWidth;
 
 =begin pod
 
-=head1 BadArg
+=head1 Exceptions
+
+=head2 BadArg
 
  
 =begin code :lang<raku>
@@ -88,7 +113,7 @@ class BadArg is Exception is export {
 
 =begin pod
 
-=head1 ArgParityMissMatch
+=head2 ArgParityMissMatch
 
 =begin code :lang<raku>
 
@@ -113,7 +138,7 @@ class ArgParityMissMatch is Exception is export {
 
 =begin pod
 
-=head1 FormatSpecError
+=head2 FormatSpecError
 
 =begin code :lang<raku>
 
@@ -894,7 +919,7 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 =begin pod
 
-=head2 The functions Provided.
+=head2 The Functions Provided
 
 =begin item 
 

@@ -28,20 +28,48 @@ COPYRIGHT
 
 GPL V3.0+ [LICENSE](https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE)
 
+Table of Contents
+-----------------
+
+  * [Introduction](#introduction)
+
+    * [Motivations](#motivations)
+
+      * [Update](#update)
+
+  * [Exceptions](#exceptions)
+
+    * [BadArg](#badarg)
+
+    * [ArgParityMissMatch](#argparitymissmatch)
+
+    * [FormatSpecError](#formatspecerror)
+
+    * [`UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`](#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions)
+
+    * [The Functions Provided](#the-functions-provided)
+
+    * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
+
+    * [Sprintf](#sprintf)
+
+    * [Printf](#printf)
+
 Introduction
-------------
+============
 
 A Raku module to provide text formatting services to Raku programs.
 
 Including a sprintf front-end Sprintf that copes better with Ansi highlighted text and implements **`%U`** and does octal as **`0o123`** or **`0O123`** if you choose **`%O`** as I hate ambiguity like **`0123`** is it an int with leading zeros or an octal number. Also there is **`%N`** for a new line and **`%T`** for a tab helpful when you want to use single quotes to stop the **num`$`** specs needing back slashes.
 
-### Motivations
+Motivations
+-----------
 
 When you embed formatting information into your text such as **bold**, *italics*, etc ... and **colours** standard text formatting will not work e.g. printf, sprintf etc also those functions don't do centring.
 
 Another important thing to note is that even these functions will fail if you include such formatting in the **text** field unless you supply a copy of the text with out the formatting characters in it in the **:ref** field i.e. **`left($formatted-text, $width, :ref($unformatted-text))`** or **`text($formatted-text, $width, :$ref)`** if the reference text is in a variable called **`$ref`** or you can write it as **`left($formatted-text, $width, ref => $unformatted-text)`**
 
-#### Update
+### Update
 
 Fixed the proto type of **`left`** etc is now 
 
@@ -51,8 +79,11 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 
 Where **`sub strip-ansi(Str:D $text --> Str:D) is export`** is my new function for striping out ANSI escape sequences so we don't need to supply **`:$ref`** unless it contains codes that **`sub strip-ansi(Str:D $text --> Str:D) is export`** cannot strip out, if so I would like to know so I can update it to cope with these new codes.
 
+Exceptions
+==========
+
 BadArg
-======
+------
 
 ```raku
 class BadArg is Exception is export
@@ -61,7 +92,7 @@ class BadArg is Exception is export
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
 
 ArgParityMissMatch
-==================
+------------------
 
 ```raku
 class ArgParityMissMatch is Exception is export
@@ -72,7 +103,7 @@ ArgParityMissMatch is an exception class that Sprintf throws if the number of ar
 **NB: if you use *`num$`* argument specs these will not count as they grab from the args add hoc, *`*`* width and precision spec however do count as they consume argument.**
 
 FormatSpecError
-===============
+---------------
 
 ```raku
 class FormatSpecError is Exception is export
@@ -98,8 +129,8 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
 **`Unhighlight`** & **`UnhighlightActions`** are a grammar & class pair which provide a simple TOP for applying an application of **`UnhighlightBase`** & **`UnhighlightBaseActions`** for use by **`sub strip-ansi(Str:D $text --` Str:D) is export**> to strip out the plain text from a ANSI formatted string
 
-The functions Provided.
------------------------
+The Functions Provided
+----------------------
 
   * strip-ansi
 

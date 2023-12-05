@@ -12,7 +12,54 @@ Gzz::Text::Utils
 A Raku module to provide text formatting services to Raku programs\&.
 .SH "COPYRIGHT"
 GPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE]
-.SS Introduction
+.SS Table of Contents
+.IP \(bu 2m
+Introduction [#introduction]
+.RS 2n
+.IP \(bu 2m
+Motivations [#motivations]
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Update [#update]
+.RE
+.RE
+.IP \(bu 2m
+Exceptions [#exceptions]
+.RS 2n
+.IP \(bu 2m
+BadArg [#badarg]
+.RE
+.RS 2n
+.IP \(bu 2m
+ArgParityMissMatch [#argparitymissmatch]
+.RE
+.RS 2n
+.IP \(bu 2m
+FormatSpecError [#formatspecerror]
+.RE
+.RS 2n
+.IP \(bu 2m
+UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions [#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions]
+.RE
+.RS 2n
+.IP \(bu 2m
+The Functions Provided [#the-functions-provided]
+.RE
+.RS 2n
+.IP \(bu 2m
+Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted [#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted]
+.RE
+.RS 2n
+.IP \(bu 2m
+Sprintf [#sprintf]
+.RE
+.RS 2n
+.IP \(bu 2m
+Printf [#printf]
+.RE
+.SH Introduction
 
 A Raku module to provide text formatting services to Raku programs\&.
 
@@ -34,7 +81,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 .RE
 .P
 Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
-.SH BadArg
+.SH Exceptions
+.SS BadArg
 
 .RS 4m
 .EX
@@ -45,7 +93,7 @@ class BadArg is Exception is export
 .RE
 .P
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
-.SH ArgParityMissMatch
+.SS ArgParityMissMatch
 
 .RS 4m
 .EX
@@ -58,7 +106,7 @@ class ArgParityMissMatch is Exception is export
 ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
 
 \fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
-.SH FormatSpecError
+.SS FormatSpecError
 
 .RS 4m
 .EX
@@ -83,7 +131,7 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&
 \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
 
 \fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
-.SS The functions Provided\&.
+.SS The Functions Provided
 .IP \(bu 2m
 strip\-ansi
 .IP
