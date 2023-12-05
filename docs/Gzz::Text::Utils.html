@@ -800,7 +800,65 @@ B&lt;white space other than the normal space&gt;, and B&lt;C&lt;max-width&gt;&gt
 
 The format string looks like this:</pre></li>
 <ul>
-<li><pre class="pod-block-code">&lt;text&gt; % &lt;spec&gt;</pre></li>
+<li><pre class="pod-block-code">    token format      { &lt;chunks&gt;+ }
+    token chunks      { [ &lt;chunk&gt; || '%' &lt;format-spec&gt; ] }
+    token chunk       { &lt;-[%]&gt;+ }
+    token format-spec { [ &lt;fmt-esc&gt; || &lt;fmt-spec&gt; ] }
+    token fmt-esc     { [      '%' #`« a literal % »
+                            || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+                            || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+                            || 'n' #`« not implemented and will not be »
+                            || 't' #`« not implemented and will not be »
+                        ]
+                      }
+    token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&gt;? [ '.' &lt;precision&gt; [ '.' &lt;max-width&gt; ]? ]? &lt;modifier&gt;? &lt;spec-char&gt; }
+
+</pre><pre class="pod-block-code">Where</pre></li>
+<ul>
+<li><pre class="pod-block-code">B&lt;C&lt;dollar-directive&gt;&gt; is a integer &gt;= 1</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;flags&gt;&gt; is any zero or more of:</pre></li>
+<ul>
+<li><pre class="pod-block-code">B&lt;C&lt;+&gt;&gt; put a plus in front of positive values.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;-&gt;&gt; left justify right is the default</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;^&gt;&gt;  centre justify.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;#&gt;&gt; ensure the leading B&lt;C&lt;0&gt;&gt; for any octal, prefix non-zero hexadecimal
+with B&lt;C&lt;0x&gt;&gt; or B&lt;C&lt;0X&gt;&gt;, prefix non-zero binary with B&lt;C&lt;0b&gt;&gt; or B&lt;C&lt;0B&gt;&gt;</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;v&gt;&gt; vector flag (used only with d directive)</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;' '&gt;&gt; pad with spaces.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;0&gt;&gt; pad with zeros.</pre></li>
+<li><pre class="pod-block-code">B«C«[ &lt;char&gt; ]»» pad with character char where char is B«C«&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt;+ || ' '»»
+                 i.e. anything except control characters white space (apart from the basic
+                 white space (i.e. \x20 or the one with ord 32)), and B&lt;C&lt;[&gt;&gt; and finally B&lt;C&lt;]&gt;&gt;.</pre></li>
+</ul>
+<li><pre class="pod-block-code">B&lt;C&lt;width&gt;&gt; is either an integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt; followed by an integer &gt;= 0 and a '$'.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;precision&gt;&gt; is a B&lt;C&lt;.&gt;&gt; followed by either an positive integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt;
+                             followed by an integer &gt;= 0 and a '$'.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;max-width&gt;&gt; is a B&lt;C&lt;.&gt;&gt; followed by either an positive integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt;
+                     followed by an integer &gt;= 0 and a '$'.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;modifier&gt;&gt; is a integer &gt;= 1</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;spec-char&gt;&gt; or the conversion character is one of:</pre></li>
+<ul>
+<li><pre class="pod-block-code">B&lt;C&lt;c&gt;&gt; a character with the given codepoint.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;s&gt;&gt; a string.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;d&gt;&gt; a signed integer, in decimal.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;u&gt;&gt; an unsigned integer, in decimal.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;o&gt;&gt; an unsigned integer, in octal, with a B&lt;C&lt;0o&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;x&gt;&gt; an unsigned integer, in hexadecimal, with a B&lt;C&lt;0x&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;e&gt;&gt; a floating-point number, in scientific notation.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;f&gt;&gt; a floating-point number, in fixed decimal notation.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;g&gt;&gt; a floating-point number, in %e or %f notation.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;X&gt;&gt; like B&lt;C&lt;x&gt;&gt;, but using uppercase letters, with a B&lt;C&lt;0X&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;E&gt;&gt; like B&lt;C&lt;e&gt;&gt;, but using an uppercase B&lt;C&lt;E&gt;&gt;.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;G&gt;&gt; like B&lt;C&lt;g&gt;&gt;, but with an uppercase B&lt;C&lt;E&gt;&gt; (if applicable).</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;b&gt;&gt; an unsigned integer, in binary, with a B&lt;C&lt;0b&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;B&gt;&gt; an unsigned integer, in binary, with a B&lt;C&lt;0B&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;i&gt;&gt; a synonym for B&lt;C&lt;%d&gt;&gt;.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;D&gt;&gt; a synonym for B&lt;C&lt;%ld&gt;&gt;.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;U&gt;&gt; a synonym for B&lt;C&lt;%lu&gt;&gt;.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;O&gt;&gt; a synonym for B&lt;C&lt;%lo&gt;&gt;.</pre></li>
+<li><pre class="pod-block-code">B&lt;C&lt;F&gt;&gt; a synonym for B&lt;C&lt;%f&gt;&gt;.</pre></li>
+</ul>
+</ul>
 </ul>
 <li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
 <ul>
@@ -869,7 +927,7 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T01:18:13Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T02:28:14Z</span></div></footer>
 	</body>
 </html>
 
