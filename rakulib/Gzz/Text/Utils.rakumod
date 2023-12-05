@@ -21,8 +21,8 @@ Table of  Contents
 =item2 L<BadArg|#badarg>
 =item2 L<ArgParityMissMatch|#argparitymissmatch>
 =item2 L<FormatSpecError|#formatspecerror>
-=item2 L<C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>|#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions>
-=item2 L<The Functions Provided|#the-functions-provided>
+=item L<C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>|#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions>
+=item L<The Functions Provided|#the-functions-provided>
 
 =begin item2
 L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI formatted|#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted>
@@ -551,7 +551,7 @@ class FormatActions does FormatBaseActions is export {
 
 L<Top of Document|#>
 
-=head2 C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
+=head C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
 
 B<C<UnhighlightBase>> & B<C<UnhighlightBaseActions>> are a grammar & role pair that does the work required to 
 to parse apart ansi highlighted text into ANSI highlighted and plain text. 
@@ -944,7 +944,7 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 L<Top of Document|#>
 
-=head2 The Functions Provided
+=head The Functions Provided
 
 =begin item 
 
@@ -1013,12 +1013,12 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 L<Top of Document|#>
 
-=begin head3
+=begin head
 
 Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when
 it is ANSI formatted.
 
-=end head3
+=end head
 
 =begin item
 
@@ -1487,7 +1487,7 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 L<Top of Document|#>
 
-=head3 Sprintf
+=head2 Sprintf
 
 =begin item
 
@@ -4199,7 +4199,7 @@ sub Sprintf(Str:D $format-str,
 
 L<Top of Document|#>
 
-=head3 Printf
+=head2 Printf
 
 =begin item
 

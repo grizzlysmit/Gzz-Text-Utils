@@ -39,14 +39,10 @@ ArgParityMissMatch [#argparitymissmatch]
 .IP \(bu 2m
 FormatSpecError [#formatspecerror]
 .RE
-.RS 2n
 .IP \(bu 2m
 UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions [#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions]
-.RE
-.RS 2n
 .IP \(bu 2m
 The Functions Provided [#the-functions-provided]
-.RE
 .RS 2n
 .IP \(bu 2m
 Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted [#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted]
@@ -152,13 +148,15 @@ Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR
 
 For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&.
 Top of Document [#]
-.SS UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
+.SH "HEAD"
+UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
 
 \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
 
 \fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
 Top of Document [#]
-.SS The Functions Provided
+.SH "HEAD"
+The Functions Provided
 .IP \(bu 2m
 strip\-ansi
 .IP
@@ -202,7 +200,8 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 .RE
 .RE
 Top of Document [#]
-.SS Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
+.SH "HEAD"
+Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .IP \(bu 2m
 \fBcentre\fR
 .IP

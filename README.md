@@ -27,9 +27,9 @@ Table of Contents
 
     * [FormatSpecError](#formatspecerror)
 
-    * [`UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`](#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions)
+  * [`UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`](#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions)
 
-    * [The Functions Provided](#the-functions-provided)
+  * [The Functions Provided](#the-functions-provided)
 
     * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
 
@@ -151,8 +151,10 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
 [Top of Document](#)
 
+head
+====
+
 `UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`
--------------------------------------------------------------------------------------
 
 **`UnhighlightBase`** & **`UnhighlightBaseActions`** are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. 
 
@@ -160,8 +162,10 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
 [Top of Document](#)
 
+head
+====
+
 The Functions Provided
-----------------------
 
   * strip-ansi
 
@@ -189,7 +193,10 @@ The Functions Provided
 
 [Top of Document](#)
 
-### Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
+head
+====
+
+Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
   * **centre**
 
@@ -358,7 +365,8 @@ The Functions Provided
 
 [Top of Document](#)
 
-### Sprintf
+Sprintf
+-------
 
   * Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a **`$max-width`** using **`width.precision.max-width`**, which can be **`.*`**, **C*<<num>$**>, **`.*`**, or **C<<num>**>
 
@@ -559,7 +567,8 @@ The Functions Provided
 
 [Top of Document](#)
 
-### Printf
+Printf
+------
 
   * Same as **`Sprintf`** but writes it's output to **`$*OUT`** or an arbitary filehandle if you choose.
 
