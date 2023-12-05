@@ -4147,7 +4147,7 @@ sub Sprintf(Str:D $format-str,
 
 =begin item
 
-Same as Sprintf but writes it's output to B<C<$*OUT>> or an arbitary filehandle if you choose.
+Same as B<C<Sprintf>> but writes it's output to B<C<$*OUT>> or an arbitary filehandle if you choose.
 
 =end item                                                
 
@@ -4158,20 +4158,20 @@ defined as
 =begin code :lang<raku>
 
 multi sub Printf(Str:D $format-str,
-                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+        :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                        Str:D :$ellipsis = '', *@args --> True) is export {
     Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
 } #`««« sub Fprintf(Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»
+                                              Str:D :$ellipsis = '', *@args --> True) is export »»»
 
 multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+                                              Str:D :$ellipsis = '', *@args --> True) is export {
     $fp.print: Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args);
 } #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
-                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»
+         :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                              Str:D :$ellipsis = '', *@args --> True) is export »»»
 
 =end code
 

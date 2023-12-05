@@ -937,29 +937,29 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 </ul>
 </section><section name="pod"><h3 id="Printf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Printf</a></h3>
 <ul>
-<li><p>Same as Sprintf but writes it's output to <strong><code>$*OUT</code></strong> or an arbitary filehandle if you choose.</p></li>
+<li><p>Same as <strong><code>Sprintf</code></strong> but writes it's output to <strong><code>$*OUT</code></strong> or an arbitary filehandle if you choose.</p></li>
 <ul>
 <li><p>defined as</p><pre class="pod-block-code">multi sub Printf(Str:D $format-str,
-                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export {
+        :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                        Str:D :$ellipsis = '', *@args --&gt; True) is export {
     Sprintf($format-str, :number-of-chars(&amp;number-of-chars), :$ellipsis, |@args).print;
 } #`««« sub Fprintf(Str:D $format-str,
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+                                              Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
 multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export {
+                                              Str:D :$ellipsis = '', *@args --&gt; True) is export {
     $fp.print: Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args);
 } #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
-                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                              Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
 
 </pre></li>
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T06:55:02Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T07:20:29Z</span></div></footer>
 	</body>
 </html>
 
