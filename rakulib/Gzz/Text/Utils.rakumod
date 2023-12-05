@@ -1462,11 +1462,11 @@ B<C<format-str>> is is a superset of the B<C<sprintf>> format string,  but it ha
 like the flag B<C<[ <char> ]>> where <char> can be almost anything except B<C<[>>, B<C<]>> B<control characters>, 
 B<white space other than the normal space>, and B<C<max-width>> after the precision.
 
-The format string looks like this:
-
 =end item3
 
 =begin item4
+
+The format string looks like this:                                                        
 
 =begin  code :lang<raku>
 
