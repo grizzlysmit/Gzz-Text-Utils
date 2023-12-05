@@ -1470,22 +1470,25 @@ The format string looks like this:
 
 =begin  code :lang<raku>
 
-    token format      { <chunks>+ }
-    token chunks      { [ <chunk> || '%' <format-spec> ] }
-    token chunk       { <-[%]>+ }
-    token format-spec { [ <fmt-esc> || <fmt-spec> ] }
-    token fmt-esc     { [      '%' #`« a literal % »
-                            || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
-                            || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
-                            || 'n' #`« not implemented and will not be »
-                            || 't' #`« not implemented and will not be »
-                        ]
-                      }
-    token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+token format      { <chunks>+ }
+token chunks      { [ <chunk> || '%' <format-spec> ] }
+token chunk       { <-[%]>+ }
+token format-spec { [ <fmt-esc> || <fmt-spec> ] }
+token fmt-esc     { [      '%' #`« a literal % »
+                        || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+                        || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+                        || 'n' #`« not implemented and will not be »
+                        || 't' #`« not implemented and will not be »
+                    ]
+                  }
+token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+
 
 =end code
 
+
 =end item4
+
 
 =begin item5
 

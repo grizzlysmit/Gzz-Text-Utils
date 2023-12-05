@@ -796,18 +796,19 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <ul>
 <li><p><strong><code>format-str</code></strong> is is a superset of the <strong><code>sprintf</code></strong> format string, but it has extra features: like the flag <strong><code>[ &lt;char&gt; ]</code></strong> where &lt;char&gt; can be almost anything except <strong><code>[</code></strong>, <strong><code>]</code></strong> <strong>control characters</strong>, <strong>white space other than the normal space</strong>, and <strong><code>max-width</code></strong> after the precision.</p><p>The format string looks like this:</p></li>
 <ul>
-<li><pre class="pod-block-code">    token format      { &lt;chunks&gt;+ }
-    token chunks      { [ &lt;chunk&gt; || '%' &lt;format-spec&gt; ] }
-    token chunk       { &lt;-[%]&gt;+ }
-    token format-spec { [ &lt;fmt-esc&gt; || &lt;fmt-spec&gt; ] }
-    token fmt-esc     { [      '%' #`« a literal % »
-                            || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
-                            || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
-                            || 'n' #`« not implemented and will not be »
-                            || 't' #`« not implemented and will not be »
-                        ]
-                      }
-    token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&gt;? [ '.' &lt;precision&gt; [ '.' &lt;max-width&gt; ]? ]? &lt;modifier&gt;? &lt;spec-char&gt; }
+<li><pre class="pod-block-code">token format      { &lt;chunks&gt;+ }
+token chunks      { [ &lt;chunk&gt; || '%' &lt;format-spec&gt; ] }
+token chunk       { &lt;-[%]&gt;+ }
+token format-spec { [ &lt;fmt-esc&gt; || &lt;fmt-spec&gt; ] }
+token fmt-esc     { [      '%' #`« a literal % »
+                        || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+                        || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+                        || 'n' #`« not implemented and will not be »
+                        || 't' #`« not implemented and will not be »
+                    ]
+                  }
+token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&gt;? [ '.' &lt;precision&gt; [ '.' &lt;max-width&gt; ]? ]? &lt;modifier&gt;? &lt;spec-char&gt; }
+
 
 </pre></li>
 <ul>
@@ -919,7 +920,7 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T02:51:55Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T02:56:49Z</span></div></footer>
 	</body>
 </html>
 
