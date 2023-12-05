@@ -417,6 +417,8 @@ Sprintf
 
                 * **`<-[ <cntrl> \s \[ \] ]> || ' '`** i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and **`[`** and finally **`]`**.
 
+              * [Top of Document](#)
+
             * **`width`** is either an integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.
 
             * **`precision`** is a **`.`** followed by either an positive integer or a **`*`** or a **`*`** followed by an integer >= 1 and a '$'.

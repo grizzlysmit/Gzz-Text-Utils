@@ -1628,6 +1628,8 @@ and B<C<[>> and finally B<C<]>>.
 
 =end item8
 
+=item7 L<Top of Document|#>
+
 =begin item6
 
 B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an integer >= 1 and a '$'.
