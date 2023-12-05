@@ -58,6 +58,8 @@ in the B<:ref> field i.e. B<C<left($formatted-text, $width, :ref($unformatted-te
 B<C<text($formatted-text, $width, :$ref)>> if the reference text is in a variable called B<C<$ref>>
 or you can write it as B«C«left($formatted-text, $width, ref => $unformatted-text)»»
 
+L<Top of Document|#>
+
 =head3 Update
 
 Fixed the proto type of B<C<left>> etc is now 
@@ -69,6 +71,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = str
 Where B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» is my new function for striping out ANSI escape sequences so we don't need to supply 
 B<C<:$ref>> unless it contains codes that B«C«sub strip-ansi(Str:D $text --> Str:D) is export»» cannot strip out, if so I would like to know so
 I can update it to cope with these new codes.
+
+L<Top of Document|#>
 
 =end pod
 
@@ -102,6 +106,8 @@ class BadArg is Exception is export
 =end code
  
 BadArg is a exception type that Sprintf will throw in case of badly specified arguments.
+
+L<Top of Document|#>
  
 
 =end pod
@@ -140,6 +146,8 @@ class ArgParityMissMatch is Exception is export {
 
 =begin pod
 
+L<Top of Document|#>
+
 =head2 FormatSpecError
 
 =begin code :lang<raku>
@@ -173,6 +181,8 @@ if $*RAKU.compiler.name ne 'rakudo' {
 #»»
 
 =begin pod
+
+L<Top of Document|#>
 
 =head1 Format and FormatActions
 
@@ -529,6 +539,8 @@ class FormatActions does FormatBaseActions is export {
 } # class FormatActions does FormatBaseActions is export # 
 
 =begin pod
+
+L<Top of Document|#>
 
 =head2 C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
 
@@ -921,6 +933,8 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 =begin pod
 
+L<Top of Document|#>
+
 =head2 The Functions Provided
 
 =begin item 
@@ -987,6 +1001,8 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 } #  sub hwcswidth(Str:D $text --> Int:D) is export #
 
 =begin pod
+
+L<Top of Document|#>
 
 =begin head3
 
@@ -1459,6 +1475,8 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                         :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export »»»
 
 =begin pod
+
+L<Top of Document|#>
 
 =head3 Sprintf
 
@@ -4170,6 +4188,8 @@ sub Sprintf(Str:D $format-str,
 
 =begin pod
 
+L<Top of Document|#>
+
 =head3 Printf
 
 =begin item
@@ -4203,6 +4223,8 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 =end code
 
 =end item2
+
+L<Top of Document|#>
 
 =end pod
 
