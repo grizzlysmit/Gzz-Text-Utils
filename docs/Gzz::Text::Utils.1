@@ -64,6 +64,8 @@ Printf [#printf]
 A Raku module to provide text formatting services to Raku programs\&.
 
 Including a sprintf front\-end Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%N\fR for a new line and \fB%T\fR for a tab helpful when you want to use single quotes to stop the \fBnum$\fR specs needing back slashes\&.
+
+Top of Document [#]
 .SS Motivations
 
 When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.

@@ -62,6 +62,8 @@ A Raku module to provide text formatting services to Raku programs.
 
 Including a sprintf front-end Sprintf that copes better with Ansi highlighted text and implements **`%U`** and does octal as **`0o123`** or **`0O123`** if you choose **`%O`** as I hate ambiguity like **`0123`** is it an int with leading zeros or an octal number. Also there is **`%N`** for a new line and **`%T`** for a tab helpful when you want to use single quotes to stop the **num`$`** specs needing back slashes.
 
+[Top of Document](#)
+
 Motivations
 -----------
 

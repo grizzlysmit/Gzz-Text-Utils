@@ -45,6 +45,8 @@ leading zeros or an octal number.
 Also there is B<C<%N>> for a new line and B<C<%T>> for a tab helpful when
 you want to use single quotes to stop the B<numC<$>> specs needing back slashes.
 
+L<Top of Document|#>
+
 =head2 Motivations
 
 When you embed formatting information into your text such as B<bold>, I<italics>, etc ... and B<colours>
