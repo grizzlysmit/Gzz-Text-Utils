@@ -304,6 +304,14 @@ The functions Provided.
 
     * Where:
 
+      *     B<C<format-str>> is is a superset of the B<C<sprintf>> format string,  but it has extra features: 
+          like the flag B<C<[ <char> ]>> where <char> can be almost anything except B<C<[>>, B<C<]>> B<control characters>, 
+          B<white space other than the normal space>, and B<C<max-width>> after the precision.
+
+          The format string looks like this:
+
+        *     <text> % <spec>
+
       * **`*@args`** is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
 
         * If a Hash then it should contain two pairs with keys:
@@ -379,6 +387,4 @@ The functions Provided.
           ```
 
           *     B<Note: This is a closure we should always use a closure if we want to get the number of characters printed.>
-
-      *     B<C<format-str>> is
 

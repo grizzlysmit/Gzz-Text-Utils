@@ -794,6 +794,14 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <ul>
 <li><p>Where:</p></li>
 <ul>
+<li><pre class="pod-block-code">B&lt;C&lt;format-str&gt;&gt; is is a superset of the B&lt;C&lt;sprintf&gt;&gt; format string,  but it has extra features: 
+like the flag B&lt;C&lt;[ &lt;char&gt; ]&gt;&gt; where &lt;char&gt; can be almost anything except B&lt;C&lt;[&gt;&gt;, B&lt;C&lt;]&gt;&gt; B&lt;control characters&gt;, 
+B&lt;white space other than the normal space&gt;, and B&lt;C&lt;max-width&gt;&gt; after the precision.
+
+The format string looks like this:</pre></li>
+<ul>
+<li><pre class="pod-block-code">&lt;text&gt; % &lt;spec&gt;</pre></li>
+</ul>
 <li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p></li>
 <ul>
 <li><p>If a Hash then it should contain two pairs with keys:</p></li>
@@ -857,12 +865,11 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 <li><pre class="pod-block-code">B&lt;Note: This is a closure we should always use a closure if we want to get the number of characters printed.&gt; </pre></li>
 </ul>
 </ul>
-<li><pre class="pod-block-code">B&lt;C&lt;format-str&gt;&gt; is </pre></li>
 </ul>
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-04T23:51:55Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T01:18:13Z</span></div></footer>
 	</body>
 </html>
 

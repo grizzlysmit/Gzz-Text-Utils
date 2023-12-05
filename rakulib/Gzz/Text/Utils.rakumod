@@ -1457,6 +1457,23 @@ Where:
 
 =begin item3
 
+    B<C<format-str>> is is a superset of the B<C<sprintf>> format string,  but it has extra features: 
+    like the flag B<C<[ <char> ]>> where <char> can be almost anything except B<C<[>>, B<C<]>> B<control characters>, 
+    B<white space other than the normal space>, and B<C<max-width>> after the precision.
+
+    The format string looks like this:
+
+=end item3
+
+=begin item4
+
+                        <text> % <spec>
+
+
+=end item4
+
+=begin item3
+
 B<C<*@args>> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
 
 =end item3
@@ -1585,12 +1602,6 @@ sub test( --> True) is export {
     B<Note: This is a closure we should always use a closure if we want to get the number of characters printed.> 
 
 =end item5
-
-=begin item3
-
-    B<C<format-str>> is 
-
-=end item3
 
 =end pod
 

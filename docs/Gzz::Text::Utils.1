@@ -455,6 +455,34 @@ Where:
 .RS 2n
 .RS 2n
 .IP \(bu 2m
+
+.RS 4m
+.EX
+B<C<format\-str>> is is a superset of the B<C<sprintf>> format string,  but it has extra features: 
+like the flag B<C<[ <char> ]>> where <char> can be almost anything except B<C<[>>, B<C<]>> B<control characters>, 
+B<white space other than the normal space>, and B<C<max\-width>> after the precision\&.
+
+The format string looks like this:
+.EE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+
+.RS 4m
+.EX
+<text> % <spec>
+.EE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
 \fB*@args\fR is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
 .RE
 .RE
@@ -611,17 +639,6 @@ B<Note: This is a closure we should always use a closure if we want to get the n
 .EE
 .RE
 .RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<format\-str>> is 
-.EE
 .RE
 .RE
 .RE
