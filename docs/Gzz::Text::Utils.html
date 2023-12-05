@@ -794,11 +794,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <ul>
 <li><p>Where:</p></li>
 <ul>
-<li><pre class="pod-block-code">B&lt;C&lt;format-str&gt;&gt; is is a superset of the B&lt;C&lt;sprintf&gt;&gt; format string,  but it has extra features: 
-like the flag B&lt;C&lt;[ &lt;char&gt; ]&gt;&gt; where &lt;char&gt; can be almost anything except B&lt;C&lt;[&gt;&gt;, B&lt;C&lt;]&gt;&gt; B&lt;control characters&gt;, 
-B&lt;white space other than the normal space&gt;, and B&lt;C&lt;max-width&gt;&gt; after the precision.
-
-The format string looks like this:</pre></li>
+<li><p><strong><code>format-str</code></strong> is is a superset of the <strong><code>sprintf</code></strong> format string, but it has extra features: like the flag <strong><code>[ &lt;char&gt; ]</code></strong> where &lt;char&gt; can be almost anything except <strong><code>[</code></strong>, <strong><code>]</code></strong> <strong>control characters</strong>, <strong>white space other than the normal space</strong>, and <strong><code>max-width</code></strong> after the precision.</p><p>The format string looks like this:</p></li>
 <ul>
 <li><pre class="pod-block-code">    token format      { &lt;chunks&gt;+ }
     token chunks      { [ &lt;chunk&gt; || '%' &lt;format-spec&gt; ] }
@@ -815,48 +811,43 @@ The format string looks like this:</pre></li>
 
 </pre><pre class="pod-block-code">Where</pre></li>
 <ul>
-<li><pre class="pod-block-code">B&lt;C&lt;dollar-directive&gt;&gt; is a integer &gt;= 1</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;flags&gt;&gt; is any zero or more of:</pre></li>
+<li><p><strong><code>dollar-directive</code></strong> is a integer &gt;= 1</p></li>
+<li><p><strong><code>flags</code></strong> is any zero or more of:</p></li>
 <ul>
-<li><pre class="pod-block-code">B&lt;C&lt;+&gt;&gt; put a plus in front of positive values.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;-&gt;&gt; left justify right is the default</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;^&gt;&gt;  centre justify.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;#&gt;&gt; ensure the leading B&lt;C&lt;0&gt;&gt; for any octal, prefix non-zero hexadecimal
-with B&lt;C&lt;0x&gt;&gt; or B&lt;C&lt;0X&gt;&gt;, prefix non-zero binary with B&lt;C&lt;0b&gt;&gt; or B&lt;C&lt;0B&gt;&gt;</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;v&gt;&gt; vector flag (used only with d directive)</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;' '&gt;&gt; pad with spaces.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;0&gt;&gt; pad with zeros.</pre></li>
-<li><pre class="pod-block-code">B«C«[ &lt;char&gt; ]»» pad with character char where char is B«C«&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt;+ || ' '»»
-                 i.e. anything except control characters white space (apart from the basic
-                 white space (i.e. \x20 or the one with ord 32)), and B&lt;C&lt;[&gt;&gt; and finally B&lt;C&lt;]&gt;&gt;.</pre></li>
+<li><p><strong><code>+</code></strong> put a plus in front of positive values.</p></li>
+<li><p><strong><code>-</code></strong> left justify right is the default</p></li>
+<li><p><strong><code>^</code></strong> centre justify.</p></li>
+<li><p><strong><code>#</code></strong> ensure the leading <strong><code>0</code></strong> for any octal, prefix non-zero hexadecimal with <strong><code>0x</code></strong> or <strong><code>0X</code></strong>, prefix non-zero binary with <strong><code>0b</code></strong> or <strong><code>0B</code></strong></p></li>
+<li><p><strong><code>v</code></strong> vector flag (used only with d directive)</p></li>
+<li><p><strong><code>' '</code></strong> pad with spaces.</p></li>
+<li><p><strong><code>0</code></strong> pad with zeros.</p></li>
+<li><p><strong><code>[ &lt;char&gt; ]</code></strong> pad with character char where char is <strong><code>&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt;+ || ' '</code></strong> i.e. anything except control characters white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and <strong><code>[</code></strong> and finally <strong><code>]</code></strong>.</p></li>
 </ul>
-<li><pre class="pod-block-code">B&lt;C&lt;width&gt;&gt; is either an integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt; followed by an integer &gt;= 0 and a '$'.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;precision&gt;&gt; is a B&lt;C&lt;.&gt;&gt; followed by either an positive integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt;
-                             followed by an integer &gt;= 0 and a '$'.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;max-width&gt;&gt; is a B&lt;C&lt;.&gt;&gt; followed by either an positive integer or a B&lt;C&lt;*&gt;&gt; or a B&lt;C&lt;*&gt;&gt;
-                     followed by an integer &gt;= 0 and a '$'.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;modifier&gt;&gt; is a integer &gt;= 1</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;spec-char&gt;&gt; or the conversion character is one of:</pre></li>
+<li><p><strong><code>width</code></strong> is either an integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
+<li><p><strong><code>precision</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
+<li><p><strong><code>max-width</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 0 and a '$'.</p></li>
+<li><p><strong><code>modifier</code></strong> is a integer &gt;= 1</p></li>
+<li><p><strong><code>spec-char</code></strong> or the conversion character is one of:</p></li>
 <ul>
-<li><pre class="pod-block-code">B&lt;C&lt;c&gt;&gt; a character with the given codepoint.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;s&gt;&gt; a string.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;d&gt;&gt; a signed integer, in decimal.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;u&gt;&gt; an unsigned integer, in decimal.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;o&gt;&gt; an unsigned integer, in octal, with a B&lt;C&lt;0o&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;x&gt;&gt; an unsigned integer, in hexadecimal, with a B&lt;C&lt;0x&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;e&gt;&gt; a floating-point number, in scientific notation.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;f&gt;&gt; a floating-point number, in fixed decimal notation.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;g&gt;&gt; a floating-point number, in %e or %f notation.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;X&gt;&gt; like B&lt;C&lt;x&gt;&gt;, but using uppercase letters, with a B&lt;C&lt;0X&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;E&gt;&gt; like B&lt;C&lt;e&gt;&gt;, but using an uppercase B&lt;C&lt;E&gt;&gt;.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;G&gt;&gt; like B&lt;C&lt;g&gt;&gt;, but with an uppercase B&lt;C&lt;E&gt;&gt; (if applicable).</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;b&gt;&gt; an unsigned integer, in binary, with a B&lt;C&lt;0b&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;B&gt;&gt; an unsigned integer, in binary, with a B&lt;C&lt;0B&gt;&gt; prepended if the B&lt;C&lt;#&gt;&gt; flag is present.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;i&gt;&gt; a synonym for B&lt;C&lt;%d&gt;&gt;.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;D&gt;&gt; a synonym for B&lt;C&lt;%ld&gt;&gt;.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;U&gt;&gt; a synonym for B&lt;C&lt;%lu&gt;&gt;.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;O&gt;&gt; a synonym for B&lt;C&lt;%lo&gt;&gt;.</pre></li>
-<li><pre class="pod-block-code">B&lt;C&lt;F&gt;&gt; a synonym for B&lt;C&lt;%f&gt;&gt;.</pre></li>
+<li><p><strong><code>c</code></strong> a character with the given codepoint.</p></li>
+<li><p><strong><code>s</code></strong> a string.</p></li>
+<li><p><strong><code>d</code></strong> a signed integer, in decimal.</p></li>
+<li><p><strong><code>u</code></strong> an unsigned integer, in decimal.</p></li>
+<li><p><strong><code>o</code></strong> an unsigned integer, in octal, with a <strong><code>0o</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p></li>
+<li><p><strong><code>x</code></strong> an unsigned integer, in hexadecimal, with a <strong><code>0x</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p></li>
+<li><p><strong><code>e</code></strong> a floating-point number, in scientific notation.</p></li>
+<li><p><strong><code>f</code></strong> a floating-point number, in fixed decimal notation.</p></li>
+<li><p><strong><code>g</code></strong> a floating-point number, in %e or %f notation.</p></li>
+<li><p><strong><code>X</code></strong> like <strong><code>x</code></strong>, but using uppercase letters, with a <strong><code>0X</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p></li>
+<li><p><strong><code>E</code></strong> like <strong><code>e</code></strong>, but using an uppercase <strong><code>E</code></strong>.</p></li>
+<li><p><strong><code>G</code></strong> like <strong><code>g</code></strong>, but with an uppercase <strong><code>E</code></strong> (if applicable).</p></li>
+<li><p><strong><code>b</code></strong> an unsigned integer, in binary, with a <strong><code>0b</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p></li>
+<li><p><strong><code>B</code></strong> an unsigned integer, in binary, with a <strong><code>0B</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p></li>
+<li><p><strong><code>i</code></strong> a synonym for <strong><code>%d</code></strong>.</p></li>
+<li><p><strong><code>D</code></strong> a synonym for <strong><code>%ld</code></strong>.</p></li>
+<li><p><strong><code>U</code></strong> a synonym for <strong><code>%lu</code></strong>.</p></li>
+<li><p><strong><code>O</code></strong> a synonym for <strong><code>%lo</code></strong>.</p></li>
+<li><p><strong><code>F</code></strong> a synonym for <strong><code>%f</code></strong>.</p></li>
 </ul>
 </ul>
 </ul>
@@ -927,7 +918,7 @@ sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visi
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T02:28:14Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T02:34:57Z</span></div></footer>
 	</body>
 </html>
 

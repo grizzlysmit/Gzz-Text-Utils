@@ -455,16 +455,9 @@ Where:
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<format\-str>> is is a superset of the B<C<sprintf>> format string,  but it has extra features: 
-like the flag B<C<[ <char> ]>> where <char> can be almost anything except B<C<[>>, B<C<]>> B<control characters>, 
-B<white space other than the normal space>, and B<C<max\-width>> after the precision\&.
-
+\fBformat\-str\fR is is a superset of the \fBsprintf\fR format string, but it has extra features: like the flag \fB[ <char> ]\fR where <char> can be almost anything except \fB[\fR, \fB]\fR \fBcontrol characters\fR, \fBwhite space other than the normal space\fR, and \fBmax\-width\fR after the precision\&.
+.IP
 The format string looks like this:
-.EE
-.RE
 .RE
 .RE
 .RS 2n
@@ -505,12 +498,7 @@ Where
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<dollar\-directive>> is a integer >= 1
-.EE
-.RE
+\fBdollar\-directive\fR is a integer >= 1
 .RE
 .RE
 .RE
@@ -520,12 +508,7 @@ B<C<dollar\-directive>> is a integer >= 1
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<flags>> is any zero or more of:
-.EE
-.RE
+\fBflags\fR is any zero or more of:
 .RE
 .RE
 .RE
@@ -536,12 +519,7 @@ B<C<flags>> is any zero or more of:
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<+>> put a plus in front of positive values\&.
-.EE
-.RE
+\fB+\fR put a plus in front of positive values\&.
 .RE
 .RE
 .RE
@@ -553,29 +531,7 @@ B<C<+>> put a plus in front of positive values\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<\->> left justify right is the default
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<^>>  centre justify\&.
-.EE
-.RE
+\fB\-\fR left justify right is the default
 .RE
 .RE
 .RE
@@ -587,13 +543,7 @@ B<C<^>>  centre justify\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<#>> ensure the leading B<C<0>> for any octal, prefix non\-zero hexadecimal
-with B<C<0x>> or B<C<0X>>, prefix non\-zero binary with B<C<0b>> or B<C<0B>>
-.EE
-.RE
+\fB^\fR centre justify\&.
 .RE
 .RE
 .RE
@@ -605,29 +555,7 @@ with B<C<0x>> or B<C<0X>>, prefix non\-zero binary with B<C<0b>> or B<C<0B>>
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<v>> vector flag (used only with d directive)
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<' '>> pad with spaces\&.
-.EE
-.RE
+\fB#\fR ensure the leading \fB0\fR for any octal, prefix non\-zero hexadecimal with \fB0x\fR or \fB0X\fR, prefix non\-zero binary with \fB0b\fR or \fB0B\fR
 .RE
 .RE
 .RE
@@ -639,108 +567,7 @@ B<C<' '>> pad with spaces\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<0>> pad with zeros\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B«C«[ <char> ]»» pad with character char where char is B«C«<\-[ <cntrl> \s \[ \] ]>+ || ' '»»
-                 i\&.e\&. anything except control characters white space (apart from the basic
-                 white space (i\&.e\&. \x20 or the one with ord 32)), and B<C<[>> and finally B<C<]>>\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<width>> is either an integer or a B<C<*>> or a B<C<*>> followed by an integer >= 0 and a '$'\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<precision>> is a B<C<\&.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
-                             followed by an integer >= 0 and a '$'\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<max\-width>> is a B<C<\&.>> followed by either an positive integer or a B<C<*>> or a B<C<*>>
-                     followed by an integer >= 0 and a '$'\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<modifier>> is a integer >= 1
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<spec\-char>> or the conversion character is one of:
-.EE
+\fBv\fR vector flag (used only with d directive)
 .RE
 .RE
 .RE
@@ -752,29 +579,7 @@ B<C<spec\-char>> or the conversion character is one of:
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<c>> a character with the given codepoint\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<s>> a string\&.
-.EE
-.RE
+\fB' '\fR pad with spaces\&.
 .RE
 .RE
 .RE
@@ -786,29 +591,7 @@ B<C<s>> a string\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<d>> a signed integer, in decimal\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<u>> an unsigned integer, in decimal\&.
-.EE
-.RE
+\fB0\fR pad with zeros\&.
 .RE
 .RE
 .RE
@@ -820,12 +603,69 @@ B<C<u>> an unsigned integer, in decimal\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<o>> an unsigned integer, in octal, with a B<C<0o>> prepended if the B<C<#>> flag is present\&.
-.EE
+\fB[ <char> ]\fR pad with character char where char is \fB<\-[ <cntrl> \s \[ \] ]>+ || ' '\fR i\&.e\&. anything except control characters white space (apart from the basic white space (i\&.e\&. \x20 or the one with ord 32)), and \fB[\fR and finally \fB]\fR\&.
 .RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBwidth\fR is either an integer or a \fB*\fR or a \fB*\fR followed by an integer >= 0 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBprecision\fR is a \fB\&.\fR followed by either an positive integer or a \fB*\fR or a \fB*\fR followed by an integer >= 0 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBmax\-width\fR is a \fB\&.\fR followed by either an positive integer or a \fB*\fR or a \fB*\fR followed by an integer >= 0 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBmodifier\fR is a integer >= 1
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBspec\-char\fR or the conversion character is one of:
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBc\fR a character with the given codepoint\&.
 .RE
 .RE
 .RE
@@ -837,29 +677,7 @@ B<C<o>> an unsigned integer, in octal, with a B<C<0o>> prepended if the B<C<#>> 
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<x>> an unsigned integer, in hexadecimal, with a B<C<0x>> prepended if the B<C<#>> flag is present\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<e>> a floating\-point number, in scientific notation\&.
-.EE
-.RE
+\fBs\fR a string\&.
 .RE
 .RE
 .RE
@@ -871,29 +689,7 @@ B<C<e>> a floating\-point number, in scientific notation\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<f>> a floating\-point number, in fixed decimal notation\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<g>> a floating\-point number, in %e or %f notation\&.
-.EE
-.RE
+\fBd\fR a signed integer, in decimal\&.
 .RE
 .RE
 .RE
@@ -905,29 +701,7 @@ B<C<g>> a floating\-point number, in %e or %f notation\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<X>> like B<C<x>>, but using uppercase letters, with a B<C<0X>> prepended if the B<C<#>> flag is present\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<E>> like B<C<e>>, but using an uppercase B<C<E>>\&.
-.EE
-.RE
+\fBu\fR an unsigned integer, in decimal\&.
 .RE
 .RE
 .RE
@@ -939,29 +713,7 @@ B<C<E>> like B<C<e>>, but using an uppercase B<C<E>>\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<G>> like B<C<g>>, but with an uppercase B<C<E>> (if applicable)\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<b>> an unsigned integer, in binary, with a B<C<0b>> prepended if the B<C<#>> flag is present\&.
-.EE
-.RE
+\fBo\fR an unsigned integer, in octal, with a \fB0o\fR prepended if the \fB#\fR flag is present\&.
 .RE
 .RE
 .RE
@@ -973,29 +725,7 @@ B<C<b>> an unsigned integer, in binary, with a B<C<0b>> prepended if the B<C<#>>
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<B>> an unsigned integer, in binary, with a B<C<0B>> prepended if the B<C<#>> flag is present\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<i>> a synonym for B<C<%d>>\&.
-.EE
-.RE
+\fBx\fR an unsigned integer, in hexadecimal, with a \fB0x\fR prepended if the \fB#\fR flag is present\&.
 .RE
 .RE
 .RE
@@ -1007,29 +737,7 @@ B<C<i>> a synonym for B<C<%d>>\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<D>> a synonym for B<C<%ld>>\&.
-.EE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RE
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.RS 2n
-.IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<U>> a synonym for B<C<%lu>>\&.
-.EE
-.RE
+\fBe\fR a floating\-point number, in scientific notation\&.
 .RE
 .RE
 .RE
@@ -1041,12 +749,7 @@ B<C<U>> a synonym for B<C<%lu>>\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<O>> a synonym for B<C<%lo>>\&.
-.EE
-.RE
+\fBf\fR a floating\-point number, in fixed decimal notation\&.
 .RE
 .RE
 .RE
@@ -1058,12 +761,127 @@ B<C<O>> a synonym for B<C<%lo>>\&.
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-
-.RS 4m
-.EX
-B<C<F>> a synonym for B<C<%f>>\&.
-.EE
+\fBg\fR a floating\-point number, in %e or %f notation\&.
 .RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBX\fR like \fBx\fR, but using uppercase letters, with a \fB0X\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBE\fR like \fBe\fR, but using an uppercase \fBE\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBG\fR like \fBg\fR, but with an uppercase \fBE\fR (if applicable)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBb\fR an unsigned integer, in binary, with a \fB0b\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBB\fR an unsigned integer, in binary, with a \fB0B\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBi\fR a synonym for \fB%d\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBD\fR a synonym for \fB%ld\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBU\fR a synonym for \fB%lu\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBO\fR a synonym for \fB%lo\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBF\fR a synonym for \fB%f\fR\&.
 .RE
 .RE
 .RE
