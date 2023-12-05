@@ -1543,6 +1543,8 @@ token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precisi
 
 =end item4
 
+=item4 L<Top of Document|#>
+
 
 =begin item5
 

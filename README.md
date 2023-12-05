@@ -391,6 +391,8 @@ Sprintf
           token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
           ```
 
+        * [Top of Document](#)
+
           * Where
 
             * **`dollar-directive`** is a integer >= 1
