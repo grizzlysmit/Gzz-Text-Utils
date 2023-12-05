@@ -384,8 +384,8 @@ Sprintf
           token fmt-esc     { [      '%' #`« a literal % »
                                   || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
                                   || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
-                                  || 'n' #`« not implemented and will not be »
-                                  || 't' #`« not implemented and will not be »
+                                  || 'n' #`« not implemented and will not be, throws an exception if matched »
+                                  || 't' #`« not implemented and will not be, throws an exception if matched »
                               ]
                             }
           token fmt-spec   { [ <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }

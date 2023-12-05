@@ -839,8 +839,8 @@ token format-spec { [ &lt;fmt-esc&gt; || &lt;fmt-spec&gt; ] }
 token fmt-esc     { [      '%' #`« a literal % »
                         || 'N' #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
                         || 'T' #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
-                        || 'n' #`« not implemented and will not be »
-                        || 't' #`« not implemented and will not be »
+                        || 'n' #`« not implemented and will not be, throws an exception if matched »
+                        || 't' #`« not implemented and will not be, throws an exception if matched »
                     ]
                   }
 token fmt-spec   { [ &lt;dollar-directive&gt; '$' ]? &lt;flags&gt;?  &lt;width&gt;? [ '.' &lt;precision&gt; [ '.' &lt;max-width&gt; ]? ]? &lt;modifier&gt;? &lt;spec-char&gt; }
@@ -998,7 +998,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:53:18Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:57:28Z</span></div></footer>
 	</body>
 </html>
 
