@@ -49,7 +49,12 @@ text and implements B<C<%U>> and does octal as B<C<0o123>> or B<C<0O123>> if
 you choose B<C<%O>> as I hate ambiguity like B<C<0123>> is it an int with
 leading zeros or an octal number.
 Also there is B<C<%N>> for a new line and B<C<%T>> for a tab helpful when
-you want to use single quotes to stop the B<numC<$>> specs needing back slashes.
+you want to use single quotes to stop the B«<num> C«$»» specs needing back slashes.
+
+And a B<C<printf>> alike B<C<Printf>>.
+
+Also it does centring and there is a B<C<max-width>> field in the B<C<%>> spec i.e. B<C<%*.*.*E>>, 
+and more.
 
 L<Top of Document|#table-of-contents>
 
@@ -213,7 +218,7 @@ grammar FormatBase {
                                   || 't' #`« not implemented and will not be »
                               ]
                             }
-    token fmt-spec          { [ <false-flags>? <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision> [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
+    token fmt-spec          { [ <false-flags>? <dollar-directive> '$' ]? <flags>?  <width>? [ '.' <precision>? [ '.' <max-width> ]? ]? <modifier>? <spec-char> }
     token false-flags       { [ <false-flag>+ <?before \d+ '$' > ] } #`«« make sure that we don't see flags
                                                                           before the <dollar-directive> '$' »»
     token false-flag        { [ '+' || '^' || '-' || '#' || 'v' || '0' || ' ' || '[' <-[ <cntrl> \s \[ \] ]>+ ']' ] }
