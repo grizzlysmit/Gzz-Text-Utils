@@ -1840,6 +1840,8 @@ B<C<F>> a synonym for B<C<%f>>.
 
 =end item6                        
 
+L<Top of Document|#>
+
 =begin item3
 
 B<C<:&number-of-chars>> is an optional named argument which takes a function with a signature B<C<:(Int:D, Int:D --> Bool:D)>> if not specified it will have the value of B<C<&Sprintf-global-number-of-chars>> which is defined as:
@@ -1902,6 +1904,8 @@ sub test( --> True) is export {
 B<Note: This is a closure we should always use a closure if we want to get the number of characters printed.> 
 
 =end item5
+
+L<Top of Document|#>
 
 =begin item3
 
