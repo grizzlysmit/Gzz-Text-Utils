@@ -588,9 +588,9 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#ArgParityMissMatch">ArgParityMissMatch</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#FormatSpecError">FormatSpecError</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
- <tr class="toc-level-1"><td class="toc-text"><a href="#Head">Head</a></td></tr>
- <tr class="toc-level-1"><td class="toc-text"><a href="#Head">Head</a></td></tr>
- <tr class="toc-level-1"><td class="toc-text"><a href="#Head">Head</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#The_Functions_Provided">The Functions Provided</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
 </table></div>
@@ -649,14 +649,8 @@ footer {
 <pre class="pod-block-code">class FormatSpecError is Exception is export
 
 </pre><p>FormatSpecError is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification (i.e. <strong><code>%n</code></strong> instead of <strong><code>%N</code></strong> as <strong><code>%n</code></strong> is already taken, the same with using <strong><code>%t</code></strong> instead of <strong><code>%T</code></strong>).</p><p>Or anything else wrong with the Format specifier.</p><p><strong>NB: <em><code>%N</code></em> introduces a <em><code>\n</code></em> character and <em><code>%T</code></em> a tab (i.e. <em><code>\t</code></em>).</strong></p></section><section name="pod"><p><a href="#.html">Top of Document</a></p><h1 id="Format_and_FormatActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Format and FormatActions</a></h1>
-<p>Format &amp; FormatActions are a grammar and Actions pair that parse out the <strong>%</strong> spec and normal text chunks of a format string.</p><p>For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.</p></section><section name="pod"><p><a href="#.html">Top of Document</a></p><section>
-<h1 id="Head"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">head</a></h1>
-<p><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></p>
-</section>
-<p><strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> are a grammar &amp; role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. </p><p><strong><code>Unhighlight</code></strong> &amp; <strong><code>UnhighlightActions</code></strong> are a grammar &amp; class pair which provide a simple TOP for applying an application of <strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> for use by <strong><code>sub strip-ansi(Str:D $text --</code> Str:D) is export</strong>&gt; to strip out the plain text from a ANSI formatted string</p></section><section name="pod"><p><a href="#.html">Top of Document</a></p><section>
-<h1 id="Head"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">head</a></h1>
-<p>The Functions Provided</p>
-</section>
+<p>Format &amp; FormatActions are a grammar and Actions pair that parse out the <strong>%</strong> spec and normal text chunks of a format string.</p><p>For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.</p></section><section name="pod"><p><a href="#.html">Top of Document</a></p><h1 id="UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions"><a href="#Gzz::Text::Utils" class="u" title="go to top of document"><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></a></h1>
+<p><strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> are a grammar &amp; role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. </p><p><strong><code>Unhighlight</code></strong> &amp; <strong><code>UnhighlightActions</code></strong> are a grammar &amp; class pair which provide a simple TOP for applying an application of <strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> for use by <strong><code>sub strip-ansi(Str:D $text --</code> Str:D) is export</strong>&gt; to strip out the plain text from a ANSI formatted string</p></section><section name="pod"><p><a href="#.html">Top of Document</a></p><h1 id="The_Functions_Provided"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">The Functions Provided</a></h1>
 <ul>
 <li><p>strip-ansi</p><pre class="pod-block-code">sub strip-ansi(Str:D $text --&gt; Str:D) is export
 
@@ -675,10 +669,7 @@ footer {
 </pre></li>
 </ul>
 </ul>
-</section><section name="pod"><p><a href="#.html">Top of Document</a></p><section>
-<h1 id="Head"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">head</a></h1>
-<p>Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</p>
-</section>
+</section><section name="pod"><p><a href="#.html">Top of Document</a></p><h1 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h1>
 <ul>
 <li><p><strong>centre</strong></p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
@@ -1003,7 +994,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#.html">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:31:49Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T08:34:27Z</span></div></footer>
 	</body>
 </html>
 

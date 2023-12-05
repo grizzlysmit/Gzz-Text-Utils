@@ -551,7 +551,7 @@ class FormatActions does FormatBaseActions is export {
 
 L<Top of Document|#>
 
-=head C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
+=head1 C<UnhighlightBase> & C<UnhighlightBaseActions> and C<Unhighlight> & C<UnhighlightActions>
 
 B<C<UnhighlightBase>> & B<C<UnhighlightBaseActions>> are a grammar & role pair that does the work required to 
 to parse apart ansi highlighted text into ANSI highlighted and plain text. 
@@ -944,7 +944,7 @@ class UnhighlightActions does UnhighlightBaseActions {
 
 L<Top of Document|#>
 
-=head The Functions Provided
+=head1 The Functions Provided
 
 =begin item 
 
@@ -1013,12 +1013,12 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 L<Top of Document|#>
 
-=begin head
+=begin head1
 
 Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when
 it is ANSI formatted.
 
-=end head
+=end head1
 
 =begin item
 

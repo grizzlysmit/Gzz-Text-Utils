@@ -151,10 +151,8 @@ For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.
 
 [Top of Document](#)
 
-head
-====
-
 `UnhighlightBase` & `UnhighlightBaseActions` and `Unhighlight` & `UnhighlightActions`
+=====================================================================================
 
 **`UnhighlightBase`** & **`UnhighlightBaseActions`** are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. 
 
@@ -162,10 +160,8 @@ head
 
 [Top of Document](#)
 
-head
-====
-
 The Functions Provided
+======================
 
   * strip-ansi
 
@@ -193,10 +189,8 @@ The Functions Provided
 
 [Top of Document](#)
 
-head
-====
-
 Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
+======================================================================================================================
 
   * **centre**
 
