@@ -491,3 +491,27 @@ The functions Provided.
             dd $test-number-of-chars,  $test-number-of-visible-chars;
             ```
 
+### Printf
+
+  * Same as Sprintf but writes it's output to **`$*OUT`** or an arbitary filehandle if you choose.
+
+    * defined as
+
+      ```raku
+      multi sub Printf(Str:D $format-str,
+                      :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                              Str:D :$ellipsis = '', *@args --> True) is export {
+          Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
+      } #`««« sub Fprintf(Str:D $format-str,
+                      :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                              Str:D :$ellipsis = '', *@args --> True) is export »»»
+
+      multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
+                      :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                              Str:D :$ellipsis = '', *@args --> True) is export {
+          $fp.print: Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args);
+      } #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
+                      :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                              Str:D :$ellipsis = '', *@args --> True) is export »»»
+      ```
+

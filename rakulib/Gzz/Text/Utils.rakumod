@@ -1935,6 +1935,8 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 our $Sprintf-total-number-of-chars is export = 0;
 our $Sprintf-total-number-of-visible-chars is export = 0;
 
+my subset FUInt of Int where {not .defined or $_ >= -1};
+
 sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $Sprintf-total-number-of-chars         = $number-of-chars;
     $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
@@ -2012,9 +2014,9 @@ sub Sprintf(Str:D $format-str,
             my         %width-spec = %elt«width»;
             my     %precision-spec = %elt«precision»;
             my     %max-width-spec = %elt«max-width»;
-            my Int:D $width        = -1;
-            my Int:D $precision    = -1;
-            my Int:D $max-width    = -1;
+            my FUInt:D $width      = -1; # -1 denotes not present. #
+            my FUInt:D $precision  = -1; # -1 denotes not present. #
+            my UInt:D $max-width   = 0;
            if %width-spec«kind» eq 'star' {
                 BadArg.new(:msg("arg count out of range not enough args")).throw unless $cnt < @args.elems;
                 my Str:D $name = @args[$cnt].WHAT.^name;
@@ -4138,3 +4140,57 @@ sub Sprintf(Str:D $format-str,
 } #`««« sub Sprintf(Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --> Str) is export »»»
+
+=begin pod
+
+=head3 Printf
+
+=begin item
+
+Same as Sprintf but writes it's output to B<C<$*OUT>> or an arbitary filehandle if you choose.
+
+=end item                                                
+
+=begin item2
+
+defined as
+
+=begin code :lang<raku>
+
+multi sub Printf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+    Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
+} #`««« sub Fprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»
+
+multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+    $fp.print: Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args);
+} #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»
+
+=end code
+
+=end item2
+
+=end pod
+
+multi sub Printf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+    Sprintf($format-str, :number-of-chars(&number-of-chars), :$ellipsis, |@args).print;
+} #`««« sub Fprintf(Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»
+
+multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export {
+    $fp.print: Sprintf($format-str, :&number-of-chars, :$ellipsis, |@args);
+} #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --> True) is export »»»

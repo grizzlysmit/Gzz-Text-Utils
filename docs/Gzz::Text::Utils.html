@@ -590,6 +590,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#The_functions_Provided.">The functions Provided.</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
 </table></div>
 </nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formatting services to Raku programs.</p></div><div class="pod-body"><section name="___top"><section>
 <h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
@@ -934,8 +935,31 @@ dd $test-number-of-chars,  $test-number-of-visible-chars;
 </ul>
 </ul>
 </ul>
+</section><section name="pod"><h3 id="Printf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Printf</a></h3>
+<ul>
+<li><p>Same as Sprintf but writes it's output to <strong><code>$*OUT</code></strong> or an arbitary filehandle if you choose.</p></li>
+<ul>
+<li><p>defined as</p><pre class="pod-block-code">multi sub Printf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export {
+    Sprintf($format-str, :number-of-chars(&amp;number-of-chars), :$ellipsis, |@args).print;
+} #`««« sub Fprintf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+
+multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export {
+    $fp.print: Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args);
+} #`««« sub Fprintf(my IO::Handle:D $fp, Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = '', *@args --&gt; True) is export »»»
+
+</pre></li>
+</ul>
+</ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T04:27:44Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-05T06:55:02Z</span></div></footer>
 	</body>
 </html>
 
