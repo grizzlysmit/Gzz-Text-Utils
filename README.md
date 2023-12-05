@@ -90,7 +90,9 @@ Another important thing to note is that even these functions will fail if you in
 Fixed the proto type of **`left`** etc is now 
 
 ```raku
-sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ', Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
 ```
 
 Where **`sub strip-ansi(Str:D $text --> Str:D) is export`** is my new function for striping out ANSI escape sequences so we don't need to supply **`:$ref`** unless it contains codes that **`sub strip-ansi(Str:D $text --> Str:D) is export`** cannot strip out, if so I would like to know so I can update it to cope with these new codes.
