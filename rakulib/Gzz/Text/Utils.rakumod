@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.6>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.7>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -33,7 +33,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.6
+=VERSION 0.1.7
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -386,7 +386,7 @@ role FormatBaseActions {
     #token width-int        { \d+ }
     method width-dollar($/) {
         my Int:D $width-dollar = +$/ - 1;
-        BadArg.new(:msg("bad \$ spec for width: cannot be less than 1 ")).throw if $width-dollar < 0;
+        FormatSpecError.new(:msg('bad $ spec for width: cannot be less than 1 ')).throw if $width-dollar < 0;
         dd $width-dollar if $debug;
         make $width-dollar;
     }
@@ -408,7 +408,7 @@ role FormatBaseActions {
     #token prec-dollar      { \d+ }
     method prec-dollar($/) {
         my Int:D $prec-dollar = +$/ - 1;
-        FormatSpecError.new(:msg("bad \$ spec for precision: cannot be less than 1 ")).throw if $prec-dollar < 0;
+        FormatSpecError.new(:msg('bad $ spec for precision: cannot be less than 1 ')).throw if $prec-dollar < 0;
         dd $prec-dollar if $debug;
         make $prec-dollar;
     }
@@ -446,7 +446,7 @@ role FormatBaseActions {
     #token max-dollar        { \d+ <?before '$'> }
     method max-dollar($/) {
         my Int:D $max-dollar = +$/ - 1;
-        FormatSpecError.new(:msg("bad \$ spec for max-width: cannot be less than 1 ")).throw if $max-dollar < 0;
+        FormatSpecError.new(:msg('bad $ spec for max-width: cannot be less than 1 ')).throw if $max-dollar < 0;
         dd $max-dollar if $debug;
         make $max-dollar;
     }

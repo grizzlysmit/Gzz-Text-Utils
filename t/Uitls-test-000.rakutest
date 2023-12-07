@@ -1,0 +1,86 @@
+use Test;
+use Terminal::ANSI::OO :t;
+use Terminal::Width;
+use Terminal::WCWidth;
+
+
+use lib 'lib';
+use Gzz::Text::Utils;
+
+my Str:D $highlighted = t.bg-red ~ t.bold ~ t.bright-blue ~ 'Hello ' ~ t.color(0, 255, 0) ~ 'out ' ~ t.yellow ~ 'there.' ~ t.text-reset;
+
+is(strip-ansi($highlighted), 'Hello out there.');
+
+is(hwcswidth($highlighted), wcswidth('Hello out there.'));
+
+is(centre($highlighted, 40, '#', :max-width(38)), "###########$highlighted###########");
+
+is(left($highlighted, 40, '#', :max-width(38)), "$highlighted######################");
+
+is(right($highlighted, 40, '#', :max-width(38)), "######################$highlighted");
+
+is(Sprintf('%^[#]*.*.*s%N', 40, 0, 38, $highlighted), "###########$highlighted###########\n");
+
+#«««
+is(Sprintf('%1$^[#]*2$.0.*3$s%N', $highlighted, 40, 38), "###########$highlighted###########\n");
+
+is(Sprintf('%1$-[#]*2$.0.*3$s%N', $highlighted, 40, 38), "$highlighted######################\n");
+
+is(Sprintf('%1$[#]*2$.0.*3$s%N', $highlighted, 40, 38), "######################$highlighted\n");
+
+#»»»
+
+is(Sprintf('%^[#]40.0.38s%N', $highlighted), "###########$highlighted###########\n");
+
+is(Sprintf('%-[#]40.0.38s%N', $highlighted), "$highlighted######################\n");
+
+is(Sprintf('%[#]40.0.38s%N', $highlighted), "######################$highlighted\n");
+
+throws-like({ Sprintf('%^[*]3$*4$.*3$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')) },
+    Gzz::Text::Utils::FormatSpecError , message  => rx/ ^ \s* "Error flags belong after <number> '\$' spec not before." \s* $ /);
+
+throws-like({ Sprintf('%0$^[*]3$*4$.*3$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')) },
+    Gzz::Text::Utils::FormatSpecError , message  => rx/ ^ \s* "bad \$ spec for arg: cannot be less than 1 " \s* $ /);
+
+#«««
+
+throws-like({ Sprintf('%3$^[*%$]*4$.*3$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* 'Error: should only contain one codepoint/character you supplied 3: [*%$]' $ !);
+
+throws-like({ Sprintf('%3$^[*]*0$.*3$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* 'bad $ spec for width: cannot be less than 1 ' $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*0$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* 'bad $ spec for precision: cannot be less than 1 ' $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$,*3$.30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* "Error: found comma (',') instead of dot ('.') before precision in '%' spec." $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*3$,30d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* "Error: found comma (',') instead of dot ('.') before max-width in '%' spec." $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*3$.*0$d', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* 'bad $ spec for max-width: cannot be less than 1 ' $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*3$.30d%n', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* "%n not implemented and will not be; did you mean %N." $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*3$.30d%t', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* "%t not implemented and will not be; did you mean %T." $ !);
+
+throws-like({ Sprintf('%3$^[*]*4$.*3$.30d%w', 3.14159265, 42E10, 40, 50, 2.71828E-30, :ellipsis('…')); Nil },
+    Gzz::Text::Utils::FormatSpecError ,
+        message  => rx! ^ \s* "Error bad format-str arg did not parse!" $ !);
+
+#»»»
+
+
+done-testing;
