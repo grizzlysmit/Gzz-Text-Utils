@@ -4,20 +4,24 @@
     "perl" : "6.d",
     "license" : "LGPL-3.0-or-later",
     "authors" : [
-        "Francis Grizzly Smit"
+        "Francis Grizzly Smit <grizzly@smit.id.au>"
     ],
     "depends": [
         "Terminal::Width",
         "Terminal::WCWidth"
     ],
     "provides" : {
-        "Gzz::Text::Utils" : "rakulib/Gzz/Text/Utils.rakumod"
+        "Gzz::Text::Utils" : "lib/Gzz/Text/Utils.rakumod"
     },
     "source-url" : "https://github.com/grizzlysmit/Gzz-Text-Utils.git",
     "support" : {
-        "source" : "https://github.com/grizzlysmit/Gzz-Text-Utils.git"
+        "source" : "https://github.com/grizzlysmit/Gzz-Text-Utils.git",
+        "email" : "grizzly@smit.id.au",
+        "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "v0.1.10",
-    "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ]
+    "version" : "0.1.11",
+    "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
+  "test-depends": [
+  ]
 }
