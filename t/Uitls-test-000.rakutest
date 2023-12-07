@@ -1,13 +1,16 @@
 use Test;
+
+plan 23;
+
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
 use Terminal::WCWidth;
-
 
 use lib 'lib';
 use Gzz::Text::Utils;
 
 my Str:D $highlighted = t.bg-red ~ t.bold ~ t.bright-blue ~ 'Hello ' ~ t.color(0, 255, 0) ~ 'out ' ~ t.yellow ~ 'there.' ~ t.text-reset;
+
 
 is(strip-ansi($highlighted), 'Hello out there.');
 
