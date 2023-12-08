@@ -50,7 +50,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-v0.1.14
+v0.1.15
 
 TITLE
 =====
@@ -366,7 +366,7 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 Sprintf
 -------
 
-  * Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a **`$max-width`** using **`width.precision.max-width`**, which can be **`.*`**, **C*<<num>$**>, **`.*`**, or **C<<num>**>
+  * Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a **`$max-width`** using **`width.precision.max-width`**, which can be **`.*`**, **C*«<num>$**», **`.*`**, or **`<num>`**
 
     ```raku
     sub Sprintf(Str:D $format-str,

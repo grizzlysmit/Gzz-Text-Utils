@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.14>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.15>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -33,7 +33,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.14
+=VERSION v0.1.15
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -1514,7 +1514,7 @@ L<Top of Document|#table-of-contents>
 =begin item
 
 Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability
-to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can be B<C<.*>>, B<C*<<num>$>>, B<C<.*>>,  or B<C<<num>>>
+to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can be B<C<.*>>, B«C*«<num>$»», B«C«.*»»,  or B«C«<num>»»
 
 =begin code :lang<raku>
 
