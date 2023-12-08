@@ -1,0 +1,1426 @@
+.pc
+.TH Utils.rakumod 1 2023-12-08
+.SS Table of Contents
+.IP \(bu 2m
+NAME [#name]
+.IP \(bu 2m
+AUTHOR [#author]
+.IP \(bu 2m
+VERSION [#version]
+.IP \(bu 2m
+TITLE [#title]
+.IP \(bu 2m
+SUBTITLE [#subtitle]
+.IP \(bu 2m
+COPYRIGHT [#copyright]
+.IP \(bu 2m
+Introduction [#introduction]
+.RS 2n
+.IP \(bu 2m
+Motivations [#motivations]
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Update [#update]
+.RE
+.RE
+.IP \(bu 2m
+Exceptions [#exceptions]
+.RS 2n
+.IP \(bu 2m
+BadArg [#badarg]
+.RE
+.RS 2n
+.IP \(bu 2m
+ArgParityMissMatch [#argparitymissmatch]
+.RE
+.RS 2n
+.IP \(bu 2m
+FormatSpecError [#formatspecerror]
+.RE
+.IP \(bu 2m
+UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions [#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions]
+.IP \(bu 2m
+The Functions Provided [#the-functions-provided]
+.RS 2n
+.IP \(bu 2m
+Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted [#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted]
+.RE
+.RS 2n
+.IP \(bu 2m
+Sprintf [#sprintf]
+.RE
+.RS 2n
+.IP \(bu 2m
+Printf [#printf]
+.RE
+.SH "NAME"
+Gzz::Text::Utils 
+.SH "AUTHOR"
+Francis Grizzly Smit (grizzly@smit\&.id\&.au)
+.SH "VERSION"
+v0\&.1\&.13
+.SH "TITLE"
+Gzz::Text::Utils
+.SH "SUBTITLE"
+A Raku module to provide text formatting services to Raku programs\&.
+.SH "COPYRIGHT"
+LGPL V3\&.0+ LICENSE [https://github.com/grizzlysmit/Gzz-Text-Utils/blob/main/LICENSE]
+.SH Introduction
+
+A Raku module to provide text formatting services to Raku programs\&.
+
+Including a sprintf front\-end Sprintf that copes better with Ansi highlighted text and implements \fB%U\fR and does octal as \fB0o123\fR or \fB0O123\fR if you choose \fB%O\fR as I hate ambiguity like \fB0123\fR is it an int with leading zeros or an octal number\&. Also there is \fB%N\fR for a new line and \fB%T\fR for a tab helpful when you want to use single quotes to stop the \fB<num> $\fR specs needing back slashes\&.
+
+And a \fBprintf\fR alike \fBPrintf\fR\&.
+
+Also it does centring and there is a \fBmax\-width\fR field in the \fB%\fR spec i\&.e\&. \fB%*\&.*\&.*E\fR, and more\&.
+
+Top of Document [#table-of-contents]
+.SS Motivations
+
+When you embed formatting information into your text such as \fBbold\fR, \fIitalics\fR, etc \&.\&.\&. and \fBcolours\fR standard text formatting will not work e\&.g\&. printf, sprintf etc also those functions don't do centring\&.
+
+Another important thing to note is that even these functions will fail if you include such formatting in the \fBtext\fR field unless you supply a copy of the text with out the formatting characters in it in the \fB:ref\fR field i\&.e\&. \fBleft($formatted\-text, $width, :ref($unformatted\-text))\fR or \fBtext($formatted\-text, $width, :$ref)\fR if the reference text is in a variable called \fB$ref\fR or you can write it as \fBleft($formatted\-text, $width, ref => $unformatted\-text)\fR
+
+Top of Document [#able-of-contents]
+.SS Update
+
+Fixed the proto type of \fBleft\fR etc is now 
+
+.RS 4m
+.EX
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+            :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
+               Str:D :$ref = strip\-ansi($text), Int:D
+                                :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+
+.EE
+.RE
+.P
+Where \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR is my new function for striping out ANSI escape sequences so we don't need to supply \fB:$ref\fR unless it contains codes that \fBsub strip\-ansi(Str:D $text \-\-> Str:D) is export\fR cannot strip out, if so I would like to know so I can update it to cope with these new codes\&.
+
+Top of Document [#table-of-contents]
+.SH Exceptions
+.SS BadArg
+
+.RS 4m
+.EX
+class BadArg is Exception is export
+
+
+.EE
+.RE
+.P
+BadArg is a exception type that Sprintf will throw in case of badly specified arguments\&.
+
+Top of Document [#table-of-contents]
+.SS ArgParityMissMatch
+
+.RS 4m
+.EX
+class ArgParityMissMatch is Exception is export
+
+
+.EE
+.RE
+.P
+ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be\&.
+
+\fBNB: if you use \fInum$\fR argument specs these will not count as they grab from the args add hoc, \fI*\fR width and precision spec however do count as they consume argument\&.\fR
+Top of Document [#table-of-contents]
+.SS FormatSpecError
+
+.RS 4m
+.EX
+class FormatSpecError is Exception is export
+
+
+.EE
+.RE
+.P
+FormatSpecError is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification (i\&.e\&. \fB%n\fR instead of \fB%N\fR as \fB%n\fR is already taken, the same with using \fB%t\fR instead of \fB%T\fR)\&.
+
+Or anything else wrong with the Format specifier\&.
+
+\fBNB: \fI%N\fR introduces a \fI\n\fR character and \fI%T\fR a tab (i\&.e\&. \fI\t\fR)\&.\fR
+Top of Document [#table-of-contents]
+.SH Format and FormatActions
+
+Format & FormatActions are a grammar and Actions pair that parse out the \fB%\fR spec and normal text chunks of a format string\&.
+
+For use by Sprintf a sprintf alternative that copes with ANSI highlighted text\&.
+Top of Document [#table-of-contents]
+.SH UnhighlightBase & UnhighlightBaseActions and Unhighlight & UnhighlightActions
+
+\fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR are a grammar & role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text\&. 
+
+\fBUnhighlight\fR & \fBUnhighlightActions\fR are a grammar & class pair which provide a simple TOP for applying an application of \fBUnhighlightBase\fR & \fBUnhighlightBaseActions\fR for use by \fBsub strip\-ansi(Str:D $text \-\- Str:D) is export\fR> to strip out the plain text from a ANSI formatted string
+Top of Document [#table-of-contents]
+.SH The Functions Provided
+.IP \(bu 2m
+strip\-ansi
+.IP
+
+.RS 4m
+.EX
+sub strip\-ansi(Str:D $text \-\-> Str:D) is export
+
+
+.EE
+.RE
+.IP
+Strips out all the ANSI escapes, at the moment just those provided by the \fBTerminal::ANSI\fR or \fBTerminal::ANSI::OO\fR modules both available as \fBTerminal::ANSI\fR from zef etc I am not sure how exhaustive that is, but I will implement any more escapes as I become aware of them\&.
+.IP \(bu 2m
+hwcswidth
+.IP
+
+.RS 4m
+.EX
+sub hwcswidth(Str:D $text \-\-> Int:D) is export
+
+
+.EE
+.RE
+.IP
+Same as \fBwcswidth\fR but it copes with ANSI escape sequences unlike \fBwcswidth\fR\&.
+.RS 2n
+.IP \(bu 2m
+The secret sauce is that it is defined as:
+.IP
+
+.RS 4m
+.EX
+sub hwcswidth(Str:D $text \-\-> Int:D) is export {
+    return wcswidth(strip\-ansi($text));
+} #  sub hwcswidth(Str:D $text \-\-> Int:D) is export #
+
+
+
+.EE
+.RE
+.RE
+Top of Document [#table-of-contents]
+.SH Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
+.IP \(bu 2m
+\fBcentre\fR
+.IP
+
+.RS 4m
+.EX
+sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+            :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &centre\-global\-number\-of\-chars,
+                Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export {
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBWhere:\fR
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fill\fR is the fill char by default \fB$fill\fR is set to a single white space\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If it requires an odd number of padding then the right hand side will get one more char/codepoint\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB&number\-of\-chars\fR takes a function which takes 2 \fBInt:D\fR's and returns a \fBBool:D\fR\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+By default this is equal to the closure \fBcentre\-global\-number\-of\-chars\fR which looks like:
+.IP
+
+.RS 4m
+.EX
+our $centre\-total\-number\-of\-chars is export = 0;
+our $centre\-total\-number\-of\-visible\-chars is export = 0;
+
+sub centre\-global\-number\-of\-chars(Int:D $number\-of\-chars,
+                                Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+    $centre\-total\-number\-of\-chars         = $number\-of\-chars;
+    $centre\-total\-number\-of\-visible\-chars = $number\-of\-visible\-chars;
+    return True
+}
+
+
+.EE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Which is a closure around the variables: \fB$centre\-total\-number\-of\-chars\fR and \fB$centre\-total\-number\-of\-visible\-chars\fR, these are global \fBour\fR variables that \fBGzz::Text::Utils\fR exports\&. But you can just use \fBmy\fR variables from with a scope, just as well\&. And make the \fBsub\fR local to the same scope\&.
+.IP
+i\&.e\&.
+.IP
+
+.RS 4m
+.EX
+sub Sprintf(Str:D $format\-str,
+                :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                                        Str:D :$ellipsis = '', *@args \-\-> Str) is export {
+    \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+    my Int:D $total\-number\-of\-chars = 0;
+    my Int:D $total\-number\-of\-visible\-chars = 0;
+    sub internal\-number\-of\-chars(Int:D $number\-of\-chars, Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+        $total\-number\-of\-chars += $number\-of\-chars;
+        $total\-number\-of\-visible\-chars += $number\-of\-visible\-chars;
+        return True;
+    } # sub internal\-number\-of\-chars(Int:D $number\-of\-chars, Int:D $number\-of\-visible\-chars \-\-> Bool:D) #
+    \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+    for @format\-str \-> %elt {
+        my Str:D $type = %elt«type»;
+        if $type eq 'literal' {
+            my Str:D $lit = %elt«val»;
+            $total\-number\-of\-chars += $lit\&.chars;
+            $total\-number\-of\-visible\-chars += strip\-ansi($lit)\&.chars;
+            $result ~= $lit;
+        } elsif $type eq 'fmt\-spec' {
+            \&.\&.\&.
+            \&.\&.\&.
+            \&.\&.\&.
+            given $spec\-char {
+                when 'c' {
+                             $arg \&.=Str;
+                             $ref \&.=Str;
+                             BadArg\&.new(:msg("arg should be one codepoint: {$arg\&.codes} found"))\&.throw if $arg\&.codes != 1;
+                             $max\-width = max($max\-width, $precision, 0) if $max\-width > 0; #`« should not really have a both for this
+                                                                                                so munge together\&.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max\-width for strings\&. »
+                             if $padding eq '' {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 } elsif $justify eq '\-' {
+                                     $result ~=  left($arg, $width, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 }
+                             } else {
+                                 if $justify eq '' {
+                                     $result ~=  right($arg, $width, $padding, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 } elsif $justify eq '\-' {
+                                     $result ~=  left($arg, $width, $padding, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 } elsif $justify eq '^' {
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :number\-of\-chars(&internal\-number\-of\-chars), :$max\-width);
+                                 }
+                             }
+                         }
+                when 's' {
+                            \&.\&.\&.
+                            \&.\&.\&.
+                            \&.\&.\&.
+        \&.\&.\&.
+        \&.\&.\&.
+        \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+    return $result;
+    KEEP {
+        &number\-of\-chars($total\-number\-of\-chars, $total\-number\-of\-visible\-chars);
+    }
+} #`««« sub Sprintf(Str:D $format\-str,
+                :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                                        Str:D :$ellipsis = '', *@args \-\-> Str) is export »»»
+
+
+.EE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\fR\fR from module \fB"Terminal::WCWidth"\fR which is used to obtain the width the text if printed on the current terminal:
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBNB: wcswidth will return \-1 if you pass it text with colours etc embedded in them\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB"Terminal::WCWidth"\fR is witten by \fBbluebear94\fR github:bluebear94 [https://raku.land/github:bluebear94] get it with \fBzef\fR or whatever
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$max\-width\fR sets the maximum width of the field but if set to \fB0\fR (The default), will effectively be infinite (∞)\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$ellipsis\fR is used to elide the text if it's too big I recommend either \fB''\fR the default or \fB'…'\fR\&.
+.RE
+.RE
+.IP \(bu 2m
+\fBleft\fR
+.IP
+
+.RS 4m
+.EX
+sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
+                    Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export {
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
+.RE
+.IP \(bu 2m
+\fBright\fR
+.IP
+
+.RS 4m
+.EX
+sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                    :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &right\-global\-number\-of\-chars,
+                        Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export {
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
+.RE
+.IP \(bu 2m
+\fBcrop\-field\fR
+.IP
+
+.RS 4m
+.EX
+sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+                                                Int:D $max\-width, Str:D :$ellipsis = '' \-\-> Str:D) is export {
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fBcrop\-field\fR used by \fBcentre\fR, \fBleft\fR and \fBright\fR to crop their input if necessary\&. Copes with ANSI escape codes\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBWhere\fR
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$text\fR is the text to be cropped possibly, wit ANSI escapes embedded\&. 
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$w\fR is used to hold the width of \fB$text\fR is read\-write so will return that value\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$width\fR is the desired width\&. Will be used to return the updated width\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$cropped\fR is used to return the status of whether or not \fB$text\fR was truncated\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$max\-width\fR is the maximum width we are allowing\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$ellipsis\fR is used to supply a eliding \&. Empty string by default\&.
+.RE
+.RE
+.RE
+Top of Document [#table-of-contents]
+.SS Sprintf
+.IP \(bu 2m
+Sprintf like sprintf only it can deal with ANSI highlighted text\&. And has lots of other options, including the ability to specify a \fB$max\-width\fR using \fBwidth\&.precision\&.max\-width\fR, which can be \fB\&.*\fR, \fBC*<<num>$\fR>, \fB\&.*\fR, or \fBC<<num>\fR>
+.IP
+
+.RS 4m
+.EX
+sub Sprintf(Str:D $format\-str,
+                :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                                        Str:D :$ellipsis = '', *@args \-\-> Str) is export 
+
+
+.EE
+.RE
+.RS 2n
+.IP \(bu 2m
+Where:
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBformat\-str\fR is is a superset of the \fBsprintf\fR format string, but it has extra features: like the flag \fB[ <char> ]\fR where <char> can be almost anything except \fB[\fR, \fB]\fR \fBcontrol characters\fR, \fBwhite space other than the normal space\fR, and \fBmax\-width\fR after the precision\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+The format string looks like this: 
+.IP
+
+.RS 4m
+.EX
+token format      { <chunks>+ }
+token chunks      { [ <chunk> || '%' <format\-spec> ] }
+token chunk       { <\-[%]>+ }
+token format\-spec { [ <fmt\-esc> || <fmt\-spec> ] }
+token fmt\-esc     { [      '%' #`« a literal % »
+                        || 'N' #`« a nl i\&.e\&. \n char but does not require interpolation so no double quotes required »
+                        || 'T' #`« a tab i\&.e\&. \t char but does not require interpolation so no double quotes required »
+                        || 'n' #`« not implemented and will not be, throws an exception if matched »
+                        || 't' #`« not implemented and will not be, throws an exception if matched »
+                    ]
+                  }
+token fmt\-spec   { [ <dollar\-directive> '$' ]? <flags>?  <width>? [ '\&.' <precision> [ '\&.' <max\-width> ]? ]? <modifier>? <spec\-char> }
+
+
+
+.EE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Top of Document [#table-of-contents]
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Where
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBdollar\-directive\fR is a integer >= 1
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBflags\fR is any zero or more of:
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB+\fR put a plus in front of positive values\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB\-\fR left justify, right is the default
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB^\fR centre justify\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB#\fR ensure the leading \fB0\fR for any octal, prefix non\-zero hexadecimal with \fB0x\fR or \fB0X\fR, prefix non\-zero binary with \fB0b\fR or \fB0B\fR
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBv\fR vector flag (used only with d directive)
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB' '\fR pad with spaces\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB0\fR pad with zeros\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB[ <char> ]\fR pad with character char where char matches:
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB<\-[ <cntrl> \s \[ \] ]> || ' '\fR i\&.e\&. anything except control characters, white space (apart from the basic white space (i\&.e\&. \x20 or the one with ord 32)), and \fB[\fR and finally \fB]\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Top of Document [#table-of-contents]
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBwidth\fR is either an integer or a \fB*\fR or a \fB*\fR followed by an integer >= 1 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBprecision\fR is a \fB\&.\fR followed by either an positive integer or a \fB*\fR or a \fB*\fR followed by an integer >= 1 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBmax\-width\fR is a \fB\&.\fR followed by either an positive integer or a \fB*\fR or a \fB*\fR followed by an integer >= 1 and a '$'\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBmodifier\fR These are not implemented but is one of:
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBhh\fR interpret integer as a type \fBchar\fR or \fBunsigned char\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBh\fR interpret integer as a type \fBshort\fR or \fBunsigned short\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBj\fR interpret integer as a type \fBintmax_t\fR, only with a C99 compiler (unportable)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBl\fR interpret integer as a type \fBlong\fR or \fBunsigned long\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBll\fR interpret integer as a type \fBlong long\fR, \fBunsigned long long\fR, or \fBquad\fR (typically 64\-bit integers)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBq\fR interpret integer as a type \fBlong long\fR, \fBunsigned long long\fR, or \fBquad\fR (typically 64\-bit integers)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBL\fR interpret integer as a type \fBlong long\fR, \fBunsigned long long\fR, or \fBquad\fR (typically 64\-bit integers)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBt\fR interpret integer as a type \fBptrdiff_t\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBz\fR interpret integer as a type \fBsize_t\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Top of Document [#table-of-contents]
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBspec\-char\fR or the conversion character is one of:
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBc\fR a character with the given codepoint\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBs\fR a string\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBd\fR a signed integer, in decimal\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBu\fR an unsigned integer, in decimal\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBo\fR an unsigned integer, in octal, with a \fB0o\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBx\fR an unsigned integer, in hexadecimal, with a \fB0x\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBe\fR a floating\-point number, in scientific notation\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBf\fR a floating\-point number, in fixed decimal notation\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBg\fR a floating\-point number, in %e or %f notation\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBX\fR like \fBx\fR, but using uppercase letters, with a \fB0X\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBE\fR like \fBe\fR, but using an uppercase \fBE\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBG\fR like \fBg\fR, but with an uppercase \fBE\fR (if applicable)\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBb\fR an unsigned integer, in binary, with a \fB0b\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBB\fR an unsigned integer, in binary, with a \fB0B\fR prepended if the \fB#\fR flag is present\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBi\fR a synonym for \fB%d\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBD\fR a synonym for \fB%ld\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBU\fR a synonym for \fB%lu\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBO\fR a synonym for \fB%lo\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBF\fR a synonym for \fB%f\fR\&.
+.RE
+.RE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Top of Document [#table-of-contents]
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:&number\-of\-chars\fR is an optional named argument which takes a function with a signature \fB:(Int:D, Int:D \-\- Bool:D)\fR> if not specified it will have the value of \fB&Sprintf\-global\-number\-of\-chars\fR which is defined as:
+.IP
+
+.RS 4m
+.EX
+our $Sprintf\-total\-number\-of\-chars is export = 0;
+our $Sprintf\-total\-number\-of\-visible\-chars is export = 0;
+
+sub Sprintf\-global\-number\-of\-chars(Int:D $number\-of\-chars, Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+    $Sprintf\-total\-number\-of\-chars         = $number\-of\-chars;
+    $Sprintf\-total\-number\-of\-visible\-chars = $number\-of\-visible\-chars;
+    return True
+}
+
+
+.EE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+This is exactly the same as the argument by the same name in \fBcentre\fR, \fBleft\fR and \fBright\fR above\&.
+.IP
+i\&.e\&. 
+.IP
+
+.RS 4m
+.EX
+sub test( \-\-> True) is export {
+    \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+    my $test\-number\-of\-chars = 0;
+    my $test\-number\-of\-visible\-chars = 0;
+
+    sub test\-number\-of\-chars(Int:D $number\-of\-chars, Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+        $test\-number\-of\-chars         = $number\-of\-chars;
+        $test\-number\-of\-visible\-chars = $number\-of\-visible\-chars;
+        return True
+    }
+
+    put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                                        ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                    :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+    put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                    :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+    dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+    \&.\&.\&.
+    \&.\&.\&.
+    \&.\&.\&.
+}
+
+
+.EE
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBNote: This is a closure we should always use a closure if we want to get the number of characters printed\&.\fR 
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Top of Document [#table-of-contents]
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:$ellipsis\fR this is an optional argument of type \fBStr:D\fR which defaults to \fB''\fR, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of \fBmax\-width\fR (note \fBmax\-width\fR defaults to \fB0\fR which means infinity)\&. The recommended value would be something like \fB…\fR\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB*@args\fR is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Hash then it should contain two pairs with keys: \fBarg\fR and \fBref\fR; denoting the actual argument and a reference argument respectively, the ref argument should be the same as \fBarg\fR but with no ANSI formatting etc to mess up the counting\&. As this ruins formatting spacing\&. If not present will be set to \fBstrip\-ansi($arg)\fR, only bother with all this if \fBstrip\-ansi($arg)\fR isn't good enough\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If a Array then it should contain two values\&. The first being \fBarg\fR and the other being \fBref\fR; everything else is the same as above\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBarg\fR the actual argument\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][]\fR the actual argument\&. Where \fB$i\fR is the current index into the array of args\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@args[$i][1]\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+If it's a scalar then it's the argument itself\&. And \fB$ref\fR is \fBstrip\-ansi($arg)\fR if $arg is a string type i\&.e\&. Str or just \fBC\fR$arg>> otherwise\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBref\fR the reference argument, as in the \fB:$ref\fR arg of the \fBleft\fR, \fBright\fR and \fBcentre\fR functions which it uses\&. It only makes sense if your talking strings possibly formatted if not present will be set to \fBstrip\-ansi($arg)\fR if $arg is a Str or just $arg otherwise\&.
+.IP
+i\&.e\&.
+.IP
+
+.RS 4m
+.EX
+put Sprintf('%30\&.14\&.14s, %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                            ${ arg => $highlighted, ref => $text }, $text, 30, 14, $highlighted, 13,
+                                                                        :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+put Sprintf('%30\&.14\&.14s,  testing %30\&.14\&.13s%N%%%N%^*\&.*s%3$*4$\&.*3$\&.*6$d%N%2$^[&]*3$\&.*4$\&.*6$s%T%1$[*]^100\&.*4$\&.99s',
+                            $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                        :number\-of\-chars(&test\-number\-of\-chars), :ellipsis('…'));
+dd $test\-number\-of\-chars,  $test\-number\-of\-visible\-chars;
+
+
+.EE
+.RE
+.RE
+.RE
+.RE
+.RE
+Top of Document [#table-of-contents]
+.SS Printf
+.IP \(bu 2m
+Same as \fBSprintf\fR but writes it's output to \fB$*OUT\fR or an arbitrary filehandle if you choose\&.
+.RS 2n
+.IP \(bu 2m
+defined as
+.IP
+
+.RS 4m
+.EX
+multi sub Printf(Str:D $format\-str,
+        :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                      Str:D :$ellipsis = '', *@args \-\-> True) is export {
+    Sprintf($format\-str, :&number\-of\-chars, :$ellipsis, |@args)\&.print;
+} #`««« sub Printf(Str:D $format\-str,
+         :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                      Str:D :$ellipsis = '', *@args \-\-> True) is export »»»
+
+multi sub Printf(IO::Handle:D $fp, Str:D $format\-str,
+         :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                      Str:D :$ellipsis = '', *@args \-\-> True) is export {
+    $fp\&.print: Sprintf($format\-str, :&number\-of\-chars, :$ellipsis, |@args);
+} #`««« sub Printf(my IO::Handle:D $fp, Str:D $format\-str,
+         :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
+                                      Str:D :$ellipsis = '', *@args \-\-> True) is export »»»
+
+
+.EE
+.RE
+.RE
+
+Top of Document [#table-of-contents]
