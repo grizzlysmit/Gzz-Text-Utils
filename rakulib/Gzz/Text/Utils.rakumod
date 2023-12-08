@@ -1514,7 +1514,7 @@ L<Top of Document|#table-of-contents>
 =begin item
 
 Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability
-to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can be B<C<.*>>, B«C*«<num>$»», B«C«.*»»,  or B«C«<num>»»
+to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can be B<C<.*>>, B«C«*<num>$»», B«C«.*»»,  or B«C«<num>»»
 
 =begin code :lang<raku>
 

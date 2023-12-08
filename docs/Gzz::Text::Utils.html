@@ -822,7 +822,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 </ul>
 </section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h2 id="Sprintf"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Sprintf</a></h2>
 <ul>
-<li><p>Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a <strong><code>$max-width</code></strong> using <strong><code>width.precision.max-width</code></strong>, which can be <strong><code>.*</code></strong>, <strong>C*«&lt;num&gt;$</strong>», <strong><code>.*</code></strong>, or <strong><code>&lt;num&gt;</code></strong></p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+<li><p>Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a <strong><code>$max-width</code></strong> using <strong><code>width.precision.max-width</code></strong>, which can be <strong><code>.*</code></strong>, <strong><code>*&lt;num&gt;$</code></strong>, <strong><code>.*</code></strong>, or <strong><code>&lt;num&gt;</code></strong></p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --&gt; Str) is export 
 
@@ -1001,7 +1001,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-08T13:04:35Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-08T13:07:00Z</span></div></footer>
 	</body>
 </html>
 
