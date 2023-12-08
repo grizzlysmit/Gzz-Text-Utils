@@ -3,3 +3,4 @@ scratch/*
 rakulib/.precomp/
 sdist/
 archive/
+.fez
