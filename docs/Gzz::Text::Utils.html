@@ -1008,8 +1008,46 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <p>Display a text based menu.</p><pre class="pod-block-code">sub menu(Str:D @candidates is copy, Str:D $message = &quot;&quot;, Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --&gt; Str) is export 
 
 </pre></section><section name="pod"><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
-<pre class="pod-block-code"></pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-12T07:23:04Z</span></div></footer>
+<p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+                        &amp;setup-option-str:(Int:D $c, @a --&gt; Str:D),
+                            &amp;get-result:(Int:D $res, Int:D $p, Int:D $l, @a --&gt; Int:D),
+                                                                        @array --&gt; Int) is export 
+
+</pre><ul>
+<li><p>Where</p></li>
+<ul>
+<li><p><strong><code>$id</code></strong> is the starting value of our position in the array/choices.</p></li>
+<li><p><strong><code>$window-height</code></strong> is the number of rows of characters to display at a time.</p></li>
+<li><p><strong><code>$id-name</code></strong> is the name of the parameter we are scrolling.</p></li>
+<li><p><strong><code>&amp;setup-option-str</code></strong> is a function that returns the current row.</p></li>
+<ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p>the arg <strong><code>$c</code></strong> will be the position in the array we are </p></li>
+<li><p>the arg <strong><code>@a</code></strong> will be the <strong><code>@array</code></strong> supplied to <strong><code>dropdown(…)</code></strong> </p></li>
+<ul>
+<li><p>the use of a function for this means you can compute a much more complex field.</p></li>
+</ul>
+</ul>
+</ul>
+<li><p><strong><code>&amp;get-result</code></strong> is a function to work out the value selected.</p></li>
+<ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p>the arg <strong><code>$res</code></strong> is the default value to return.</p></li>
+<li><p>the arg <strong><code>$p</code></strong> is the current position in the array <strong><code>@array</code></strong> supplied to <strong><code>dropdown</code></strong>.</p></li>
+<li><p>the arg <strong><code>$l</code></strong> is the length of the array <strong><code>@array</code></strong>.</p></li>
+<li><p>the arg <strong><code>@a</code></strong> is the array <strong><code>@array</code></strong> that was supplied to <strong><code>dropdown</code></strong>.</p></li>
+<ul>
+<li><p>Because we use a function we can compute much more complex results; depending on what we have in <strong><code>@array</code></strong>. It still needs to be an Int (for now) but you can do further computations at the end to get other values.</p></li>
+</ul>
+</ul>
+</ul>
+<li><p><strong><code>@array</code></strong> is the array to select from.</p></li>
+</ul>
+</ul>
+</section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-12T10:55:48Z</span></div></footer>
 	</body>
 </html>
 

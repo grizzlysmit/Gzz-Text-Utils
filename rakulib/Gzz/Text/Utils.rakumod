@@ -4396,9 +4396,41 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
 
 =head3 dropdown(…)
 
+A text based dropdown/list or menu with ANSI colours.
+
 =begin code :lang<raku>
 
+sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, @a --> Str:D),
+                            &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D),
+                                                                        @array --> Int) is export 
+
 =end code
+
+=item Where
+=item2 B<C<$id>>               is the starting value of our position in the array/choices.
+=item2 B<C<$window-height>>    is the number of rows of characters to display at a time.
+=item2 B<C<$id-name>>          is the name of the parameter we are scrolling.
+=item2 B<C<&setup-option-str>> is a function that returns the current row.
+=item3 Where:
+=item4 the arg B<C<$c>> will be the position in the array we are 
+=item4 the arg B<C<@a>> will be the B<C<@array>> supplied to B<C<dropdown(…)>> 
+=item5 the use of a function for this means you can compute a much more complex field.
+=item2 B<C<&get-result>>       is a function to work out the value selected.
+=item3 Where:
+=item4 the arg B<C<$res>> is the default value to return.
+=item4 the arg B<C<$p>> is the current position in the array B<C<@array>> supplied to B<C<dropdown>>.
+=item4 the arg B<C<$l>> is the length of the array B<C<@array>>.
+=item4 the arg B<C<@a>> is the array B<C<@array>> that was supplied to B<C<dropdown>>.
+
+=begin item5 
+
+Because we use a function we can compute much more complex results; depending on what we have in B<C<@array>>.
+It still needs to be an Int (for now) but you can do further computations at the end to get other values.
+
+=end item5
+
+=item2 B<C<@array>>  is the array to select from.
 
 =end pod
 

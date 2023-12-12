@@ -616,7 +616,46 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
 
 ### dropdown(…)
 
-```raku
+A text based dropdown/list or menu with ANSI colours.
 
+```raku
+sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, @a --> Str:D),
+                            &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D),
+                                                                        @array --> Int) is export
 ```
+
+  * Where
+
+    * **`$id`** is the starting value of our position in the array/choices.
+
+    * **`$window-height`** is the number of rows of characters to display at a time.
+
+    * **`$id-name`** is the name of the parameter we are scrolling.
+
+    * **`&setup-option-str`** is a function that returns the current row.
+
+      * Where:
+
+        * the arg **`$c`** will be the position in the array we are 
+
+        * the arg **`@a`** will be the **`@array`** supplied to **`dropdown(…)`** 
+
+          * the use of a function for this means you can compute a much more complex field.
+
+    * **`&get-result`** is a function to work out the value selected.
+
+      * Where:
+
+        * the arg **`$res`** is the default value to return.
+
+        * the arg **`$p`** is the current position in the array **`@array`** supplied to **`dropdown`**.
+
+        * the arg **`$l`** is the length of the array **`@array`**.
+
+        * the arg **`@a`** is the array **`@array`** that was supplied to **`dropdown`**.
+
+          * Because we use a function we can compute much more complex results; depending on what we have in **`@array`**. It still needs to be an Int (for now) but you can do further computations at the end to get other values.
+
+    * **`@array`** is the array to select from.
 

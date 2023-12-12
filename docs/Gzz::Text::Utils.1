@@ -1445,8 +1445,121 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
 .RE
 .SS dropdown(…)
 
+A text based dropdown/list or menu with ANSI colours\&.
+
 .RS 4m
 .EX
+sub dropdown(Int:D $id, Int:D $window\-height, Str:D $id\-name,
+                        &setup\-option\-str:(Int:D $c, @a \-\-> Str:D),
+                            &get\-result:(Int:D $res, Int:D $p, Int:D $l, @a \-\-> Int:D),
+                                                                        @array \-\-> Int) is export 
+
 
 .EE
+.RE
+.IP \(bu 2m
+Where
+.RS 2n
+.IP \(bu 2m
+\fB$id\fR is the starting value of our position in the array/choices\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$window\-height\fR is the number of rows of characters to display at a time\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$id\-name\fR is the name of the parameter we are scrolling\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&setup\-option\-str\fR is a function that returns the current row\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Where:
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB$c\fR will be the position in the array we are 
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB@a\fR will be the \fB@array\fR supplied to \fBdropdown(…)\fR 
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the use of a function for this means you can compute a much more complex field\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&get\-result\fR is a function to work out the value selected\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Where:
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB$res\fR is the default value to return\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB$p\fR is the current position in the array \fB@array\fR supplied to \fBdropdown\fR\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB$l\fR is the length of the array \fB@array\fR\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+the arg \fB@a\fR is the array \fB@array\fR that was supplied to \fBdropdown\fR\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Because we use a function we can compute much more complex results; depending on what we have in \fB@array\fR\&. It still needs to be an Int (for now) but you can do further computations at the end to get other values\&.
+.RE
+.RE
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB@array\fR is the array to select from\&.
 .RE
