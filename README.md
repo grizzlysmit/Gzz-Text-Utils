@@ -37,6 +37,10 @@ Table of Contents
 
     * [Printf](#printf)
 
+    * [menu(…)](#menu)
+
+    * [dropdown(…)](#dropdown)
+
 NAME
 ====
 
@@ -601,10 +605,6 @@ Printf
       ```
 
 [Top of Document](#table-of-contents)
-
-    * [menu(…)](#menu)
-
-    * [dropdown(…)](#dropdown)
 
 ### menu
 

@@ -31,6 +31,9 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 =item2 L<Sprintf|#sprintf>
 =item2 L<Printf|#printf>
 
+=item2 L<menu(…)|#menu>
+=item2 L<dropdown(…)|#dropdown>
+
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
 =VERSION v0.1.15
@@ -4320,9 +4323,6 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
                                                         Str:D :$ellipsis = '', *@args --> True) is export »»»
 
 =begin pod
-
-=item2 L<menu(…)|#menu>
-=item2 L<dropdown(…)|#dropdown>
 
 =head3 menu
 
