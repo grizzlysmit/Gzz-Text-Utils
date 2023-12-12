@@ -105,6 +105,9 @@ INIT "Grammar::Debugger is on".say if $debug;
 
 use Terminal::Width;
 use Terminal::WCWidth;
+use Terminal::ANSI::OO :t;
+
+my @signal; # stuff to run on a interupt/signal #
 
 =begin pod
 
@@ -4315,3 +4318,216 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 } #`««« sub Printf(my IO::Handle:D $fp, Str:D $format-str,
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --> True) is export »»»
+
+=begin pod
+
+=item2 L<menu(…)|#menu>
+=item2 L<dropdown(…)|#dropdown>
+
+=head3 menu
+
+Display a text based menu.
+
+=begin code :lang<raku>
+
+sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --> Str) is export 
+
+=end code
+
+=end pod
+
+sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False, Bool:D :s(:$syntax) = False --> Str) is export {
+    $colour = True if $syntax;
+    if $colour {
+        # insure that the screen is reset on error #
+        my &stack = sub ( --> Nil) {
+            while @signal {
+                my &elt = @signal.pop;
+                &elt();
+            }
+        };
+        signal(SIGINT, SIGHUP, SIGQUIT, SIGTERM, SIGQUIT).tap( { &stack(); put t.restore-screen; say "$_ Caught"; exit 0 } );
+        my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+            return @array[$cnt];
+        };
+        my &get-result = sub (Int:D $result, Int:D $pos, Int:D $length, @array --> Int:D ) {
+            my $res = $result;
+            if $pos ~~ 0..^$length {
+              $res = $pos;
+            }
+            return $res
+        };
+        my Int:D $indx = dropdown(0, 40, 'backup', &setup-option-str, &get-result, @candidates);
+        if $indx ~~ ^@candidates.elems {
+            return @candidates[$indx];
+        } else {
+            return Str;
+        }
+    }
+    @candidates.append('cancel');
+    $message.say if $message;
+    for @candidates.kv -> $indx, $candidate {
+        "%10d\t%-20s\n".printf($indx, $candidate)
+    }
+    "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit".say;
+    my $choice = -1;
+    say "choose a backup to restore";
+    loop {
+        $choice = prompt("choose a candiate 0..{+@candidates - 1} =:> ");
+        $choice = +@candidates - 1 if $choice ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' ] \s* $$ /;
+        if $choice !~~ rx/ ^^ \s* \d* \s* $$ / {
+            "$choice: is not a valid option".say;
+            redo
+        }
+        unless 0 <= $choice < +@candidates {
+            "$choice: is not a valid option".say;
+            redo;
+        }
+        last;
+    }
+    my Str $Dir = @candidates[$choice];
+    #$Dir.say;
+    put t.show-cursor;
+    put t.restore-screen;
+    return $Dir;
+} # sub menu(Str:D @candidates is copy, Str $message = "" --> Str) is export #
+
+=begin pod
+
+=head3 dropdown(…)
+
+=begin code :lang<raku>
+
+=end code
+
+=end pod
+
+###############################################################################################################
+#                                                                                                             #
+#       Emulates dropdown/list behaviour as best you can on a terminal. not a real dropdown always down!!!    #
+#                                                                                                             #
+###############################################################################################################
+
+sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $length --> Int:D) {
+    $top = $pos - $window-height div 2 if $pos < $top;
+    $top = $pos - $window-height div 2 if $pos >= $top + $window-height;
+    $top = $length - $window-height if $top + $window-height >= $length;
+    $top = 0 if $top < 0;
+    return $top;
+} # sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $length --> Int:D) #
+
+sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:(Int:D $c, @a --> Str:D),
+                &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D), @array --> Int) is export {
+    my Int $result = $id;
+    try {
+        my Int $pos    = -1;
+        my Int $top    = -1;
+        my $bgcolour;
+        my $fgcolour;
+        my Int $length         = @array.elems;
+        for @array.kv -> $idx, %r {
+            if %r{$id-name} == $result {
+                $pos = $idx;
+                last; # found so don't waste resources #
+            }
+        }
+        $top = normalise_top($top, $pos, $window-height, $length);
+        my Str $key;
+        my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
+        @signal.push: {
+            $original-flags.setattr(:NOW);
+        };
+        my $flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
+        $flags.unset_lflags('ICANON');
+        $flags.unset_lflags('ECHO');
+        $flags.setattr(:NOW);
+        my Int $width = terminal-width;
+        $width = 80 if $width === Int;
+        my Int:D $m = 0;
+        loop (my Int $i = 0; $i < $length; $i++) {
+            $m = max($m, hwcswidth(&setup-option-str($i, @array)));
+        } # loop (my Int $i = 0; $i < $length; $i++) #
+        $m = max($m, hwcswidth('use up and down arrows or page up and down : and enter to select'));
+        my Int:D $w = min($width - 10 - 24 - 2 - 42, $m + 2);
+        loop {
+            put t.clear-screen;
+            loop (my Int $cnt = $top; $cnt < $top + $window-height && $cnt < $length; $cnt++) {
+                if $cnt == $pos {
+                    $bgcolour = t.bg-color(0,0,255);
+                    $fgcolour = t.bright-yellow;
+                } elsif $cnt % 2 == 0 {
+                    $bgcolour = t.bg-yellow;
+                    $fgcolour = t.bright-blue;
+                } else {
+                    $bgcolour = t.bg-color(0,255,0);
+                    $fgcolour = t.bright-blue;
+                }
+                put $bgcolour ~ t.bold ~ $fgcolour ~ sprintf("%-*s", $w, &setup-option-str($cnt, @array)) ~ t.text-reset;
+            } # loop (my Int $cnt = $top; $cnt <= $top + $window-height; $cnt++) #
+            $cnt = $top + $window-height;
+            my Int:D $wdth = $w div 2;
+            put t.bg-green ~ t.bold ~ t.bright-blue ~ sprintf("%-*s: %-*s", $wdth, trailing-dots('use up and down arrows or page up and down', 42), $w - $wdth, 'and enter to select') ~ t.text-reset;
+            $cnt++;
+            $key = $*IN.read(10).decode;
+            given $key {
+                when 'k'          { $pos--; $pos = 0 if $pos < 0; $top-- if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # up #
+                when 'j'          { $pos++; $pos = ($length - 1) if $pos >= $length; $top++ if $pos >= $top + $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # down #
+                when "\x[1B][A"   { $pos--; $pos = 0 if $pos < 0; $top-- if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # up #
+                when "\x[1B][B"   { $pos++; $pos = ($length - 1) if $pos >= $length; $top++ if $pos >= $top + $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # down #
+                when "\x[1B][5~"  { $pos -= ($window-height - 1); $pos = 0 if $pos < 0; $top -= ($window-height - 1) if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # page up #
+                when "\x[1B][6~"  { $pos += ($window-height - 1); $pos = ($length - 1) if $pos >= $length; $top = normalise_top($top, $pos, $window-height, $length); } # page down #
+                when "\x[1B][H"   { $pos = 0; $top = 0; $top = normalise_top($top, $pos, $window-height, $length); } # home #
+                when "\x[1B][F"   { $pos = ($length - 1); $top = $length - $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # end #
+                when "\x[1B]"     { last; } # esc #
+                when "\n"         {   # enter #
+                                      #`«««
+                                      if $pos ~~ 0..^$length {
+                                          my %row = |%(@array[$pos]);
+                                          $result = %row{$id-name} if %row{$id-name}:exists;
+                                      }
+                                      # »»»
+                                      $result = &get-result($result, $pos, $length, @array);
+                                      last;
+                                  }
+                when "q"         { last; } # quit #
+                when "Q"         { last; } # quit #
+            }
+        } # loop #
+        $original-flags.setattr(:NOW);
+        @signal.pop if @signal;
+        CATCH {
+            default {
+                $original-flags.setattr(:NOW);
+                @signal.pop if @signal;
+                .backtrace;
+                .Str.say; .rethrow 
+            }
+        }
+    } # try #
+    return $result;
+} #`««« sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:(Int:D $c, @a --> Str:D),
+                &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D), @array --> Int) is export »»»
+
+sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
+    my Str $result = " $text";
+    $width -= hwcswidth($result);
+    $width = $width div hwcswidth($fill);
+    $result = $fill x $width ~ $result;
+    return $result;
+} # sub lead-dots(Str $text, Int:D $width --> Str) is export #
+
+sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
+    my Str $result = $text;
+    $width -= hwcswidth($result);
+    $width = $width div hwcswidth($fill);
+    $result ~= $fill x $width;
+    return $result;
+} # sub trailing-dots(Str $text, Int:D $width --> Str) is export #
+
+sub dots(Str:D $ind, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
+    my Str $result = $ind;
+    $width -= hwcswidth($result);
+    $width = $width div hwcswidth($fill);
+    $result ~= $fill x $width;
+    return $result;
+} # sub dots(Str $ind, Int:D $width --> Str) is export #

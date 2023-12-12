@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-12-09
+.TH Utils.rakumod 1 2023-12-12
 .SS Table of Contents
 .IP \(bu 2m
 NAME [#name]
@@ -1424,3 +1424,29 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format\-str,
 .RE
 
 Top of Document [#table-of-contents]
+.RS 2n
+.IP \(bu 2m
+menu(…) [#menu]
+.RE
+.RS 2n
+.IP \(bu 2m
+dropdown(…) [#dropdown]
+.RE
+.SS menu
+
+Display a text based menu\&.
+
+.RS 4m
+.EX
+sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False \-\-> Str) is export 
+
+
+.EE
+.RE
+.SS dropdown(…)
+
+.RS 4m
+.EX
+
+.EE
+.RE

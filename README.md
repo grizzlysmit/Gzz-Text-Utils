@@ -602,3 +602,21 @@ Printf
 
 [Top of Document](#table-of-contents)
 
+    * [menu(…)](#menu)
+
+    * [dropdown(…)](#dropdown)
+
+### menu
+
+Display a text based menu.
+
+```raku
+sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --> Str) is export
+```
+
+### dropdown(…)
+
+```raku
+
+```
+
