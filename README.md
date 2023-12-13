@@ -792,9 +792,11 @@ my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> Mu
     }
     return $res
 };
-my Int:D $cc-id        = dropdown($cc_id, 20, 'id', &setup-option-str, &get-result, @_country);
+my Int:D $cc-id        = dropdown($cc_id, 20, 'id',
+                                    &setup-option-str, &find-pos, &get-result, @_country);
 while !valid-country-cc-id($cc-id, %countries) {
-    $cc-id             = dropdown($cc-id, 20, 'id', &setup-option-str, &get-result, @_country);
+    $cc-id             = dropdown($cc-id, 20, 'id',
+                                    &setup-option-str, &find-pos, &get-result, @_country);
 }
 ```
 

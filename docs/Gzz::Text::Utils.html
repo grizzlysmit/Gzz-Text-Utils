@@ -1160,9 +1160,11 @@ my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --
     }
     return $res
 };
-my Int:D $cc-id        = dropdown($cc_id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
+my Int:D $cc-id        = dropdown($cc_id, 20, 'id',
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @_country);
 while !valid-country-cc-id($cc-id, %countries) {
-    $cc-id             = dropdown($cc-id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
+    $cc-id             = dropdown($cc-id, 20, 'id',
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @_country);
 }
 
 </pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
@@ -1221,7 +1223,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:26:27Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:29:26Z</span></div></footer>
 	</body>
 </html>
 
