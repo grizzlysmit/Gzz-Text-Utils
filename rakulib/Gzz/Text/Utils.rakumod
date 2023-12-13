@@ -4542,6 +4542,8 @@ while !valid-country-cc-id($cc-id, %countries) {
 Or using a much simpler array.
 B<NB: from C<menu>>
 
+L<Top of Document|#table-of-contents>
+
 =begin code :lang<raku>
 
 my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
@@ -4703,6 +4705,7 @@ sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is e
 =item2 B<C<$width>> the width of the total field.
 =item2 B<C<$fill>> the fill char or string.
 
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -4733,6 +4736,8 @@ sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) 
 =item2 B<C<$width>> the width of the total field.
 =item2 B<C<$fill>> the fill char or string.
 
+L<Top of Document|#table-of-contents>
+
 =end pod
 
 sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
@@ -4760,6 +4765,8 @@ sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
 =item2 B<C<$text>> the text to be preceded by the dots.
 =item2 B<C<$width>> the width of the total field.
 =item2 B<C<$fill>> the fill char or string.
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 

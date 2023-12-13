@@ -766,6 +766,8 @@ while !valid-country-cc-id($cc-id, %countries) {
 
 Or using a much simpler array. **NB: from `menu`**
 
+[Top of Document](#table-of-contents)
+
 ```raku
 my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
     return @array[$cnt];
@@ -807,6 +809,8 @@ sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is e
 
     * **`$fill`** the fill char or string.
 
+[Top of Document](#table-of-contents)
+
 ### trailing-dots(…)
 
 Returns **`$text`** in a field of **`$width`** with a line of dots trailing after it. Sort of like **`right`** with **`$fill`** defaulting to **`.`** but with a single space between the text and the padding.
@@ -823,6 +827,8 @@ sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) 
 
     * **`$fill`** the fill char or string.
 
+[Top of Document](#table-of-contents)
+
 ### dots(…)
 
 Returns **`$text`** in a field of **`$width`** with a line of dots preceding it. Sort of like **`left`** with **`$fill`** defaulting to **`.`**.
@@ -838,4 +844,6 @@ sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
     * **`$width`** the width of the total field.
 
     * **`$fill`** the fill char or string.
+
+[Top of Document](#table-of-contents)
 

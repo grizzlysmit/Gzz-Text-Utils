@@ -1143,7 +1143,7 @@ while !valid-country-cc-id($cc-id, %countries) {
     $cc-id             = dropdown($cc-id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
 }
 
-</pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+</pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
     return @array[$cnt];
 };
 my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
@@ -1175,7 +1175,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 <li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
 </ul>
 </ul>
-</section><section name="pod"><h3 id="trailing-dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">trailing-dots(…)</a></h3>
+<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="trailing-dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">trailing-dots(…)</a></h3>
 <p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots trailing after it. Sort of like <strong><code>right</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p><pre class="pod-block-code">sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
 
 </pre><ul>
@@ -1186,7 +1186,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 <li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
 </ul>
 </ul>
-</section><section name="pod"><h3 id="dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dots(…)</a></h3>
+<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dots(…)</a></h3>
 <p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong>.</p><pre class="pod-block-code">sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
 
 </pre><ul>
@@ -1197,8 +1197,8 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 <li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
 </ul>
 </ul>
-</section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:29:56Z</span></div></footer>
+<p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:33:07Z</span></div></footer>
 	</body>
 </html>
 
