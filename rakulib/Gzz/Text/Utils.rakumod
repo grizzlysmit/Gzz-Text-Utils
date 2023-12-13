@@ -1283,9 +1283,9 @@ Right justifying text.
 =begin code :lang<raku>
 
 sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-             :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
+            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
                     Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
-                                                   Str:D :$ellipsis = '' --> Str) is export
+                                                 Str:D :$ellipsis = '' --> Str) is export
 
 =end code
 
