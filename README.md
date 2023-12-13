@@ -379,13 +379,9 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
       * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-[Top of Document](#table-of-contents)
+      * [Top of Document](#table-of-contents)
 
-#### crop-field
-
-  * Cropping
-
-    * text
+        #### crop-field
 
       * Cropping Text in a field.
 

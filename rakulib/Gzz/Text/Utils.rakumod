@@ -1303,12 +1303,12 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =item3       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
+=begin item3
 L<Top of Document|#table-of-contents>
 
 =head4 crop-field
 
-=item Cropping
-=item2 text
+=end item3
 
 =begin item3 
 
