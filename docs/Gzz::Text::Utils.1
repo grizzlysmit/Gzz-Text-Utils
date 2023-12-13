@@ -575,7 +575,7 @@ Sprintf like sprintf only it can deal with ANSI highlighted text\&. And has lots
 .EX
 sub Sprintf(Str:D $format\-str,
            :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
-                                       Str:D :$ellipsis = '', *@args \-\-> Str) is export 
+                                           Str:D :$ellipsis = '', *@args \-\-> Str) is export 
 
 
 .EE
@@ -1496,8 +1496,9 @@ Display a text based menu\&.
 
 .RS 4m
 .EX
-sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                     Bool:D :s(:$syntax) = False \-\-> MultiT) is export
+sub menu(@candidates is copy, Str:D $message = "",
+                            Bool:D :c(:color(:$colour)) is copy = False,
+                             Bool:D :s(:$syntax) = False \-\-> MultiT) is export
 
 
 .EE

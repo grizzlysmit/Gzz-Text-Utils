@@ -1557,7 +1557,7 @@ to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can b
 
 sub Sprintf(Str:D $format-str,
            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                       Str:D :$ellipsis = '', *@args --> Str) is export 
+                                           Str:D :$ellipsis = '', *@args --> Str) is export 
 
 =end code
 
@@ -4377,8 +4377,9 @@ Display a text based menu.
 
 =begin code :lang<raku>
 
-sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                     Bool:D :s(:$syntax) = False --> MultiT) is export
+sub menu(@candidates is copy, Str:D $message = "",
+                            Bool:D :c(:color(:$colour)) is copy = False,
+                             Bool:D :s(:$syntax) = False --> MultiT) is export
 
 =end code
 

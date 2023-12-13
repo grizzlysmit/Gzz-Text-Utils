@@ -414,7 +414,7 @@ Sprintf
     ```raku
     sub Sprintf(Str:D $format-str,
                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                           Str:D :$ellipsis = '', *@args --> Str) is export
+                                               Str:D :$ellipsis = '', *@args --> Str) is export
     ```
 
     * Where:
@@ -658,8 +658,9 @@ subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
 Display a text based menu.
 
 ```raku
-sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                     Bool:D :s(:$syntax) = False --> MultiT) is export
+sub menu(@candidates is copy, Str:D $message = "",
+                            Bool:D :c(:color(:$colour)) is copy = False,
+                             Bool:D :s(:$syntax) = False --> MultiT) is export
 ```
 
   * Where:
