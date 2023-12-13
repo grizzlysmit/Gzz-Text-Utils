@@ -365,7 +365,7 @@ The Functions Provided
 
 ### right
 
-  * just right.
+  * ⋄
 
     * Right justifying text.
 
