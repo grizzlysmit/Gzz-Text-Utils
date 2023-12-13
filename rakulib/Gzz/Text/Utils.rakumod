@@ -1280,7 +1280,7 @@ L<Top of Document|#table-of-contents>
 
 =head3 right
 
-=item just right.
+=item X<just right>.
 
 =begin item2
 
