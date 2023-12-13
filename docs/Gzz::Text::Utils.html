@@ -596,6 +596,9 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#MultiT">MultiT</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#menu">menu</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#dropdown(…)">dropdown(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#lead-dots(…)">lead-dots(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#trailing-dots(…)">trailing-dots(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#dots(…)">dots(…)</a></td></tr>
 </table></div>
 </nav><div id="Gzz::Text::Utils"></div><div class="subtitle"><p>A Raku module to provide text formatting services to Raku programs.</p></div><div class="pod-body"><section name="___top"><h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
 <ul>
@@ -624,8 +627,12 @@ footer {
 <li><p><a href="#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted</a></p></li>
 <li><p><a href="#sprintf">Sprintf</a></p></li>
 <li><p><a href="#printf">Printf</a></p></li>
+<li><p><a href="#multit">MultiT</a></p></li>
 <li><p><a href="#menu">menu(…)</a></p></li>
 <li><p><a href="#dropdown">dropdown(…)</a></p></li>
+<li><p><a href="#lead-dots">lead-dots(…)</a></p></li>
+<li><p><a href="#trailing-dots">trailing-dots(…)</a></p></li>
+<li><p><a href="#dots">dots(…)</a></p></li>
 </ul>
 </ul>
 <section>
@@ -1010,9 +1017,26 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 
 </pre></section><section name="pod"><h3 id="menu"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">menu</a></h3>
 <p>Display a text based menu.</p><pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;, Bool:D :c(:color(:$colour)) is copy = False,
-                                                                        Bool:D :s(:$syntax) = False --&gt; MultiT) is export {
+                                                     Bool:D :s(:$syntax) = False --&gt; MultiT) is export
 
-</pre></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
+</pre><ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p><strong><code>@candidates</code></strong> is an array of strings to make up the rows of the menu.</p></li>
+<li><p><strong><code>:c(:color(:$colour))</code></strong> defines a boolean flag to tell whether to use colours or not.</p></li>
+<ul>
+<li><p>you can use <strong><code>:c</code></strong>, <strong><code>:color</code></strong> or <strong><code>:colour</code></strong> for this they are all exactly the same.</p></li>
+</ul>
+<li><p><strong><code>:s(:$syntax)</code></strong> same as <strong><code>$colour</code></strong> except it could result in some sour of syntax highlighting. </p></li>
+<ul>
+<li><p>for now <strong><code>$syntax</code></strong> is no different from <strong><code>$colour</code></strong> but it may change later.</p></li>
+<ul>
+<li><p>calls <a href="#dropdown">dropdown</a> to do the colour work.</p></li>
+</ul>
+</ul>
+</ul>
+</ul>
+</section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
 <p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                         &amp;setup-option-str:(Int:D $c, @a --&gt; Str:D),
                             &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
@@ -1119,7 +1143,7 @@ while !valid-country-cc-id($cc-id, %countries) {
     $cc-id             = dropdown($cc-id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
 }
 
-</pre><p>Or using a much simpler array.</p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+</pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
     return @array[$cnt];
 };
 my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
@@ -1138,10 +1162,43 @@ my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown('', 40, 'backup', &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
 
-</pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T07:13:04Z</span></div></footer>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="lead-dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">lead-dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p><pre class="pod-block-code">sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
+
+</pre><ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p><strong><code>$text</code></strong> the text to be preceded by the dots.</p></li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p></li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
+</ul>
+</ul>
+</section><section name="pod"><h3 id="trailing-dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">trailing-dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots trailing after it. Sort of like <strong><code>right</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p><pre class="pod-block-code">sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
+
+</pre><ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p><strong><code>$text</code></strong> the text to be trailed by the dots.</p></li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p></li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
+</ul>
+</ul>
+</section><section name="pod"><h3 id="dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong>.</p><pre class="pod-block-code">sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
+
+</pre><ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p><strong><code>$text</code></strong> the text to be preceded by the dots.</p></li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p></li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p></li>
+</ul>
+</ul>
+</section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:29:56Z</span></div></footer>
 	</body>
 </html>
 

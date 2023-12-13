@@ -31,8 +31,14 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 =item2 L<Sprintf|#sprintf>
 =item2 L<Printf|#printf>
 
+
+=item2 L<MultiT|#multit>
+
 =item2 L<menu(…)|#menu>
 =item2 L<dropdown(…)|#dropdown>
+=item2 L<lead-dots(…)|#lead-dots>
+=item2 L<trailing-dots(…)|#trailing-dots>
+=item2 L<dots(…)|#dots>
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
@@ -4348,9 +4354,17 @@ Display a text based menu.
 =begin code :lang<raku>
 
 sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                                        Bool:D :s(:$syntax) = False --> MultiT) is export {
+                                                     Bool:D :s(:$syntax) = False --> MultiT) is export
 
 =end code
+
+=item Where:
+=item2 B<C<@candidates>> is an array of strings to make up the rows of the menu.
+=item2 B<C<:c(:color(:$colour))>> defines a boolean flag to tell whether to use colours or not.
+=item3 you can use B<C<:c>>, B<C<:color>> or B<C<:colour>> for this they are all exactly the same.
+=item2 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sour of syntax highlighting. 
+=item3 for now B<C<$syntax>> is no different from B<C<$colour>> but it may change later.
+=item4 calls L<dropdown|#dropdown> to do the colour work.
 
 =end pod
 
@@ -4385,7 +4399,7 @@ sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) i
             }
             return $pos;
         }
-        my Str:D $result = dropdown('', 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+        my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
         return $result;
     }
     @candidates.append('cancel');
@@ -4526,6 +4540,7 @@ while !valid-country-cc-id($cc-id, %countries) {
 =end code
 
 Or using a much simpler array.
+B<NB: from C<menu>>
 
 =begin code :lang<raku>
 
@@ -4548,9 +4563,11 @@ my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown('', 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -4667,13 +4684,56 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                             &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
                                                                         @array --> MultiT) is export »»»
 
+=begin pod
+
+=head3 lead-dots(…)
+
+Returns B<C<$text>> in a field of B<C<$width>> with a line of dots preceding it.
+Sort of like B<C<left>> with B<C<$fill>> defaulting to B<C<.>> but with a single
+space between the text and the padding.
+
+=begin code :lang<raku>
+
+sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+
+=end code
+
+=item Where:
+=item2 B<C<$text>> the text to be preceded by the dots.
+=item2 B<C<$width>> the width of the total field.
+=item2 B<C<$fill>> the fill char or string.
+
+
+=end pod
+
 sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
     my Str $result = " $text";
     $width -= hwcswidth($result);
     $width = $width div hwcswidth($fill);
     $result = $fill x $width ~ $result;
     return $result;
-} # sub lead-dots(Str $text, Int:D $width --> Str) is export #
+} # sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export #
+
+=begin pod
+
+=head3 trailing-dots(…)
+
+Returns B<C<$text>> in a field of B<C<$width>> with a line of dots trailing after it.
+Sort of like B<C<right>> with B<C<$fill>> defaulting to B<C<.>> but with a single
+space between the text and the padding.
+
+=begin code :lang<raku>
+
+sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+
+=end code
+
+=item Where:
+=item2 B<C<$text>> the text to be trailed by the dots.
+=item2 B<C<$width>> the width of the total field.
+=item2 B<C<$fill>> the fill char or string.
+
+=end pod
 
 sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
     my Str $result = $text;
@@ -4681,12 +4741,32 @@ sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) 
     $width = $width div hwcswidth($fill);
     $result ~= $fill x $width;
     return $result;
-} # sub trailing-dots(Str $text, Int:D $width --> Str) is export #
+} # sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export #
 
-sub dots(Str:D $ind, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
-    my Str $result = $ind;
+=begin pod
+
+=head3 dots(…)
+
+Returns B<C<$text>> in a field of B<C<$width>> with a line of dots preceding it.
+Sort of like B<C<left>> with B<C<$fill>> defaulting to B<C<.>>.
+
+=begin code :lang<raku>
+
+sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+
+=end code
+
+=item Where:
+=item2 B<C<$text>> the text to be preceded by the dots.
+=item2 B<C<$width>> the width of the total field.
+=item2 B<C<$fill>> the fill char or string.
+
+=end pod
+
+sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
+    my Str $result = $text;
     $width -= hwcswidth($result);
     $width = $width div hwcswidth($fill);
     $result ~= $fill x $width;
     return $result;
-} # sub dots(Str $ind, Int:D $width --> Str) is export #
+} # sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export #

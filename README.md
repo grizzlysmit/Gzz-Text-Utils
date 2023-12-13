@@ -37,9 +37,17 @@ Table of Contents
 
     * [Printf](#printf)
 
+    * [MultiT](#multit)
+
     * [menu(…)](#menu)
 
     * [dropdown(…)](#dropdown)
+
+    * [lead-dots(…)](#lead-dots)
+
+    * [trailing-dots(…)](#trailing-dots)
+
+    * [dots(…)](#dots)
 
 NAME
 ====
@@ -620,8 +628,22 @@ Display a text based menu.
 
 ```raku
 sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                                        Bool:D :s(:$syntax) = False --> MultiT) is export {
+                                                     Bool:D :s(:$syntax) = False --> MultiT) is export
 ```
+
+  * Where:
+
+    * **`@candidates`** is an array of strings to make up the rows of the menu.
+
+    * **`:c(:color(:$colour))`** defines a boolean flag to tell whether to use colours or not.
+
+      * you can use **`:c`**, **`:color`** or **`:colour`** for this they are all exactly the same.
+
+    * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sour of syntax highlighting. 
+
+      * for now **`$syntax`** is no different from **`$colour`** but it may change later.
+
+        * calls [dropdown](#dropdown) to do the colour work.
 
 [Top of Document](#table-of-contents)
 
@@ -742,7 +764,7 @@ while !valid-country-cc-id($cc-id, %countries) {
 }
 ```
 
-Or using a much simpler array.
+Or using a much simpler array. **NB: from `menu`**
 
 ```raku
 my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
@@ -764,6 +786,56 @@ my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown('', 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
 ```
+
+[Top of Document](#table-of-contents)
+
+### lead-dots(…)
+
+Returns **`$text`** in a field of **`$width`** with a line of dots preceding it. Sort of like **`left`** with **`$fill`** defaulting to **`.`** but with a single space between the text and the padding.
+
+```raku
+sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+```
+
+  * Where:
+
+    * **`$text`** the text to be preceded by the dots.
+
+    * **`$width`** the width of the total field.
+
+    * **`$fill`** the fill char or string.
+
+### trailing-dots(…)
+
+Returns **`$text`** in a field of **`$width`** with a line of dots trailing after it. Sort of like **`right`** with **`$fill`** defaulting to **`.`** but with a single space between the text and the padding.
+
+```raku
+sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+```
+
+  * Where:
+
+    * **`$text`** the text to be trailed by the dots.
+
+    * **`$width`** the width of the total field.
+
+    * **`$fill`** the fill char or string.
+
+### dots(…)
+
+Returns **`$text`** in a field of **`$width`** with a line of dots preceding it. Sort of like **`left`** with **`$fill`** defaulting to **`.`**.
+
+```raku
+sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export
+```
+
+  * Where:
+
+    * **`$text`** the text to be preceded by the dots.
+
+    * **`$width`** the width of the total field.
+
+    * **`$fill`** the fill char or string.
 

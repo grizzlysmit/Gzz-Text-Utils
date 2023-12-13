@@ -57,11 +57,27 @@ Printf [#printf]
 .RE
 .RS 2n
 .IP \(bu 2m
+MultiT [#multit]
+.RE
+.RS 2n
+.IP \(bu 2m
 menu(…) [#menu]
 .RE
 .RS 2n
 .IP \(bu 2m
 dropdown(…) [#dropdown]
+.RE
+.RS 2n
+.IP \(bu 2m
+lead\-dots(…) [#lead-dots]
+.RE
+.RS 2n
+.IP \(bu 2m
+trailing\-dots(…) [#trailing-dots]
+.RE
+.RS 2n
+.IP \(bu 2m
+dots(…) [#dots]
 .RE
 .SH "NAME"
 Gzz::Text::Utils 
@@ -1450,10 +1466,44 @@ Display a text based menu\&.
 .RS 4m
 .EX
 sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                                        Bool:D :s(:$syntax) = False \-\-> MultiT) is export {
+                                                     Bool:D :s(:$syntax) = False \-\-> MultiT) is export
 
 
 .EE
+.RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB@candidates\fR is an array of strings to make up the rows of the menu\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB:c(:color(:$colour))\fR defines a boolean flag to tell whether to use colours or not\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactly the same\&.
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sour of syntax highlighting\&. 
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+for now \fB$syntax\fR is no different from \fB$colour\fR but it may change later\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+calls dropdown [#dropdown] to do the colour work\&.
+.RE
+.RE
 .RE
 Top of Document [#table-of-contents]
 .SS dropdown(…)
@@ -1685,7 +1735,7 @@ while !valid\-country\-cc\-id($cc\-id, %countries) {
 .EE
 .RE
 .P
-Or using a much simpler array\&.
+Or using a much simpler array\&. \fBNB: from menu\fR
 
 .RS 4m
 .EX
@@ -1708,8 +1758,85 @@ my &find\-pos = sub (MultiT $result, Int:D $pos, @array \-\-> Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown('', 40, 'backup', &setup\-option\-str, &find\-pos, &get\-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates\&.elems \- 1], 40, 'backup', &setup\-option\-str, &find\-pos, &get\-result, @candidates);
 
 
 .EE
+.RE
+.P
+Top of Document [#table-of-contents]
+.SS lead\-dots(…)
+
+Returns \fB$text\fR in a field of \fB$width\fR with a line of dots preceding it\&. Sort of like \fBleft\fR with \fB$fill\fR defaulting to \fB\&.\fR but with a single space between the text and the padding\&.
+
+.RS 4m
+.EX
+sub lead\-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '\&.' \-\-> Str) is export
+
+
+.EE
+.RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB$text\fR the text to be preceded by the dots\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$width\fR the width of the total field\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fill\fR the fill char or string\&.
+.RE
+.SS trailing\-dots(…)
+
+Returns \fB$text\fR in a field of \fB$width\fR with a line of dots trailing after it\&. Sort of like \fBright\fR with \fB$fill\fR defaulting to \fB\&.\fR but with a single space between the text and the padding\&.
+
+.RS 4m
+.EX
+sub trailing\-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '\&.' \-\-> Str) is export
+
+
+.EE
+.RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB$text\fR the text to be trailed by the dots\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$width\fR the width of the total field\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fill\fR the fill char or string\&.
+.RE
+.SS dots(…)
+
+Returns \fB$text\fR in a field of \fB$width\fR with a line of dots preceding it\&. Sort of like \fBleft\fR with \fB$fill\fR defaulting to \fB\&.\fR\&.
+
+.RS 4m
+.EX
+sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = '\&.' \-\-> Str) is export
+
+
+.EE
+.RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB$text\fR the text to be preceded by the dots\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$width\fR the width of the total field\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fill\fR the fill char or string\&.
 .RE
