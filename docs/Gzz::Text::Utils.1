@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-12-12
+.TH Utils.rakumod 1 2023-12-13
 .SS Table of Contents
 .IP \(bu 2m
 NAME [#name]
@@ -1432,13 +1432,25 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format\-str,
 .RE
 
 Top of Document [#table-of-contents]
+.SS MultiT
+
+A lot of types but not Any\&.
+
+.RS 4m
+.EX
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+
+
+.EE
+.RE
 .SS menu
 
 Display a text based menu\&.
 
 .RS 4m
 .EX
-sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False \-\-> Str) is export 
+sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
+                                                                        Bool:D :s(:$syntax) = False \-\-> MultiT) is export {
 
 
 .EE
@@ -1449,10 +1461,11 @@ A text based dropdown/list or menu with ANSI colours\&.
 
 .RS 4m
 .EX
-sub dropdown(Int:D $id, Int:D $window\-height, Str:D $id\-name,
+sub dropdown(MultiT:D $id, Int:D $window\-height, Str:D $id\-name,
                         &setup\-option\-str:(Int:D $c, @a \-\-> Str:D),
-                            &get\-result:(Int:D $res, Int:D $p, Int:D $l, @a \-\-> Int:D),
-                                                                        @array \-\-> Int) is export 
+                            &find\-pos:(MultiT $r, Int:D $p, @a \-\-> Int:D),
+                                &get\-result:(MultiT:D $res, Int:D $p, Int:D $l, @a \-\-> MultiT:D),
+                                                                        @array \-\-> MultiT) is export  
 
 
 .EE

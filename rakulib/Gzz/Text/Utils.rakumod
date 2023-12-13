@@ -106,9 +106,10 @@ INIT my $debug = False;
 #use Grammar::Tracer;
 INIT "Grammar::Debugger is on".say if $debug;
 
+use Terminal::ANSI::OO :t;
+use Term::termios;
 use Terminal::Width;
 use Terminal::WCWidth;
-use Terminal::ANSI::OO :t;
 
 my @signal; # stuff to run on a interupt/signal #
 
@@ -4324,19 +4325,37 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 
 =begin pod
 
+=head3 MultiT
+
+A lot of types but not Any.
+
+=begin code :lang<raku>
+
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+
+=end code
+
+=end pod
+
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+
+=begin pod
+
 =head3 menu
 
 Display a text based menu.
 
 =begin code :lang<raku>
 
-sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --> Str) is export 
+sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
+                                                                        Bool:D :s(:$syntax) = False --> MultiT) is export {
 
 =end code
 
 =end pod
 
-sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False, Bool:D :s(:$syntax) = False --> Str) is export {
+sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
+                                                                         Bool:D :s(:$syntax) = False --> MultiT) is export {
     $colour = True if $syntax;
     if $colour {
         # insure that the screen is reset on error #
@@ -4350,19 +4369,24 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
         my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
             return @array[$cnt];
         };
-        my &get-result = sub (Int:D $result, Int:D $pos, Int:D $length, @array --> Int:D ) {
+        my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
             my $res = $result;
             if $pos ~~ 0..^$length {
-              $res = $pos;
+              $res = @array[$pos];
             }
             return $res
         };
-        my Int:D $indx = dropdown(0, 40, 'backup', &setup-option-str, &get-result, @candidates);
-        if $indx ~~ ^@candidates.elems {
-            return @candidates[$indx];
-        } else {
-            return Str;
+        my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
+            for @array.kv -> $idx, $r {
+                if $r eq $result {
+                    $pos = $idx;
+                    last; # found so don't waste resources #
+                }
+            }
+            return $pos;
         }
+        my Str:D $result = dropdown('', 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+        return $result;
     }
     @candidates.append('cancel');
     $message.say if $message;
@@ -4385,12 +4409,11 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
         }
         last;
     }
-    my Str $Dir = @candidates[$choice];
-    #$Dir.say;
-    put t.show-cursor;
-    put t.restore-screen;
+    my Str $Dir;
+    $Dir = @candidates[$choice] unless @candidates[$choice] eq 'cancel';
+    $Dir.say;
     return $Dir;
-} # sub menu(Str:D @candidates is copy, Str $message = "" --> Str) is export #
+} # sub menu(@candidates is copy, Str $message = "" --> Str) is export #
 
 =begin pod
 
@@ -4400,10 +4423,11 @@ A text based dropdown/list or menu with ANSI colours.
 
 =begin code :lang<raku>
 
-sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                         &setup-option-str:(Int:D $c, @a --> Str:D),
-                            &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D),
-                                                                        @array --> Int) is export 
+                            &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                                &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                                                                        @array --> MultiT) is export  
 
 =end code
 
@@ -4448,31 +4472,33 @@ sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $l
     return $top;
 } # sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $length --> Int:D) #
 
-sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:(Int:D $c, @a --> Str:D),
-                &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D), @array --> Int) is export {
-    my Int $result = $id;
+sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, @a --> Str:D),
+                            &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                                &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                                                                        @array --> MultiT) is export  {
+    t.save-screen;
+    my MultiT $result = $id;
     try {
-        my Int $pos    = -1;
-        my Int $top    = -1;
+        my Int:D $pos    = -1;
+        my Int:D $top    = -1;
         my $bgcolour;
         my $fgcolour;
-        my Int $length         = @array.elems;
-        for @array.kv -> $idx, %r {
-            if %r{$id-name} == $result {
-                $pos = $idx;
-                last; # found so don't waste resources #
-            }
-        }
+        my Int:D $length = @array.elems;
+        $pos = &find-pos($result, $pos, @array);
         $top = normalise_top($top, $pos, $window-height, $length);
         my Str $key;
         my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
         @signal.push: {
             $original-flags.setattr(:NOW);
+            t.restore-screen;
         };
+        #«««
         my $flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
         $flags.unset_lflags('ICANON');
         $flags.unset_lflags('ECHO');
         $flags.setattr(:NOW);
+        #»»»
         my Int $width = terminal-width;
         $width = 80 if $width === Int;
         my Int:D $m = 0;
@@ -4497,8 +4523,8 @@ sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:
                 put $bgcolour ~ t.bold ~ $fgcolour ~ sprintf("%-*s", $w, &setup-option-str($cnt, @array)) ~ t.text-reset;
             } # loop (my Int $cnt = $top; $cnt <= $top + $window-height; $cnt++) #
             $cnt = $top + $window-height;
-            my Int:D $wdth = $w div 2;
-            put t.bg-green ~ t.bold ~ t.bright-blue ~ sprintf("%-*s: %-*s", $wdth, trailing-dots('use up and down arrows or page up and down', 42), $w - $wdth, 'and enter to select') ~ t.text-reset;
+            my Int:D $wdth = hwcswidth(trailing-dots('use up and down arrows or page up and down', 42));
+            put t.bg-green ~ t.bold ~ t.bright-blue ~ sprintf("%-*s: %-*s", $wdth, trailing-dots('use up and down arrows or page up and down', 42), $w - $wdth - 2, 'and enter to select') ~ t.text-reset;
             $cnt++;
             $key = $*IN.read(10).decode;
             given $key {
@@ -4529,16 +4555,21 @@ sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:
         @signal.pop if @signal;
         CATCH {
             default {
+                .backtrace;
+                .Str.say;
                 $original-flags.setattr(:NOW);
                 @signal.pop if @signal;
-                .backtrace;
-                .Str.say; .rethrow 
+                t.restore-screen;
+                .rethrow;
             }
         }
     } # try #
+    t.restore-screen;
     return $result;
-} #`««« sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name, &setup-option-str:(Int:D $c, @a --> Str:D),
-                &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D), @array --> Int) is export »»»
+} #`««« sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, @a --> Str:D),
+                            &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                                                                        @array --> MultiT) is export »»»
 
 sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --> Str) is export {
     my Str $result = " $text";

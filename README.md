@@ -606,12 +606,21 @@ Printf
 
 [Top of Document](#table-of-contents)
 
+### MultiT
+
+A lot of types but not Any.
+
+```raku
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+```
+
 ### menu
 
 Display a text based menu.
 
 ```raku
-sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --> Str) is export
+sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
+                                                                        Bool:D :s(:$syntax) = False --> MultiT) is export {
 ```
 
 ### dropdown(…)
@@ -619,10 +628,11 @@ sub menu(Str:D @candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colo
 A text based dropdown/list or menu with ANSI colours.
 
 ```raku
-sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                         &setup-option-str:(Int:D $c, @a --> Str:D),
-                            &get-result:(Int:D $res, Int:D $p, Int:D $l, @a --> Int:D),
-                                                                        @array --> Int) is export
+                            &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                                &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                                                                        @array --> MultiT) is export
 ```
 
   * Where

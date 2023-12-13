@@ -593,6 +593,7 @@ footer {
  <tr class="toc-level-1"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#MultiT">MultiT</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#menu">menu</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#dropdown(…)">dropdown(…)</a></td></tr>
 </table></div>
@@ -1004,14 +1005,19 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </pre></li>
 </ul>
 </ul>
-<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="menu"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">menu</a></h3>
-<p>Display a text based menu.</p><pre class="pod-block-code">sub menu(Str:D @candidates is copy, Str:D $message = &quot;&quot;, Bool:D :c(:color(:$colour)) = False, Bool:D :s(:$syntax) = False --&gt; Str) is export 
+<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="MultiT"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">MultiT</a></h3>
+<p>A lot of types but not Any.</p><pre class="pod-block-code">subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+
+</pre></section><section name="pod"><h3 id="menu"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">menu</a></h3>
+<p>Display a text based menu.</p><pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;, Bool:D :c(:color(:$colour)) is copy = False,
+                                                                        Bool:D :s(:$syntax) = False --&gt; MultiT) is export {
 
 </pre></section><section name="pod"><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
-<p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(Int:D $id, Int:D $window-height, Str:D $id-name,
+<p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                         &amp;setup-option-str:(Int:D $c, @a --&gt; Str:D),
-                            &amp;get-result:(Int:D $res, Int:D $p, Int:D $l, @a --&gt; Int:D),
-                                                                        @array --&gt; Int) is export 
+                            &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
+                                &amp;get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --&gt; MultiT:D),
+                                                                        @array --&gt; MultiT) is export  
 
 </pre><ul>
 <li><p>Where</p></li>
@@ -1047,7 +1053,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 </section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-12T10:55:48Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T06:37:44Z</span></div></footer>
 	</body>
 </html>
 
