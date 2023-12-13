@@ -70,7 +70,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-v0.1.15
+v0.1.16
 
 TITLE
 =====
