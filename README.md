@@ -39,6 +39,8 @@ Table of Contents
 
       * [right(…)](#right)
 
+      * [right(…)](#just-right)
+
         * [crop-field(…)](#crop-field)
 
     * [Sprintf](#sprintf)
