@@ -590,7 +590,7 @@ footer {
  <tr class="toc-level-1"><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#The_Functions_Provided">The Functions Provided</a></td></tr>
- <tr class="toc-level-2"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
+ <tr class="toc-level-1"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#centre">centre</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#left">left</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#right">right</a></td></tr>
@@ -693,12 +693,10 @@ footer {
 </pre></li>
 </ul>
 </ul>
-</section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><ul>
-<li><h2 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h2>
-</li>
+</section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h1 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h1>
+<h3 id="centre"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">centre</a></h3>
 <ul>
-<li><h3 id="centre"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">centre</a></h3>
-</li>
+<li><p>centring</p></li>
 <ul>
 <li><p>Centring text in a field.</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
@@ -817,8 +815,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 </ul>
 </ul>
 </ul>
-<li><p><a href="#table-of-contents">Top of Document</a></p><h3 id="left"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">left</a></h3>
-</li>
+<p><a href="#table-of-contents">Top of Document</a></p><h3 id="left"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">left</a></h3>
+<ul>
+<li><p>left justifying</p></li>
 <ul>
 <li><p>Left Justifying text.</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
              :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
@@ -830,8 +829,10 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p></li>
 </ul>
 </ul>
-<li><p><a href="#table-of-contents">Top of Document</a></p><h3 id="right"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">right</a></h3>
-</li>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p><h3 id="right"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">right</a></h3>
+<ul>
+<li><p>just right.</p></li>
 <ul>
 <li><p>Right justifying text.</p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;right-global-number-of-chars,
@@ -843,6 +844,8 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p></li>
 <li><p><a href="#table-of-contents">Top of Document</a></p><h4 id="crop-field"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">crop-field</a></h4>
 </li>
+</ul>
+<li><p>text</p></li>
 <ul>
 <li><p>Cropping Text in a field.</p><pre class="pod-block-code">sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
                              Int:D $max-width, Str:D :$ellipsis = '' --&gt; Str:D) is export 
@@ -859,7 +862,6 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <li><p><strong><code>$cropped</code></strong> is used to return the status of whether or not <strong><code>$text</code></strong> was truncated.</p></li>
 <li><p><strong><code>$max-width</code></strong> is the maximum width we are allowing.</p></li>
 <li><p><strong><code>$ellipsis</code></strong> is used to supply a eliding . Empty string by default.</p></li>
-</ul>
 </ul>
 </ul>
 </ul>
@@ -1236,7 +1238,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T12:10:31Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T12:13:28Z</span></div></footer>
 	</body>
 </html>
 

@@ -213,139 +213,143 @@ The Functions Provided
 
 [Top of Document](#table-of-contents)
 
-  * Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
-  ----------------------------------------------------------------------------------------------------------------------
+Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
+======================================================================================================================
 
-    * ### centre
+### centre
 
-      * Centring text in a field.
+  * centring
 
-        ```raku
-        sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                    :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
-                        Str:D :$ref = strip-ansi($text),
-                            Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
-        ```
+    * Centring text in a field.
 
-        * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
+      ```raku
+      sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+                  :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
+                      Str:D :$ref = strip-ansi($text),
+                          Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
+      ```
 
-        * **Where:**
+      * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
 
-          * **`$fill`** is the fill char by default **`$fill`** is set to a single white space.
+      * **Where:**
 
-            * If it requires an odd number of padding then the right hand side will get one more char/codepoint.
+        * **`$fill`** is the fill char by default **`$fill`** is set to a single white space.
 
-          * **`&number-of-chars`** takes a function which takes 2 **`Int:D`**'s and returns a **`Bool:D`**.
+          * If it requires an odd number of padding then the right hand side will get one more char/codepoint.
 
-            * By default this is equal to the closure **`centre-global-number-of-chars`** which looks like:
+        * **`&number-of-chars`** takes a function which takes 2 **`Int:D`**'s and returns a **`Bool:D`**.
+
+          * By default this is equal to the closure **`centre-global-number-of-chars`** which looks like:
+
+            ```raku
+            our $centre-total-number-of-chars is export = 0;
+            our $centre-total-number-of-visible-chars is export = 0;
+
+            sub centre-global-number-of-chars(Int:D $number-of-chars,
+                                            Int:D $number-of-visible-chars --> Bool:D) {
+                $centre-total-number-of-chars         = $number-of-chars;
+                $centre-total-number-of-visible-chars = $number-of-visible-chars;
+                return True
+            }
+            ```
+
+            * Which is a closure around the variables: **`$centre-total-number-of-chars`** and **`$centre-total-number-of-visible-chars`**, these are global **`our`** variables that **`Gzz::Text::Utils`** exports. But you can just use **`my`** variables from with a scope, just as well. And make the **`sub`** local to the same scope.
+
+              [Top of Document](#table-of-contents)
+
+              i.e.
 
               ```raku
-              our $centre-total-number-of-chars is export = 0;
-              our $centre-total-number-of-visible-chars is export = 0;
-
-              sub centre-global-number-of-chars(Int:D $number-of-chars,
-                                              Int:D $number-of-visible-chars --> Bool:D) {
-                  $centre-total-number-of-chars         = $number-of-chars;
-                  $centre-total-number-of-visible-chars = $number-of-visible-chars;
-                  return True
-              }
+              sub Sprintf(Str:D $format-str,
+                              :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                                      Str:D :$ellipsis = '', *@args --> Str) is export {
+                  ...
+                  ...
+                  ...
+                  my Int:D $total-number-of-chars = 0;
+                  my Int:D $total-number-of-visible-chars = 0;
+                  sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
+                      $total-number-of-chars += $number-of-chars;
+                      $total-number-of-visible-chars += $number-of-visible-chars;
+                      return True;
+                  } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) #
+                  ...
+                  ...
+                  ...
+                  for @format-str -> %elt {
+                      my Str:D $type = %elt«type»;
+                      if $type eq 'literal' {
+                          my Str:D $lit = %elt«val»;
+                          $total-number-of-chars += $lit.chars;
+                          $total-number-of-visible-chars += strip-ansi($lit).chars;
+                          $result ~= $lit;
+                      } elsif $type eq 'fmt-spec' {
+                          ...
+                          ...
+                          ...
+                          given $spec-char {
+                              when 'c' {
+                                           $arg .=Str;
+                                           $ref .=Str;
+                                           BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
+                                           $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
+                                                                                                              so munge together.
+                                                                                                              Traditionally sprintf etc treat precision
+                                                                                                              as max-width for strings. »
+                                           if $padding eq '' {
+                                               if $justify eq '' {
+                                                   $result ~=  right($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               } elsif $justify eq '-' {
+                                                   $result ~=  left($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               } elsif $justify eq '^' {
+                                                   $result ~=  centre($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               }
+                                           } else {
+                                               if $justify eq '' {
+                                                   $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               } elsif $justify eq '-' {
+                                                   $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               } elsif $justify eq '^' {
+                                                   $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
+                                               }
+                                           }
+                                       }
+                              when 's' {
+                                          ...
+                                          ...
+                                          ...
+                      ...
+                      ...
+                      ...
+                  ...
+                  ...
+                  ...
+                  return $result;
+                  KEEP {
+                      &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+                  }
+              } #`««« sub Sprintf(Str:D $format-str,
+                              :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                                                      Str:D :$ellipsis = '', *@args --> Str) is export »»»
               ```
 
-              * Which is a closure around the variables: **`$centre-total-number-of-chars`** and **`$centre-total-number-of-visible-chars`**, these are global **`our`** variables that **`Gzz::Text::Utils`** exports. But you can just use **`my`** variables from with a scope, just as well. And make the **`sub`** local to the same scope.
+        * The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`**
 
-                [Top of Document](#table-of-contents)
+          * This is used to obtain the length of the of the text using ***`wcswidth(Str)`*** from module **"`Terminal::WCWidth`"** which is used to obtain the width the text if printed on the current terminal:
 
-                i.e.
+            * **NB: `wcswidth` will return -1 if you pass it text with colours etc embedded in them**.
 
-                ```raku
-                sub Sprintf(Str:D $format-str,
-                                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                                        Str:D :$ellipsis = '', *@args --> Str) is export {
-                    ...
-                    ...
-                    ...
-                    my Int:D $total-number-of-chars = 0;
-                    my Int:D $total-number-of-visible-chars = 0;
-                    sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
-                        $total-number-of-chars += $number-of-chars;
-                        $total-number-of-visible-chars += $number-of-visible-chars;
-                        return True;
-                    } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) #
-                    ...
-                    ...
-                    ...
-                    for @format-str -> %elt {
-                        my Str:D $type = %elt«type»;
-                        if $type eq 'literal' {
-                            my Str:D $lit = %elt«val»;
-                            $total-number-of-chars += $lit.chars;
-                            $total-number-of-visible-chars += strip-ansi($lit).chars;
-                            $result ~= $lit;
-                        } elsif $type eq 'fmt-spec' {
-                            ...
-                            ...
-                            ...
-                            given $spec-char {
-                                when 'c' {
-                                             $arg .=Str;
-                                             $ref .=Str;
-                                             BadArg.new(:msg("arg should be one codepoint: {$arg.codes} found")).throw if $arg.codes != 1;
-                                             $max-width = max($max-width, $precision, 0) if $max-width > 0; #`« should not really have a both for this
-                                                                                                                so munge together.
-                                                                                                                Traditionally sprintf etc treat precision
-                                                                                                                as max-width for strings. »
-                                             if $padding eq '' {
-                                                 if $justify eq '' {
-                                                     $result ~=  right($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 } elsif $justify eq '-' {
-                                                     $result ~=  left($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 } elsif $justify eq '^' {
-                                                     $result ~=  centre($arg, $width, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 }
-                                             } else {
-                                                 if $justify eq '' {
-                                                     $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 } elsif $justify eq '-' {
-                                                     $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 } elsif $justify eq '^' {
-                                                     $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&internal-number-of-chars), :$max-width);
-                                                 }
-                                             }
-                                         }
-                                when 's' {
-                                            ...
-                                            ...
-                                            ...
-                        ...
-                        ...
-                        ...
-                    ...
-                    ...
-                    ...
-                    return $result;
-                    KEEP {
-                        &number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
-                    }
-                } #`««« sub Sprintf(Str:D $format-str,
-                                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                                        Str:D :$ellipsis = '', *@args --> Str) is export »»»
-                ```
+            * **"`Terminal::WCWidth`"** is witten by **bluebear94** [github:bluebear94](https://raku.land/github:bluebear94) get it with **zef** or whatever
 
-          * The parameter **`:$ref`** is by default set to the value of **`strip-ansi($text)`**
+        * **`:$max-width`** sets the maximum width of the field but if set to **`0`** (The default), will effectively be infinite (∞).
 
-            * This is used to obtain the length of the of the text using ***`wcswidth(Str)`*** from module **"`Terminal::WCWidth`"** which is used to obtain the width the text if printed on the current terminal:
+        * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
-              * **NB: `wcswidth` will return -1 if you pass it text with colours etc embedded in them**.
+[Top of Document](#table-of-contents)
 
-              * **"`Terminal::WCWidth`"** is witten by **bluebear94** [github:bluebear94](https://raku.land/github:bluebear94) get it with **zef** or whatever
+### left
 
-          * **`:$max-width`** sets the maximum width of the field but if set to **`0`** (The default), will effectively be infinite (∞).
-
-          * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
-
-  * [Top of Document](#table-of-contents)
-
-    ### left
+  * left justifying
 
     * Left Justifying text.
 
@@ -358,9 +362,11 @@ The Functions Provided
 
       * **`left`** is the same except that except that it puts all the padding on the right of the field.
 
-  * [Top of Document](#table-of-contents)
+[Top of Document](#table-of-contents)
 
-    ### right
+### right
+
+  * just right.
 
     * Right justifying text.
 
@@ -377,28 +383,30 @@ The Functions Provided
 
         #### crop-field
 
-        * Cropping Text in a field.
+    * text
 
-          ```raku
-          sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                       Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export
-          ```
+      * Cropping Text in a field.
 
-          * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary. Copes with ANSI escape codes.
+        ```raku
+        sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
+                                     Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export
+        ```
 
-            * **Where**
+        * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary. Copes with ANSI escape codes.
 
-              * **`$text`** is the text to be cropped possibly, wit ANSI escapes embedded. 
+          * **Where**
 
-              * **`$w`** is used to hold the width of **`$text`** is read-write so will return that value.
+            * **`$text`** is the text to be cropped possibly, wit ANSI escapes embedded. 
 
-              * **`$width`** is the desired width. Will be used to return the updated width.
+            * **`$w`** is used to hold the width of **`$text`** is read-write so will return that value.
 
-              * **`$cropped`** is used to return the status of whether or not **`$text`** was truncated.
+            * **`$width`** is the desired width. Will be used to return the updated width.
 
-              * **`$max-width`** is the maximum width we are allowing.
+            * **`$cropped`** is used to return the status of whether or not **`$text`** was truncated.
 
-              * **`$ellipsis`** is used to supply a eliding . Empty string by default.
+            * **`$max-width`** is the maximum width we are allowing.
+
+            * **`$ellipsis`** is used to supply a eliding . Empty string by default.
 
 [Top of Document](#table-of-contents)
 
