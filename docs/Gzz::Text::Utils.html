@@ -591,6 +591,9 @@ footer {
  <tr class="toc-level-1"><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions">UnhighlightBase &amp; UnhighlightBaseActions and Unhighlight &amp; UnhighlightActions</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#The_Functions_Provided">The Functions Provided</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to centre, left and right justify text even when it is ANSI formatted.</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#centre">centre</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#left">left</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#right">right</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#MultiT">MultiT</a></td></tr>
@@ -625,6 +628,9 @@ footer {
 <li><p><a href="#the-functions-provided">The Functions Provided</a></p></li>
 <ul>
 <li><p><a href="#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted</a></p></li>
+<li><p><a href="#centre">centre</a></p></li>
+<li><p><a href="#left">left</a></p></li>
+<li><p><a href="#right">right</a></p></li>
 <li><p><a href="#sprintf">Sprintf</a></p></li>
 <li><p><a href="#printf">Printf</a></p></li>
 <li><p><a href="#multit">MultiT</a></p></li>
@@ -682,6 +688,7 @@ footer {
 </ul>
 </ul>
 </section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h1 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h1>
+<h2 id="centre"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">centre</a></h2>
 <ul>
 <li><p><strong>centre</strong></p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
@@ -797,6 +804,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <li><p><strong><code>:$ellipsis</code></strong> is used to elide the text if it's too big I recommend either <strong><code>''</code></strong> the default or <strong><code>'…'</code></strong>.</p></li>
 </ul>
 </ul>
+</ul>
+<h2 id="left"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">left</a></h2>
+<ul>
 <li><p><strong>left</strong></p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
                     Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
@@ -805,6 +815,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 <ul>
 <li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p></li>
 </ul>
+</ul>
+<h2 id="right"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">right</a></h2>
+<ul>
 <li><p><strong>right</strong></p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                     :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;right-global-number-of-chars,
                         Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
@@ -1198,7 +1211,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:33:07Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:46:04Z</span></div></footer>
 	</body>
 </html>
 

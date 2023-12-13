@@ -33,6 +33,12 @@ Table of Contents
 
     * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
 
+    * [centre](#centre)
+
+    * [left](#left)
+
+    * [right](#right)
+
     * [Sprintf](#sprintf)
 
     * [Printf](#printf)
@@ -208,6 +214,9 @@ The Functions Provided
 Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 ======================================================================================================================
 
+centre
+------
+
   * **centre**
 
     ```raku
@@ -330,6 +339,9 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
       * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
+left
+----
+
   * **left**
 
     ```raku
@@ -339,6 +351,9 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
     ```
 
     * **`left`** is the same except that except that it puts all the padding on the right of the field.
+
+right
+-----
 
   * **right**
 

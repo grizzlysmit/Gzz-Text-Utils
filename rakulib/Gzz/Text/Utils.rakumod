@@ -28,6 +28,10 @@ Table of  Contents
 L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI formatted|#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted>
 =end item2
 
+=item2 L<centre|#centre>
+=item2 L<left|#left>
+=item2 L<right|#right>
+
 =item2 L<Sprintf|#sprintf>
 =item2 L<Printf|#printf>
 
@@ -1055,6 +1059,8 @@ it is ANSI formatted.
 
 =end head1
 
+=head2 centre
+
 =begin item
 
 B<centre>
@@ -1241,6 +1247,8 @@ B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<
 
 =end item3
 
+=head2 left
+
 =begin item
 
 B<left>
@@ -1256,6 +1264,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 =end item
 
 =item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
+
+=head2 right
 
 =begin item
 

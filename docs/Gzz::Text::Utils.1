@@ -49,6 +49,18 @@ Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justif
 .RE
 .RS 2n
 .IP \(bu 2m
+centre [#centre]
+.RE
+.RS 2n
+.IP \(bu 2m
+left [#left]
+.RE
+.RS 2n
+.IP \(bu 2m
+right [#right]
+.RE
+.RS 2n
+.IP \(bu 2m
 Sprintf [#sprintf]
 .RE
 .RS 2n
@@ -227,6 +239,7 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 .RE
 Top of Document [#table-of-contents]
 .SH Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
+.SS centre
 .IP \(bu 2m
 \fBcentre\fR
 .IP
@@ -430,6 +443,7 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 \fB:$ellipsis\fR is used to elide the text if it's too big I recommend either \fB''\fR the default or \fB'…'\fR\&.
 .RE
 .RE
+.SS left
 .IP \(bu 2m
 \fBleft\fR
 .IP
@@ -447,6 +461,7 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 .IP \(bu 2m
 \fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
 .RE
+.SS right
 .IP \(bu 2m
 \fBright\fR
 .IP
