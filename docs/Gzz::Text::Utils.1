@@ -48,20 +48,30 @@ The Functions Provided [#the-functions-provided]
 Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted [#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted]
 .RE
 .RS 2n
+.RS 2n
 .IP \(bu 2m
 centre(…) [#centre]
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 left(…) [#left]
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 right(…) [#right]
 .RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 crop\-field(…) [#crop-field]
+.RE
+.RE
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -244,6 +254,7 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 Top of Document [#table-of-contents]
 .SH Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .SS centre
+.RS 2n
 .IP \(bu 2m
 Centring text in a field\&.
 .IP
@@ -258,20 +269,28 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 .EE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBcentre\fR centres the text \fB$text\fR in a field of width \fB$width\fR padding either side with \fB$fill\fR
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBWhere:\fR
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB$fill\fR is the fill char by default \fB$fill\fR is set to a single white space\&.
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -280,12 +299,16 @@ If it requires an odd number of padding then the right hand side will get one mo
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB&number\-of\-chars\fR takes a function which takes 2 \fBInt:D\fR's and returns a \fBBool:D\fR\&.
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -311,6 +334,8 @@ sub centre\-global\-number\-of\-chars(Int:D $number\-of\-chars,
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -404,12 +429,16 @@ sub Sprintf(Str:D $format\-str,
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 The parameter \fB:$ref\fR is by default set to the value of \fBstrip\-ansi($text)\fR
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -418,6 +447,8 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -428,6 +459,8 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -438,21 +471,27 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 .RE
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB:$max\-width\fR sets the maximum width of the field but if set to \fB0\fR (The default), will effectively be infinite (∞)\&.
 .RE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB:$ellipsis\fR is used to elide the text if it's too big I recommend either \fB''\fR the default or \fB'…'\fR\&.
 .RE
 .RE
+.RE
 
 Top of Document [#table-of-contents]
 .SS left
+.RS 2n
 .IP \(bu 2m
 Left Justifying text\&.
 .IP
@@ -467,13 +506,17 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 .EE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBleft\fR is the same except that except that it puts all the padding on the right of the field\&.
 .RE
+.RE
 
 Top of Document [#table-of-contents]
 .SS right
+.RS 2n
 .IP \(bu 2m
 Right justifying text\&.
 .IP
@@ -488,13 +531,18 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 .EE
 .RE
+.RE
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBright\fR is again the same except it puts all the padding on the left and the text to the right\&.
 .RE
+.RE
 
 Top of Document [#table-of-contents]
 .SS crop\-field
+.RS 2n
+.RS 2n
 .IP \(bu 2m
 Cropping Text in a field\&.
 .IP
@@ -507,16 +555,28 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 
 .EE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBcrop\-field\fR used by \fBcentre\fR, \fBleft\fR and \fBright\fR to crop their input if necessary\&. Copes with ANSI escape codes\&.
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fBWhere\fR
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -525,6 +585,10 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -533,6 +597,10 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -541,6 +609,10 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -549,6 +621,10 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -557,11 +633,17 @@ sub crop\-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped
 .RE
 .RE
 .RE
+.RE
+.RE
+.RS 2n
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
 .IP \(bu 2m
 \fB$ellipsis\fR is used to supply a eliding \&. Empty string by default\&.
+.RE
+.RE
 .RE
 .RE
 .RE
