@@ -1556,8 +1556,8 @@ to specify a B<C<$max-width>> using B<C<width.precision.max-width>>, which can b
 =begin code :lang<raku>
 
 sub Sprintf(Str:D $format-str,
-                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                                        Str:D :$ellipsis = '', *@args --> Str) is export 
+              :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
+                                              Str:D :$ellipsis = '', *@args --> Str) is export 
 
 =end code
 
