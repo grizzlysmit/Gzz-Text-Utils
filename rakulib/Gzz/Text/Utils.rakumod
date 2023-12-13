@@ -28,9 +28,10 @@ Table of  Contents
 L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when it is ANSI formatted|#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted>
 =end item2
 
-=item2 L<centre|#centre>
-=item2 L<left|#left>
-=item2 L<right|#right>
+=item2 L<centre(…)|#centre>
+=item2 L<left(…)|#left>
+=item2 L<right(…)|#right>
+=item2 L<crop-field(…)|#crop-field>
 
 =item2 L<Sprintf|#sprintf>
 =item2 L<Printf|#printf>
@@ -1256,7 +1257,7 @@ L<Top of Document|#table-of-contents>
 
 =begin item
 
-B<left>
+Left Justifying text.
 
 =begin code :lang<raku>
 
@@ -1276,7 +1277,7 @@ L<Top of Document|#table-of-contents>
 
 =begin item
 
-B<right>
+Right justifying text.
 
 =begin code :lang<raku>
 
@@ -1294,10 +1295,12 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =item2       B<C<right>> is again the same except it puts all the padding on the left and the text to the right.
 
+=head2 crop-field
+
 
 =begin item 
 
-B<crop-field>
+Cropping Text in a field.
 
 =begin code :lang<raku>
 

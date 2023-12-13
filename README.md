@@ -33,11 +33,13 @@ Table of Contents
 
     * [Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted](#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted)
 
-    * [centre](#centre)
+    * [centre(…)](#centre)
 
-    * [left](#left)
+    * [left(…)](#left)
 
-    * [right](#right)
+    * [right(…)](#right)
+
+    * [crop-field(…)](#crop-field)
 
     * [Sprintf](#sprintf)
 
@@ -347,7 +349,7 @@ centre
 left
 ----
 
-  * **left**
+  * Left Justifying text.
 
     ```raku
     sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
@@ -362,7 +364,7 @@ left
 right
 -----
 
-  * **right**
+  * Right justifying text.
 
     ```raku
     sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
@@ -372,7 +374,10 @@ right
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
-  * **crop-field**
+crop-field
+----------
+
+  * Cropping Text in a field.
 
     ```raku
     sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
