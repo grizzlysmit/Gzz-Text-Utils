@@ -1247,6 +1247,8 @@ B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<
 
 =end item3
 
+L<Top of Document|#table-of-contents>
+
 =head2 left
 
 =begin item
@@ -1264,6 +1266,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 =end item
 
 =item2       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
+
+L<Top of Document|#table-of-contents>
 
 =head2 right
 

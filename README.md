@@ -339,6 +339,8 @@ centre
 
       * **`:$ellipsis`** is used to elide the text if it's too big I recommend either **`''`** the default or **`'…'`**.
 
+[Top of Document](#table-of-contents)
+
 left
 ----
 
@@ -351,6 +353,8 @@ left
     ```
 
     * **`left`** is the same except that except that it puts all the padding on the right of the field.
+
+[Top of Document](#table-of-contents)
 
 right
 -----
