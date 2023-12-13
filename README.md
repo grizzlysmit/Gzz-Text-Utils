@@ -623,6 +623,8 @@ sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) i
                                                                         Bool:D :s(:$syntax) = False --> MultiT) is export {
 ```
 
+[Top of Document](#table-of-contents)
+
 ### dropdown(…)
 
 A text based dropdown/list or menu with ANSI colours.
@@ -653,6 +655,18 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
 
           * the use of a function for this means you can compute a much more complex field.
 
+    * **`&find-pos`** is a function that finds the start position in the **`dropdown`**.
+
+      * Where:
+
+        * the arg **`$r`** is the value in the array **`@array`** to look for.
+
+        * the arg **`$p`** is the best approximation of where it might be if you are using it in a loop or something it could be where it last was. 
+
+        * the arg **`@a`** the argument **`@array`** that was passed to **`dropdown`**.
+
+          * you can name these argument anything you like in you function, and because of the computed nature of this function and the other two you have great flexibility.
+
     * **`&get-result`** is a function to work out the value selected.
 
       * Where:
@@ -668,4 +682,88 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
           * Because we use a function we can compute much more complex results; depending on what we have in **`@array`**. It still needs to be an Int (for now) but you can do further computations at the end to get other values.
 
     * **`@array`** is the array to select from.
+
+Here is an example of use.
+
+```raku
+my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+    my Str $name;
+    my Str $cc;
+    my Str $flag;
+    my Str $prefix;
+    if $cnt < 0 {
+        $name   = "No country selected yet.";
+        $cc     = "";
+        $flag   = "";
+        $prefix = "you must choose one";
+    } else {
+        my %row = @array[$cnt];
+        $name   = %row«_name»;
+        $cc     = %row«cc»;
+        try {
+            CATCH {
+                default {
+                    my $Name = $name;
+                    $Name ~~ s:g/ <wb> 'and' <wb> /\&/;
+                    try {
+                        CATCH {
+                            default { $flag = uniparse 'PENGUIN'}
+                        }
+                        $flag = uniparse $Name;
+                    }
+                }
+            }
+            $flag   = uniparse $name;
+        }
+        $prefix = %row«prefix»;
+    }
+    return "$flag $name: $cc ($prefix)"
+};
+my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
+    for @array.kv -> $idx, %r {
+        if %r{$id-name} == $result {
+            $pos = $idx;
+            last; # found so don't waste resources #
+        }
+    }
+    return $pos;
+}
+my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      my %row = |%(@array[$pos]);
+      $res = %row«id» if %row«id»:exists;
+    }
+    return $res
+};
+my Int:D $cc-id        = dropdown($cc_id, 20, 'id', &setup-option-str, &get-result, @_country);
+while !valid-country-cc-id($cc-id, %countries) {
+    $cc-id             = dropdown($cc-id, 20, 'id', &setup-option-str, &get-result, @_country);
+}
+```
+
+Or using a much simpler array.
+
+```raku
+my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+    return @array[$cnt];
+};
+my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      $res = @array[$pos];
+    }
+    return $res
+};
+my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
+    for @array.kv -> $idx, $r {
+        if $r eq $result {
+            $pos = $idx;
+            last; # found so don't waste resources #
+        }
+    }
+    return $pos;
+}
+my Str:D $result = dropdown('', 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+```
 

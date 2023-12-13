@@ -1012,7 +1012,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <p>Display a text based menu.</p><pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;, Bool:D :c(:color(:$colour)) is copy = False,
                                                                         Bool:D :s(:$syntax) = False --&gt; MultiT) is export {
 
-</pre></section><section name="pod"><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
+</pre></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
 <p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                         &amp;setup-option-str:(Int:D $c, @a --&gt; Str:D),
                             &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
@@ -1036,6 +1036,18 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 </ul>
 </ul>
 </ul>
+<li><p><strong><code>&amp;find-pos</code></strong> is a function that finds the start position in the <strong><code>dropdown</code></strong>.</p></li>
+<ul>
+<li><p>Where:</p></li>
+<ul>
+<li><p>the arg <strong><code>$r</code></strong> is the value in the array <strong><code>@array</code></strong> to look for.</p></li>
+<li><p>the arg <strong><code>$p</code></strong> is the best approximation of where it might be if you are using it in a loop or something it could be where it last was. </p></li>
+<li><p>the arg <strong><code>@a</code></strong> the argument <strong><code>@array</code></strong> that was passed to <strong><code>dropdown</code></strong>.</p></li>
+<ul>
+<li><p>you can name these argument anything you like in you function, and because of the computed nature of this function and the other two you have great flexibility.</p></li>
+</ul>
+</ul>
+</ul>
 <li><p><strong><code>&amp;get-result</code></strong> is a function to work out the value selected.</p></li>
 <ul>
 <li><p>Where:</p></li>
@@ -1052,8 +1064,84 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p><strong><code>@array</code></strong> is the array to select from.</p></li>
 </ul>
 </ul>
-</section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T06:37:44Z</span></div></footer>
+<p>Here is an example of use.</p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+    my Str $name;
+    my Str $cc;
+    my Str $flag;
+    my Str $prefix;
+    if $cnt &lt; 0 {
+        $name   = &quot;No country selected yet.&quot;;
+        $cc     = &quot;&quot;;
+        $flag   = &quot;&quot;;
+        $prefix = &quot;you must choose one&quot;;
+    } else {
+        my %row = @array[$cnt];
+        $name   = %row«_name»;
+        $cc     = %row«cc»;
+        try {
+            CATCH {
+                default {
+                    my $Name = $name;
+                    $Name ~~ s:g/ &lt;wb&gt; 'and' &lt;wb&gt; /\&amp;/;
+                    try {
+                        CATCH {
+                            default { $flag = uniparse 'PENGUIN'}
+                        }
+                        $flag = uniparse $Name;
+                    }
+                }
+            }
+            $flag   = uniparse $name;
+        }
+        $prefix = %row«prefix»;
+    }
+    return &quot;$flag $name: $cc ($prefix)&quot;
+};
+my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
+    for @array.kv -&gt; $idx, %r {
+        if %r{$id-name} == $result {
+            $pos = $idx;
+            last; # found so don't waste resources #
+        }
+    }
+    return $pos;
+}
+my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      my %row = |%(@array[$pos]);
+      $res = %row«id» if %row«id»:exists;
+    }
+    return $res
+};
+my Int:D $cc-id        = dropdown($cc_id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
+while !valid-country-cc-id($cc-id, %countries) {
+    $cc-id             = dropdown($cc-id, 20, 'id', &amp;setup-option-str, &amp;get-result, @_country);
+}
+
+</pre><p>Or using a much simpler array.</p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+    return @array[$cnt];
+};
+my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      $res = @array[$pos];
+    }
+    return $res
+};
+my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
+    for @array.kv -&gt; $idx, $r {
+        if $r eq $result {
+            $pos = $idx;
+            last; # found so don't waste resources #
+        }
+    }
+    return $pos;
+}
+my Str:D $result = dropdown('', 40, 'backup', &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
+
+</pre></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T07:13:04Z</span></div></footer>
 	</body>
 </html>
 
