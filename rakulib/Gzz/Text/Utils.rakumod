@@ -1053,12 +1053,12 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 L<Top of Document|#table-of-contents>
 
-=begin head1
+=begin head3
 
 Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when
 it is ANSI formatted.
 
-=end head1
+=end head3
 
 =head3 centre
 

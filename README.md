@@ -213,8 +213,7 @@ The Functions Provided
 
 [Top of Document](#table-of-contents)
 
-Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
-======================================================================================================================
+### Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justify text even when it is ANSI formatted.
 
 ### centre
 
