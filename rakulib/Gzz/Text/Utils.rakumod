@@ -31,7 +31,6 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 =item3 L<centre(…)|#centre>
 =item3 L<left(…)|#left>
 =item3 L<right(…)|#right>
-=item3 L<right(…)|#just-right>
 =item4 L<crop-field(…)|#crop-field>
 
 =item2 L<Sprintf|#sprintf>
@@ -1281,7 +1280,7 @@ L<Top of Document|#table-of-contents>
 
 =head3 right
 
-=item X<just right>.
+=item just right.
 
 =begin item2
 
