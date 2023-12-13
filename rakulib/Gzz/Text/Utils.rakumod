@@ -1128,11 +1128,11 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 
 =begin item5 
 
-L<Top of Document|#table-of-contents>
-
 Which is a closure around the variables: B<C<$centre-total-number-of-chars>> and B<C<$centre-total-number-of-visible-chars>>, 
 these are global B<C<our>> variables that B<C<Gzz::Text::Utils>> exports.
 But you can just use B<C<my>> variables from with a scope, just as well. And make the B<C<sub>> local to the same scope.
+
+L<Top of Document|#table-of-contents>
 
 i.e.
 
