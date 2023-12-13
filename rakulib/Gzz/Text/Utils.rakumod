@@ -1053,18 +1053,24 @@ sub hwcswidth(Str:D $text --> Int:D) is export {
 
 L<Top of Document|#table-of-contents>
 
-=begin head1
+=begin item
+
+=begin head2
 
 Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> justify text even when
 it is ANSI formatted.
 
-=end head1
+=end head2
+
+=end item
+
+=begin item2
 
 =head3 centre
 
-=item centring
+=end item2
 
-=begin item2
+=begin item3
 
 Centring text in a field.
 
@@ -1077,39 +1083,39 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =end code
 
-=end item2
+=end item3
 
-=begin item3
+=begin item4
 
 B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
 
-=end item3
+=end item4
 
-=begin item3
+=begin item4
 
 B<Where:>
 
-=end item3
+=end item4
 
-=begin item4
+=begin item5
 
 B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space.
 
-=end item4
+=end item5
 
-=begin item5
+=begin item6
 
 If  it requires an odd number of padding then the right hand side will get one more char/codepoint.
 
-=end item5
+=end item6
 
-=begin item4
+=begin item5
 
 B<C<&number-of-chars>> takes a function which takes 2 B<C<Int:D>>'s and returns a B<C<Bool:D>>.
 
-=end item4
+=end item5
 
-=begin item5
+=begin item6
 
 By default this is equal to the closure B<C<centre-global-number-of-chars>> which looks like:
 
@@ -1127,9 +1133,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 
 =end code
 
-=end item5
+=end item6
 
-=begin item6 
+=begin item7 
 
 Which is a closure around the variables: B<C<$centre-total-number-of-chars>> and B<C<$centre-total-number-of-visible-chars>>, 
 these are global B<C<our>> variables that B<C<Gzz::Text::Utils>> exports.
@@ -1215,49 +1221,51 @@ sub Sprintf(Str:D $format-str,
  
 =end code
 
-=end item6
-
-=begin item4
-
-The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
-=end item4
+=end item7
 
 =begin item5
 
-This is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> from module B<"C<Terminal::WCWidth>">
-which is used to obtain the width the text if printed on the current terminal:
-
+The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
 =end item5
 
 =begin item6
 
-B<NB: C<wcswidth> will return -1 if you pass it text with colours etc embedded in them>.
+This is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> from module B<"C<Terminal::WCWidth>">
+which is used to obtain the width the text if printed on the current terminal:
 
 =end item6
 
-=begin item6
+=begin item7
+
+B<NB: C<wcswidth> will return -1 if you pass it text with colours etc embedded in them>.
+
+=end item7
+
+=begin item7
 
 B<"C<Terminal::WCWidth>"> is witten by B<bluebear94> L<github:bluebear94|https://raku.land/github:bluebear94> get it with B<zef> or whatever
 
-=end item6
+=end item7
 
-=begin item4
+=begin item5
 
 B<C<:$max-width>> sets the maximum width of the field but if set to B<C<0>> (The default), will effectively be infinite (∞).
 
-=end item4
+=end item5
 
-=begin item4
+=begin item5
 
 B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<C<''>> the default or B<C<'…'>>.
 
-=end item4
+=end item5
+
+=begin item
 
 L<Top of Document|#table-of-contents>
 
 =head3 left
 
-=item left justifying
+=end item
 
 =begin item2
 
@@ -1276,11 +1284,13 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =item3       B<C<left>> is the same except that except that it puts all the  padding on the right of the field.
 
+=begin item
+
 L<Top of Document|#table-of-contents>
 
 =head3 right
 
-=item just right.
+=end item
 
 =begin item2
 
@@ -1310,7 +1320,7 @@ L<Top of Document|#table-of-contents>
 
 =end item3
 
-=begin item3 
+=begin item4 
 
 Cropping Text in a field.
 
@@ -1321,56 +1331,56 @@ sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped 
 
 =end code
 
-=end item3
-
-=begin item4
-
-B<C<crop-field>> used by B<C<centre>>, B<C<left>> and B<C<right>> to crop their input if necessary. Copes with
-ANSI escape codes.
-
 =end item4
 
 =begin item5
 
-B<Where>
+B<C<crop-field>> used by B<C<centre>>, B<C<left>> and B<C<right>> to crop their input if necessary. Copes with
+ANSI escape codes.
 
 =end item5
 
-=begin item6 
+=begin item6
+
+B<Where>
+
+=end item6
+
+=begin item7 
 
 B<C<$text>> is the text to be cropped possibly, wit ANSI escapes embedded. 
 
-=end item6
+=end item7
 
-=begin item6
+=begin item7
 
 B<C<$w>> is used to hold the width of B<C<$text>> is read-write so will return that value.
 
-=end item6
+=end item7
 
-=begin item6 
+=begin item7 
 
 B<C<$width>> is the desired width. Will be used to return the updated width.
 
-=end item6
+=end item7
 
-=begin item6 
+=begin item7 
 
 B<C<$cropped>> is used to return the status of whether or not B<C<$text>> was truncated.
 
-=end item6
+=end item7
 
-=begin item6 
+=begin item7 
 
 B<C<$max-width>> is the maximum width we are allowing.
 
-=end item6
+=end item7
 
-=begin item6 
+=begin item7 
 
 B<C<$ellipsis>> is used to supply a eliding . Empty string by default.
 
-=end item6
+=end item7
 
 =end pod
 
