@@ -376,6 +376,8 @@ right
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
 
+[Top of Document](#table-of-contents)
+
 crop-field
 ----------
 
