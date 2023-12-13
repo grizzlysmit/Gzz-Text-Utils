@@ -1079,37 +1079,37 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =end item2
 
-=begin item3
+=begin item4
 
 Centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
 
-=end item3
+=end item4
 
-=begin item3
+=begin item4
 
 B<Where:>
 
-=end item3
+=end item4
 
-=begin item4
+=begin item5
 
 B<C<$fill>>      is the fill char by default B<C<$fill>> is set to a single white space.
 
-=end item4
+=end item5
 
-=begin item5
+=begin item6
 
 If  it requires an odd number of padding then the right hand side will get one more char/codepoint.
 
-=end item5
+=end item6
 
-=begin item4
+=begin item5
 
 B<C<&number-of-chars>> takes a function which takes 2 B<C<Int:D>>'s and returns a B<C<Bool:D>>.
 
-=end item4
+=end item5
 
-=begin item5
+=begin item6
 
 By default this is equal to the closure B<C<centre-global-number-of-chars>> which looks like:
 
@@ -1127,9 +1127,9 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 
 =end code
 
-=end item5
+=end item6
 
-=begin item6 
+=begin item7 
 
 Which is a closure around the variables: B<C<$centre-total-number-of-chars>> and B<C<$centre-total-number-of-visible-chars>>, 
 these are global B<C<our>> variables that B<C<Gzz::Text::Utils>> exports.
@@ -1215,49 +1215,49 @@ sub Sprintf(Str:D $format-str,
  
 =end code
 
-=end item6
-
-=begin item4
-
-The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
-=end item4
+=end item7
 
 =begin item5
 
-This is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> from module B<"C<Terminal::WCWidth>">
-which is used to obtain the width the text if printed on the current terminal:
-
+The parameter B<C<:$ref>> is by default set to the value of B<C<strip-ansi($text)>>
 =end item5
 
 =begin item6
 
-B<NB: C<wcswidth> will return -1 if you pass it text with colours etc embedded in them>.
+This is used to obtain the length of the of the text using B<I<C<wcswidth(Str)>>> from module B<"C<Terminal::WCWidth>">
+which is used to obtain the width the text if printed on the current terminal:
 
 =end item6
 
-=begin item6
+=begin item7
+
+B<NB: C<wcswidth> will return -1 if you pass it text with colours etc embedded in them>.
+
+=end item7
+
+=begin item7
 
 B<"C<Terminal::WCWidth>"> is witten by B<bluebear94> L<github:bluebear94|https://raku.land/github:bluebear94> get it with B<zef> or whatever
 
-=end item6
+=end item7
 
-=begin item4
+=begin item5
 
 B<C<:$max-width>> sets the maximum width of the field but if set to B<C<0>> (The default), will effectively be infinite (∞).
 
-=end item4
+=end item5
 
-=begin item4
+=begin item5
 
 B<C<:$ellipsis>> is used to elide the text if it's too big I recommend either B<C<''>> the default or B<C<'…'>>.
 
-=end item4
+=end item5
 
 L<Top of Document|#table-of-contents>
 
 =head3 left
 
-=item left justifying
+=item ⋄
 
 =begin item2
 
