@@ -685,10 +685,10 @@ A text based dropdown/list or menu with ANSI colours.
 
 ```raku
 sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                        &setup-option-str:(Int:D $c, @a --> Str:D),
-                            &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
-                                &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
-                                                                        @array --> MultiT) is export
+                &setup-option-str:(Int:D $c, @a --> Str:D),
+                    &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                        &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                                                                @array --> MultiT) is export
 ```
 
   * Where
