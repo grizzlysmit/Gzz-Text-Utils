@@ -383,9 +383,9 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
 #### crop-field
 
-  * 
+  * Cropping
 
-    * 
+    * text
 
       * Cropping Text in a field.
 
