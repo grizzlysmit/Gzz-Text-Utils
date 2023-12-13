@@ -254,6 +254,8 @@ sub hwcswidth(Str:D $text \-\-> Int:D) is export {
 Top of Document [#table-of-contents]
 .SH Here are 4 functions provided to \fBcentre\fR, \fBleft\fR and \fBright\fR justify text even when it is ANSI formatted\&.
 .SS centre
+.IP \(bu 2m
+centring
 .RS 2n
 .IP \(bu 2m
 Centring text in a field\&.
@@ -491,6 +493,8 @@ This is used to obtain the length of the of the text using \fB\fIwcswidth(Str)\f
 
 Top of Document [#table-of-contents]
 .SS left
+.IP \(bu 2m
+left justifying
 .RS 2n
 .IP \(bu 2m
 Left Justifying text\&.
@@ -516,6 +520,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 Top of Document [#table-of-contents]
 .SS right
+.IP \(bu 2m
+just right\&.
 .RS 2n
 .IP \(bu 2m
 Right justifying text\&.

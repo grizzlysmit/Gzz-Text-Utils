@@ -1062,6 +1062,8 @@ it is ANSI formatted.
 
 =head3 centre
 
+=item centring
+
 =begin item2
 
 Centring text in a field.
@@ -1255,6 +1257,8 @@ L<Top of Document|#table-of-contents>
 
 =head3 left
 
+=item left justifying
+
 =begin item2
 
 Left Justifying text.
@@ -1275,6 +1279,8 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 L<Top of Document|#table-of-contents>
 
 =head3 right
+
+=item just right.
 
 =begin item2
 

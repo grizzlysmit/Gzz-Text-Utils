@@ -218,6 +218,8 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
 ### centre
 
+  * centring
+
     * Centring text in a field.
 
       ```raku
@@ -347,6 +349,8 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
 ### left
 
+  * left justifying
+
     * Left Justifying text.
 
       ```raku
@@ -361,6 +365,8 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 [Top of Document](#table-of-contents)
 
 ### right
+
+  * just right.
 
     * Right justifying text.
 

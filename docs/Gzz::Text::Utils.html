@@ -696,6 +696,7 @@ footer {
 </section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h1 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h1>
 <h3 id="centre"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">centre</a></h3>
 <ul>
+<li><p>centring</p></li>
 <ul>
 <li><p>Centring text in a field.</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
@@ -816,6 +817,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p><h3 id="left"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">left</a></h3>
 <ul>
+<li><p>left justifying</p></li>
 <ul>
 <li><p>Left Justifying text.</p><pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
              :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
@@ -830,6 +832,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p><h3 id="right"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">right</a></h3>
 <ul>
+<li><p>just right.</p></li>
 <ul>
 <li><p>Right justifying text.</p><pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;right-global-number-of-chars,
@@ -1237,7 +1240,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:39:32Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:45:09Z</span></div></footer>
 	</body>
 </html>
 
