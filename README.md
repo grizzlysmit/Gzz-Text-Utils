@@ -739,6 +739,8 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
 
 Here is an example of use.
 
+[Top of Document](#table-of-contents)
+
 ```raku
 my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
     my Str $name;
@@ -820,7 +822,8 @@ my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
+                                    &setup-option-str, &find-pos, &get-result, @candidates);
 ```
 
 [Top of Document](#table-of-contents)

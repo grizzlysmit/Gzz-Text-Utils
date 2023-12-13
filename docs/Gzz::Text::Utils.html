@@ -1110,7 +1110,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p><strong><code>@array</code></strong> is the array to select from.</p></li>
 </ul>
 </ul>
-<p>Here is an example of use.</p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+<p>Here is an example of use.</p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
     my Str $name;
     my Str $cc;
     my Str $flag;
@@ -1184,7 +1184,8 @@ my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="lead-dots(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">lead-dots(…)</a></h3>
 <p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p><pre class="pod-block-code">sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = '.' --&gt; Str) is export
@@ -1220,7 +1221,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:23:48Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T11:26:27Z</span></div></footer>
 	</body>
 </html>
 

@@ -4505,6 +4505,8 @@ It still needs to be an Int (for now) but you can do further computations at the
 
 Here is an example of use.
 
+L<Top of Document|#table-of-contents>
+
 =begin code :lang<raku>
 
 my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
@@ -4590,7 +4592,8 @@ my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
     }
     return $pos;
 }
-my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
+                                    &setup-option-str, &find-pos, &get-result, @candidates);
 
 =end code
 
