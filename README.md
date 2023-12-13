@@ -217,7 +217,7 @@ The Functions Provided
 
 ### centre
 
-  * centring
+  * ⋄
 
     * Centring text in a field.
 
@@ -228,7 +228,7 @@ The Functions Provided
                           Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
       ```
 
-      * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
+      * Centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
 
       * **Where:**
 

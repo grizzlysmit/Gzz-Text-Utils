@@ -1062,7 +1062,7 @@ it is ANSI formatted.
 
 =head3 centre
 
-=item centring
+=item ⋄
 
 =begin item2
 
@@ -1081,7 +1081,7 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 =begin item3
 
-B<C<centre>> centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
+Centres the text B<C<$text>> in a field of width B<C<$width>> padding either side with B<C<$fill>>
 
 =end item3
 
