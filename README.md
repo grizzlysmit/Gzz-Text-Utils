@@ -383,6 +383,10 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 
 #### crop-field
 
+  * 
+
+    * 
+
       * Cropping Text in a field.
 
         ```raku
