@@ -1063,13 +1063,14 @@ it is ANSI formatted.
 
 =begin item
 
-B<centre>
+Centring text in a field.
 
 =begin code :lang<raku>
 
 sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
-                Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                Str:D :$ref = strip-ansi($text),
+                    Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
 
 =end code
 
@@ -1126,6 +1127,8 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 =end item4
 
 =begin item5 
+
+L<Top of Document|#table-of-contents>
 
 Which is a closure around the variables: B<C<$centre-total-number-of-chars>> and B<C<$centre-total-number-of-visible-chars>>, 
 these are global B<C<our>> variables that B<C<Gzz::Text::Utils>> exports.

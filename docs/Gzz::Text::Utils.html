@@ -690,9 +690,10 @@ footer {
 </section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h1 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a href="#Gzz::Text::Utils" class="u" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h1>
 <h2 id="centre"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">centre</a></h2>
 <ul>
-<li><p><strong>centre</strong></p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
+<li><p>Centring text in a field.</p><pre class="pod-block-code">sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
             :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;centre-global-number-of-chars,
-                Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export {
+                Str:D :$ref = strip-ansi($text),
+                    Int:D :$max-width = 0, Str:D :$ellipsis = '' --&gt; Str) is export 
 
 </pre></li>
 <ul>
@@ -717,7 +718,7 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 
 </pre></li>
 <ul>
-<li><p>Which is a closure around the variables: <strong><code>$centre-total-number-of-chars</code></strong> and <strong><code>$centre-total-number-of-visible-chars</code></strong>, these are global <strong><code>our</code></strong> variables that <strong><code>Gzz::Text::Utils</code></strong> exports. But you can just use <strong><code>my</code></strong> variables from with a scope, just as well. And make the <strong><code>sub</code></strong> local to the same scope.</p><p>i.e.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+<li><p><a href="#table-of-contents">Top of Document</a></p><p>Which is a closure around the variables: <strong><code>$centre-total-number-of-chars</code></strong> and <strong><code>$centre-total-number-of-visible-chars</code></strong>, these are global <strong><code>our</code></strong> variables that <strong><code>Gzz::Text::Utils</code></strong> exports. But you can just use <strong><code>my</code></strong> variables from with a scope, just as well. And make the <strong><code>sub</code></strong> local to the same scope.</p><p>i.e.</p><pre class="pod-block-code">sub Sprintf(Str:D $format-str,
                 :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
                                                         Str:D :$ellipsis = '', *@args --&gt; Str) is export {
     ...
@@ -1211,7 +1212,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &a
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:48:25Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-13T10:55:28Z</span></div></footer>
 	</body>
 </html>
 

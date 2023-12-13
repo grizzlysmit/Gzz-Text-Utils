@@ -217,12 +217,13 @@ Here are 4 functions provided to **`centre`**, **`left`** and **`right`** justif
 centre
 ------
 
-  * **centre**
+  * Centring text in a field.
 
     ```raku
     sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                    Str:D :$ref = strip-ansi($text),
+                        Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`centre`** centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
@@ -249,7 +250,9 @@ centre
           }
           ```
 
-          * Which is a closure around the variables: **`$centre-total-number-of-chars`** and **`$centre-total-number-of-visible-chars`**, these are global **`our`** variables that **`Gzz::Text::Utils`** exports. But you can just use **`my`** variables from with a scope, just as well. And make the **`sub`** local to the same scope.
+          * [Top of Document](#table-of-contents)
+
+            Which is a closure around the variables: **`$centre-total-number-of-chars`** and **`$centre-total-number-of-visible-chars`**, these are global **`our`** variables that **`Gzz::Text::Utils`** exports. But you can just use **`my`** variables from with a scope, just as well. And make the **`sub`** local to the same scope.
 
             i.e.
 
