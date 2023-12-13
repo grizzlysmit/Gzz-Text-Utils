@@ -1263,7 +1263,8 @@ Left Justifying text.
 
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                                     Str:D :$ellipsis = '' --> Str) is export
 
 =end code
 
@@ -1283,7 +1284,8 @@ Right justifying text.
 
 sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                     :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
-                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                                        Str:D :$ellipsis = '' --> Str) is export
 
 =end code
 
@@ -1305,7 +1307,7 @@ Cropping Text in a field.
 =begin code :lang<raku>
 
 sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                                Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
+                                Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export 
 
 =end code
 

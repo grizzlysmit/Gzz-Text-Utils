@@ -354,7 +354,8 @@ left
     ```raku
     sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                     :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
-                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                        Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                                         Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`left`** is the same except that except that it puts all the padding on the right of the field.
@@ -369,7 +370,8 @@ right
     ```raku
     sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                         :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
-                            Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                            Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                                            Str:D :$ellipsis = '' --> Str) is export
     ```
 
     * **`right`** is again the same except it puts all the padding on the left and the text to the right.
@@ -381,7 +383,7 @@ crop-field
 
     ```raku
     sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                                    Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
+                                    Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export
     ```
 
     * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary. Copes with ANSI escape codes.
