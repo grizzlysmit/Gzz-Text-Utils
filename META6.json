@@ -8,7 +8,9 @@
     ],
     "depends": [
         "Terminal::Width",
-        "Terminal::WCWidth"
+        "Terminal::WCWidth",
+        "Term::termios",
+        "Terminal::ANSI"
     ],
     "provides" : {
         "Gzz::Text::Utils" : "lib/Gzz/Text/Utils.rakumod"
@@ -20,7 +22,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.16",
+    "version" : "0.1.17",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]
