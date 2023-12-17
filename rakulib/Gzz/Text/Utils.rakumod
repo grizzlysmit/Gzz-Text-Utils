@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.17>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.18>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -47,7 +47,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.17
+=VERSION v0.1.18
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -1497,9 +1497,12 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
     return $result if $width <= 0;
     my Int:D $fill-width = wcswidth($fill);
     $fill-width = 1 unless $fill-width > 0;
-    $width = $width div $fill-width;
+    my Int:D $extra-width = $width % $fill-width;
+    my Int:D $left-extra-width = $extra-width div 2;
+    $extra-width -= $left-extra-width;
+    $width div= $fill-width;
     my Int:D $l  = $width div 2;
-    $result = $fill x $l ~ $result ~ $fill x ($width - $l);
+    $result = $fill x $l ~ $fill.substr(0, $left-extra-width) ~ $result ~ $fill x ($width - $l) ~ $fill.substr(0, $extra-width);
     return $result;
     KEEP {
         &number-of-chars($result.chars, strip-ansi($result).chars);
@@ -1520,7 +1523,11 @@ sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
     return $result if $width <= 0;
     return $result if $width <= $w;
     my Int:D $l  = ($width - $w).abs;
-    $result ~= $fill x $l;
+    my Int:D $fill-width = wcswidth($fill);
+    $fill-width = 1 unless $fill-width > 0;
+    my Int:D $extra-width = $l % $fill-width;
+    $l div= $fill-width;
+    $result ~= $fill x $l ~ $fill.substr(0, $extra-width);
     return $result;
     KEEP {
         &number-of-chars($result.chars, strip-ansi($result).chars);
@@ -1540,9 +1547,13 @@ sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
     return $result if $width <= 0;
     return $result if $width <= $w;
     my Int:D $l  = $width - $w;
+    my Int:D $fill-width = wcswidth($fill);
+    $fill-width = 1 unless $fill-width > 0;
+    my Int:D $extra-width = $l % $fill-width;
+    $l div= $fill-width;
     dd $l, $result if $debug;
     dd $w, $width, $max-width, $result, $ref, $fill if $debug;
-    $result = ($fill x $l) ~ $result;
+    $result = ($fill x $l) ~ $fill.substr(0, $extra-width) ~ $result;
     return $result;
     KEEP {
         &number-of-chars($result.chars, strip-ansi($result).chars);
