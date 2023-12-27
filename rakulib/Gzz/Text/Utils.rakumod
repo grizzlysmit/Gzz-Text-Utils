@@ -4435,7 +4435,7 @@ sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) i
             }
             return $res
         };
-        my &find-pos = sub (MultiT $result, Int:D $pos, @array --> Int:D) {
+        my &find-pos = sub (MultiT $result, Int:D $pos is copy, @array --> Int:D) {
             for @array.kv -> $idx, $r {
                 if $r eq $result {
                     $pos = $idx;
