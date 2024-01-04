@@ -223,7 +223,7 @@ The Functions Provided
 
       ```raku
       sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                  :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
                       Str:D :$ref = strip-ansi($text),
                           Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
       ```
