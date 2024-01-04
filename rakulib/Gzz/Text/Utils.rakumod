@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.18>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.19>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -47,7 +47,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.18
+=VERSION v0.1.20
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4398,24 +4398,116 @@ Display a text based menu.
 =begin code :lang<raku>
 
 sub menu(@candidates is copy, Str:D $message = "",
-                            Bool:D :c(:color(:$colour)) is copy = False,
-                             Bool:D :s(:$syntax) = False --> MultiT) is export
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export 
 
 =end code
 
-=item Where:
+=item1 Where:
 =item2 B<C<@candidates>> is an array of strings to make up the rows of the menu.
+=item2 B<C<$message>> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).
+=item2 B<C<&row>> is is a callback to deal with the rows of the menu.
+=item3 Where
+=item4 B<C<$c>> is the current row count.
+=item4 B<C<$p>> is the current position in the @candidates array.
+=item4 B<C<@a>> is the array @candidates itself.
+=item4 B<C<$highlight-bg-colour>> is the background colour of the current row (i.e. $c == $p).
+=item4 B<C<$highlight-fg-colour>> is the foreground colour of the current row (i.e. $c == $p).
+=item4 B<C<$bg-colour0>> is the background colour of the row (i.e. $c %% 2).
+=item4 B<C<$fg-colour0>> is the foreground colour of the row (i.e. $c %% 2).
+=item4 B<C<$bg-colour1>> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).
+=item4 B<C<$fg-colour1>> is the foreground colour of the row (i.e. $c % 2 != 0).
+=item2 B<C<&value>> is a callback to get the return value for the function.
+=item4 B<C<$c>> is the row selected.
+=item4 B<C<$c>> is the array @candidates.
 =item2 B<C<:c(:color(:$colour))>> defines a boolean flag to tell whether to use colours or not.
 =item3 you can use B<C<:c>>, B<C<:color>> or B<C<:colour>> for this they are all exactly the same.
 =item2 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sour of syntax highlighting. 
-=item3 for now B<C<$syntax>> is no different from B<C<$colour>> but it may change later.
+=item2 B<C<$highlight-bg-colour>>  the background colour to use to highlight the current line.
+=item2 B<C<$highlight-fg-colour>>  the foreground colour to use to highlight the current line.
+=item2 B<C<$bg-colour0>> the background colour to use if the line count is divisible by 2.
+=item2 B<C<$fg-colour0>> the foreground colour to use if the line count is divisible by 2.
+=item2 B<C<$bg-colour1>> the background colour to use if the line count is not divisible by 2.
+=item2 B<C<$fg-colour1>> the foreground colour to use if the line count is not divisible by 2.
+=item2 B<C<$bg-prompt>>  the background colour to use on the prompt line below the selection area.
+=item2 B<C<$fg-prompt>>  the foreground colour to use on the prompt line below the selection area.
+=item2 B<C<$wrap-around>> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
+=item3 B<C<$highlight-bg-colour>> to B<C<$wrap-around>> are all just used for the dropdown case (i.e. B<C<$colour>> or B<C<$syntax>> are True)
+=item3 B<C<$syntax>> is no different from B<C<$colour>> unless the user defines it using the B<C<:&row>> parameter.
 =item4 calls L<dropdown|#dropdown> to do the colour work.
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) is copy = False,
-                                                                         Bool:D :s(:$syntax) = False --> MultiT) is export {
+sub default-row(Int:D $cnt, Int:D $pos, @array,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = ''  --> Str:D) is export {
+    if $colour || $syntax {
+        if $cnt == $pos {
+            return $highlight-bg-colour ~ $highlight-fg-colour ~ @array[$pos]«name»;
+        } elsif $cnt %% 2 {
+            return $bg-colour0 ~ $fg-colour0 ~ @array[$pos]«name»;
+        } else {
+            return $bg-colour1 ~ $fg-colour1 ~ @array[$pos]«name»;
+        }
+    } else {
+        return @array[$pos]«name»;
+    }
+} #`««« sub default-row(Int:D $cnt, Int:D $pos, @array,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = ''  --> Str:D) is export »»»
+
+sub default-value(Int:D $choice, @array --> MultiT) is export {
+    return @array[$choice]«value»;
+} # sub default-value(Int:D $choice, @array --> MultiT) is export #
+
+sub menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export {
     $colour = True if $syntax;
+    my %cancel = value => 'cancel', name => 'cancel';
+    @candidates.push(%cancel);
     if $colour {
         # insure that the screen is reset on error #
         my &stack = sub ( --> Nil) {
@@ -4425,31 +4517,45 @@ sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) i
             }
         };
         signal(SIGINT, SIGHUP, SIGQUIT, SIGTERM, SIGQUIT).tap( { &stack(); put t.restore-screen; say "$_ Caught"; exit 0 } );
-        my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
-            return @array[$cnt];
+        my &setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --> Str:D ) {
+            return &row($cnt, $pos, @array, :$colour, :$syntax, 
+                        :$highlight-bg-colour, :$highlight-fg-colour,
+                        :$bg-colour0, :$fg-colour0, 
+                        :$bg-colour1, :$bg-colour1);
         };
         my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
             my $res = $result;
             if $pos ~~ 0..^$length {
-              $res = @array[$pos];
+                $res = @array[$pos]«value»;
             }
             return $res
         };
         my &find-pos = sub (MultiT $result, Int:D $pos is copy, @array --> Int:D) {
-            for @array.kv -> $idx, $r {
-                if $r eq $result {
+            for @array.kv -> $idx, %r {
+                if %r«value» eq $result {
                     $pos = $idx;
                     last; # found so don't waste resources #
                 }
             }
             return $pos;
         }
-        my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup', &setup-option-str, &find-pos, &get-result, @candidates);
+        my Str:D $result = dropdown(@candidates[@candidates.elems - 1]«value», 40, 'backup',
+                                                    &setup-option-str, &find-pos, &get-result,
+                                                    @candidates, 
+                                                    :$highlight-bg-colour,
+                                                    :$highlight-fg-colour,
+                                                    :$bg-colour0,
+                                                    :$fg-colour0,
+                                                    :$bg-colour1,
+                                                    :$fg-colour1,
+                                                    :$bg-prompt,
+                                                    :$fg-prompt,
+                                                    :$wrap-around);
         return $result;
     }
-    @candidates.append('cancel');
     $message.say if $message;
-    for @candidates.kv -> $indx, $candidate {
+    for @candidates.kv -> $indx, %row {
+        my Str:D $candidate = &row($indx, $indx, @candidates);
         "%10d\t%-20s\n".printf($indx, $candidate)
     }
     "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit".say;
@@ -4469,10 +4575,27 @@ sub menu(@candidates is copy, Str:D $message = "", Bool:D :c(:color(:$colour)) i
         last;
     }
     my Str $Dir;
-    $Dir = @candidates[$choice] unless @candidates[$choice] eq 'cancel';
-    $Dir.say;
+    $Dir = &value($choice, @candidates) unless &row($choice,  $choice, @candidates) eq 'cancel';
+    #$Dir.say;
     return $Dir;
-} # sub menu(@candidates is copy, Str $message = "" --> Str) is export #
+} #`««« sub menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export »»»
 
 =begin pod
 
@@ -4484,11 +4607,20 @@ A text based dropdown/list or menu with ANSI colours.
 
 =begin code :lang<raku>
 
-sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                &setup-option-str:(Int:D $c, @a --> Str:D),
-                    &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, Int:D $p, @a --> Str:D),
+                        &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
                         &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
-                                                                @array --> MultiT) is export  
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue, 
+                        Bool:D :$wrap-around = False --> MultiT) is export  
 
 =end code
 
@@ -4513,6 +4645,16 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
 =item4 the arg B<C<$p>> is the current position in the array B<C<@array>> supplied to B<C<dropdown>>.
 =item4 the arg B<C<$l>> is the length of the array B<C<@array>>.
 =item4 the arg B<C<@a>> is the array B<C<@array>> that was supplied to B<C<dropdown>>.
+=item2 B<C<@array>> the of rows to display.
+=item2 B<C<$highlight-bg-colour>>  the background colour to use to highlight the current line.
+=item2 B<C<$highlight-fg-colour>>  the foreground colour to use to highlight the current line.
+=item2 B<C<$bg-colour0>> the background colour to use if the line count is divisible by 2.
+=item2 B<C<$fg-colour0>> the foreground colour to use if the line count is divisible by 2.
+=item2 B<C<$bg-colour1>> the background colour to use if the line count is not divisible by 2.
+=item2 B<C<$fg-colour1>> the foreground colour to use if the line count is not divisible by 2.
+=item2 B<C<$bg-prompt>>  the background colour to use on the prompt line below the selection area.
+=item2 B<C<$fg-prompt>>  the foreground colour to use on the prompt line below the selection area.
+=item2 B<C<$wrap-around>> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
 
 =begin item5 
 
@@ -4529,7 +4671,7 @@ L<Top of Document|#table-of-contents>
 
 =begin code :lang<raku>
 
-my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+my &setup-option-str = sub (Int:D $cnt, Int:D $p, @array --> Str:D ) {
     my Str $name;
     my Str $cc;
     my Str $flag;
@@ -4595,7 +4737,7 @@ L<Top of Document|#table-of-contents>
 
 =begin code :lang<raku>
 
-my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+my &setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --> Str:D ) {
     return @array[$cnt];
 };
 my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
@@ -4637,26 +4779,36 @@ sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $l
     return $top;
 } # sub normalise_top(Int:D $top is copy, Int:D $pos, Int:D $window-height, Int:D $length --> Int:D) #
 
-sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                        &setup-option-str:(Int:D $c, @a --> Str:D),
-                            &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
-                                &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
-                                                                        @array --> MultiT) is export  {
-    t.save-screen;
+sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, Int:D $p, @a --> Str:D),
+                        &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                        &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue, 
+                        Bool:D :$wrap-around = False --> MultiT) is export  {
+    put t.save-screen;
     my MultiT $result = $id;
     try {
         my Int:D $pos    = -1;
         my Int:D $top    = -1;
-        my $bgcolour;
-        my $fgcolour;
+        my Str:D $bgcolour = '';
+        my Str:D $fgcolour = '';
         my Int:D $length = @array.elems;
+        $window-height = $length if $window-height > $length;
         $pos = &find-pos($result, $pos, @array);
         $top = normalise_top($top, $pos, $window-height, $length);
         my Str $key;
         my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
         @signal.push: {
             $original-flags.setattr(:NOW);
-            t.restore-screen;
+            print t.show-cursor ~ t.restore-screen;
         };
         #«««
         my $flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
@@ -4668,39 +4820,102 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
         $width = 80 if $width === Int;
         my Int:D $m = 0;
         loop (my Int $i = 0; $i < $length; $i++) {
-            $m = max($m, hwcswidth(&setup-option-str($i, @array)));
+            $m = max($m, hwcswidth(&setup-option-str($i, $pos, @array)));
         } # loop (my Int $i = 0; $i < $length; $i++) #
-        $m = max($m, hwcswidth('use up and down arrows or page up and down : and enter to select'));
-        my Int:D $w = min($width - 10 - 24 - 2 - 42, $m + 2);
+        $m = max($m, hwcswidth('use up and down arrows or page up and down : and enter to select (esc, q or Q to quit)'));
+        my Int:D $w = min($width, $m + 2);
+        put t.hide-cursor;
         loop {
             put t.clear-screen;
             loop (my Int $cnt = $top; $cnt < $top + $window-height && $cnt < $length; $cnt++) {
                 if $cnt == $pos {
-                    $bgcolour = t.bg-color(0,0,255);
-                    $fgcolour = t.bright-yellow;
+                    $bgcolour = $highlight-bg-colour;
+                    $fgcolour = $highlight-fg-colour;
                 } elsif $cnt % 2 == 0 {
-                    $bgcolour = t.bg-yellow;
-                    $fgcolour = t.bright-blue;
+                    $bgcolour = $bg-colour0;
+                    $fgcolour = $fg-colour0;
                 } else {
-                    $bgcolour = t.bg-color(0,255,0);
-                    $fgcolour = t.bright-blue;
+                    $bgcolour = $bg-colour1;
+                    $fgcolour = $fg-colour1;
                 }
-                put $bgcolour ~ t.bold ~ $fgcolour ~ sprintf("%-*s", $w, &setup-option-str($cnt, @array)) ~ t.text-reset;
+                put $bgcolour ~ $fgcolour ~ Sprintf("%-*s", $w, &setup-option-str($cnt, $pos, @array)) ~ t.text-reset;
             } # loop (my Int $cnt = $top; $cnt <= $top + $window-height; $cnt++) #
             $cnt = $top + $window-height;
             my Int:D $wdth = hwcswidth(trailing-dots('use up and down arrows or page up and down', 42));
-            put t.bg-green ~ t.bold ~ t.bright-blue ~ sprintf("%-*s: %-*s", $wdth, trailing-dots('use up and down arrows or page up and down', 42), $w - $wdth - 2, 'and enter to select') ~ t.text-reset;
+            put $bg-prompt ~ $fg-prompt ~ Sprintf("%-*s: %-*s", $wdth, trailing-dots('use up and down arrows or page up and down', 42),
+                                                          $w - $wdth - hwcswidth(': '), 'and enter to select (esc, q or Q to quit)') ~ t.text-reset;
             $cnt++;
             $key = $*IN.read(10).decode;
             given $key {
-                when 'k'          { $pos--; $pos = 0 if $pos < 0; $top-- if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # up #
-                when 'j'          { $pos++; $pos = ($length - 1) if $pos >= $length; $top++ if $pos >= $top + $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # down #
-                when "\x[1B][A"   { $pos--; $pos = 0 if $pos < 0; $top-- if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # up #
-                when "\x[1B][B"   { $pos++; $pos = ($length - 1) if $pos >= $length; $top++ if $pos >= $top + $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # down #
-                when "\x[1B][5~"  { $pos -= ($window-height - 1); $pos = 0 if $pos < 0; $top -= ($window-height - 1) if $pos < $top; $top = normalise_top($top, $pos, $window-height, $length); } # page up #
-                when "\x[1B][6~"  { $pos += ($window-height - 1); $pos = ($length - 1) if $pos >= $length; $top = normalise_top($top, $pos, $window-height, $length); } # page down #
-                when "\x[1B][H"   { $pos = 0; $top = 0; $top = normalise_top($top, $pos, $window-height, $length); } # home #
-                when "\x[1B][F"   { $pos = ($length - 1); $top = $length - $window-height; $top = normalise_top($top, $pos, $window-height, $length); } # end #
+                when 'k'          {
+                    $pos--;
+                    if $wrap-around {
+                        $pos = ($length - 1) if $pos < 0;
+                    } else {
+                        $pos = 0 if $pos < 0;
+                    }
+                    $top-- if $pos < $top;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # up #
+                when 'j'          {
+                    $pos++;
+                    if $wrap-around {
+                        $pos = 0 if $pos >= $length;
+                    } else {
+                        $pos = ($length - 1) if $pos >= $length;
+                    }
+                    $top++ if $pos >= $top + $window-height;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # down #
+                when "\x[1B][A"   {
+                    $pos--;
+                    if $wrap-around {
+                        $pos = ($length - 1) if $pos < 0;
+                    } else {
+                        $pos = 0 if $pos < 0;
+                    }
+                    $top-- if $pos < $top;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # up #
+                when "\x[1B][B"   {
+                    $pos++;
+                    if $wrap-around {
+                        $pos = 0 if $pos >= $length;
+                    } else {
+                        $pos = ($length - 1) if $pos >= $length;
+                    }
+                    $top++ if $pos >= $top + $window-height;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # down #
+                when "\x[1B][5~"  {
+                    $pos -= ($window-height - 1);
+                    if $wrap-around {
+                        $pos = ($length - 1) if $pos < 0;
+                    } else {
+                        $pos = 0 if $pos < 0;
+                    }
+                    $top -= ($window-height - 1) if $pos < $top;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # page up #
+                when "\x[1B][6~"  {
+                    $pos += ($window-height - 1);
+                    if $wrap-around {
+                        $pos = 0 if $pos >= $length;
+                    } else {
+                        $pos = ($length - 1) if $pos >= $length;
+                    }
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # page down #
+                when "\x[1B][H"   {
+                    $pos = 0;
+                    $top = 0;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # home #
+                when "\x[1B][F"   {
+                    $pos = ($length - 1);
+                    $top = $length - $window-height;
+                    $top = normalise_top($top, $pos, $window-height, $length);
+                } # end #
                 when "\x[1B]"     { last; } # esc #
                 when "\n"         {   # enter #
                                       #`«««
@@ -4715,6 +4930,8 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                 when "q"         { last; } # quit #
                 when "Q"         { last; } # quit #
             }
+            $*ERR.say: '=' x 80;
+            $*ERR.flush;
         } # loop #
         $original-flags.setattr(:NOW);
         @signal.pop if @signal;
@@ -4724,17 +4941,26 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
                 .Str.say;
                 $original-flags.setattr(:NOW);
                 @signal.pop if @signal;
-                t.restore-screen;
+                print t.show-cursor ~ t.restore-screen;
                 .rethrow;
             }
         }
     } # try #
-    t.restore-screen;
+    print t.show-cursor ~ t.restore-screen;
     return $result;
 } #`««« sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                        &setup-option-str:(Int:D $c, @a --> Str:D),
-                            &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
-                                                                        @array --> MultiT) is export »»»
+                        &setup-option-str:(Int:D $c, Int:D $p, @a --> Str:D),
+                        &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+                        &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue --> MultiT) is export »»»
 
 =begin pod
 

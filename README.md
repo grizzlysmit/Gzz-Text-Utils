@@ -70,7 +70,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-v0.1.18
+v0.1.20
 
 TITLE
 =====
@@ -662,13 +662,58 @@ Display a text based menu.
 
 ```raku
 sub menu(@candidates is copy, Str:D $message = "",
-                            Bool:D :c(:color(:$colour)) is copy = False,
-                             Bool:D :s(:$syntax) = False --> MultiT) is export
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export
 ```
 
   * Where:
 
     * **`@candidates`** is an array of strings to make up the rows of the menu.
+
+    * **`$message`** is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).
+
+    * **`&row`** is is a callback to deal with the rows of the menu.
+
+      * Where
+
+        * **`$c`** is the current row count.
+
+        * **`$p`** is the current position in the @candidates array.
+
+        * **`@a`** is the array @candidates itself.
+
+        * **`$highlight-bg-colour`** is the background colour of the current row (i.e. $c == $p).
+
+        * **`$highlight-fg-colour`** is the foreground colour of the current row (i.e. $c == $p).
+
+        * **`$bg-colour0`** is the background colour of the row (i.e. $c %% 2).
+
+        * **`$fg-colour0`** is the foreground colour of the row (i.e. $c %% 2).
+
+        * **`$bg-colour1`** is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).
+
+        * **`$fg-colour1`** is the foreground colour of the row (i.e. $c % 2 != 0).
+
+    * **`&value`** is a callback to get the return value for the function.
+
+        * **`$c`** is the row selected.
+
+        * **`$c`** is the array @candidates.
 
     * **`:c(:color(:$colour))`** defines a boolean flag to tell whether to use colours or not.
 
@@ -676,9 +721,31 @@ sub menu(@candidates is copy, Str:D $message = "",
 
     * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sour of syntax highlighting. 
 
-      * for now **`$syntax`** is no different from **`$colour`** but it may change later.
+    * **`$highlight-bg-colour`** the background colour to use to highlight the current line.
+
+    * **`$highlight-fg-colour`** the foreground colour to use to highlight the current line.
+
+    * **`$bg-colour0`** the background colour to use if the line count is divisible by 2.
+
+    * **`$fg-colour0`** the foreground colour to use if the line count is divisible by 2.
+
+    * **`$bg-colour1`** the background colour to use if the line count is not divisible by 2.
+
+    * **`$fg-colour1`** the foreground colour to use if the line count is not divisible by 2.
+
+    * **`$bg-prompt`** the background colour to use on the prompt line below the selection area.
+
+    * **`$fg-prompt`** the foreground colour to use on the prompt line below the selection area.
+
+    * **`$wrap-around`** if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
+
+      * **`$highlight-bg-colour`** to **`$wrap-around`** are all just used for the dropdown case (i.e. **`$colour`** or **`$syntax`** are True)
+
+      * **`$syntax`** is no different from **`$colour`** unless the user defines it using the **`:&row`** parameter.
 
         * calls [dropdown](#dropdown) to do the colour work.
+
+[Top of Document](#table-of-contents)
 
 [Top of Document](#table-of-contents)
 
@@ -687,11 +754,20 @@ sub menu(@candidates is copy, Str:D $message = "",
 A text based dropdown/list or menu with ANSI colours.
 
 ```raku
-sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                &setup-option-str:(Int:D $c, @a --> Str:D),
-                    &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
+sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
+                        &setup-option-str:(Int:D $c, Int:D $p, @a --> Str:D),
+                        &find-pos:(MultiT $r, Int:D $p, @a --> Int:D),
                         &get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --> MultiT:D),
-                                                                @array --> MultiT) is export
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue, 
+                        Bool:D :$wrap-around = False --> MultiT) is export
 ```
 
   * Where
@@ -736,6 +812,26 @@ sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
 
         * the arg **`@a`** is the array **`@array`** that was supplied to **`dropdown`**.
 
+    * **`@array`** the of rows to display.
+
+    * **`$highlight-bg-colour`** the background colour to use to highlight the current line.
+
+    * **`$highlight-fg-colour`** the foreground colour to use to highlight the current line.
+
+    * **`$bg-colour0`** the background colour to use if the line count is divisible by 2.
+
+    * **`$fg-colour0`** the foreground colour to use if the line count is divisible by 2.
+
+    * **`$bg-colour1`** the background colour to use if the line count is not divisible by 2.
+
+    * **`$fg-colour1`** the foreground colour to use if the line count is not divisible by 2.
+
+    * **`$bg-prompt`** the background colour to use on the prompt line below the selection area.
+
+    * **`$fg-prompt`** the foreground colour to use on the prompt line below the selection area.
+
+    * **`$wrap-around`** if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
+
           * Because we use a function we can compute much more complex results; depending on what we have in **`@array`**. It still needs to be an Int (for now) but you can do further computations at the end to get other values.
 
     * **`@array`** is the array to select from.
@@ -745,7 +841,7 @@ Here is an example of use.
 [Top of Document](#table-of-contents)
 
 ```raku
-my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+my &setup-option-str = sub (Int:D $cnt, Int:D $p, @array --> Str:D ) {
     my Str $name;
     my Str $cc;
     my Str $flag;
@@ -808,7 +904,7 @@ Or using a much simpler array. **NB: from `menu`**
 [Top of Document](#table-of-contents)
 
 ```raku
-my &setup-option-str = sub (Int:D $cnt, @array --> Str:D ) {
+my &setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --> Str:D ) {
     return @array[$cnt];
 };
 my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {

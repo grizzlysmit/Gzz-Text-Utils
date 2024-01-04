@@ -24,7 +24,7 @@ Av8AAAD/AAAAAAAAAEAAAAAAAAAAGQAAAP/RAACR/35+/wAAAP8A+wL/AAAA2gAAAGX/AADa/35+
 AAAAZQAAAP8AAAD/AAAAAAAAAAAAAABlAAAA/4WFhQEAAAD/AAAAQAAAAAAAAAD/AAAA2gAAAGUA
 AAAAj/kAAAZgAAADgAAAgAEAAOAHAADgBwAAwAMAAIABAACAAQAAAAEAAAAAAAAAAAAAAAAAAAPA
 AACH4QAAzrMAAA==" rel="icon" type="image/x-icon" /><meta name="author" value="Francis Grizzly Smit (grizzly@smit.id.au)" />
-<meta name="version" value="v0.1.18" />
+<meta name="version" value="v0.1.20" />
 <style>.comment {
   color: #666; }
 
@@ -1055,32 +1055,89 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 
 </pre></section><section name="pod"><h3 id="menu"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">menu</a></h3>
 <p>Display a text based menu.</p><pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;,
-                            Bool:D :c(:color(:$colour)) is copy = False,
-                             Bool:D :s(:$syntax) = False --&gt; MultiT) is export
+                              :&amp;row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --&gt; Str:D) = &amp;default-row, 
+                              :&amp;value:(Int:D $c, @a --&gt; MultiT) = &amp;default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --&gt; MultiT) is export 
 
 </pre><ul>
 <li><p>Where:</p></li>
 <ul>
 <li><p><strong><code>@candidates</code></strong> is an array of strings to make up the rows of the menu.</p></li>
+<li><p><strong><code>$message</code></strong> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).</p></li>
+<li><p><strong><code>&amp;row</code></strong> is is a callback to deal with the rows of the menu.</p></li>
+<ul>
+<li><p>Where</p></li>
+<ul>
+<li><p><strong><code>$c</code></strong> is the current row count.</p></li>
+<li><p><strong><code>$p</code></strong> is the current position in the @candidates array.</p></li>
+<li><p><strong><code>@a</code></strong> is the array @candidates itself.</p></li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> is the background colour of the current row (i.e. $c == $p).</p></li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> is the foreground colour of the current row (i.e. $c == $p).</p></li>
+<li><p><strong><code>$bg-colour0</code></strong> is the background colour of the row (i.e. $c %% 2).</p></li>
+<li><p><strong><code>$fg-colour0</code></strong> is the foreground colour of the row (i.e. $c %% 2).</p></li>
+<li><p><strong><code>$bg-colour1</code></strong> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).</p></li>
+<li><p><strong><code>$fg-colour1</code></strong> is the foreground colour of the row (i.e. $c % 2 != 0).</p></li>
+</ul>
+</ul>
+<li><p><strong><code>&amp;value</code></strong> is a callback to get the return value for the function.</p></li>
+<ul>
+<ul>
+<li><p><strong><code>$c</code></strong> is the row selected.</p></li>
+<li><p><strong><code>$c</code></strong> is the array @candidates.</p></li>
+</ul>
+</ul>
 <li><p><strong><code>:c(:color(:$colour))</code></strong> defines a boolean flag to tell whether to use colours or not.</p></li>
 <ul>
 <li><p>you can use <strong><code>:c</code></strong>, <strong><code>:color</code></strong> or <strong><code>:colour</code></strong> for this they are all exactly the same.</p></li>
 </ul>
 <li><p><strong><code>:s(:$syntax)</code></strong> same as <strong><code>$colour</code></strong> except it could result in some sour of syntax highlighting. </p></li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p></li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p></li>
+<li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p></li>
+<li><p><strong><code>$fg-colour0</code></strong> the foreground colour to use if the line count is divisible by 2.</p></li>
+<li><p><strong><code>$bg-colour1</code></strong> the background colour to use if the line count is not divisible by 2.</p></li>
+<li><p><strong><code>$fg-colour1</code></strong> the foreground colour to use if the line count is not divisible by 2.</p></li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p></li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p></li>
+<li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p></li>
 <ul>
-<li><p>for now <strong><code>$syntax</code></strong> is no different from <strong><code>$colour</code></strong> but it may change later.</p></li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> to <strong><code>$wrap-around</code></strong> are all just used for the dropdown case (i.e. <strong><code>$colour</code></strong> or <strong><code>$syntax</code></strong> are True)</p></li>
+<li><p><strong><code>$syntax</code></strong> is no different from <strong><code>$colour</code></strong> unless the user defines it using the <strong><code>:&amp;row</code></strong> parameter.</p></li>
 <ul>
 <li><p>calls <a href="#dropdown">dropdown</a> to do the colour work.</p></li>
 </ul>
 </ul>
 </ul>
 </ul>
-</section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
-<p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height, Str:D $id-name,
-                &amp;setup-option-str:(Int:D $c, @a --&gt; Str:D),
-                    &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
+<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="dropdown(…)"><a href="#Gzz::Text::Utils" class="u" title="go to top of document">dropdown(…)</a></h3>
+<p>A text based dropdown/list or menu with ANSI colours.</p><pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
+                        &amp;setup-option-str:(Int:D $c, Int:D $p, @a --&gt; Str:D),
+                        &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
                         &amp;get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --&gt; MultiT:D),
-                                                                @array --&gt; MultiT) is export  
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue, 
+                        Bool:D :$wrap-around = False --&gt; MultiT) is export  
 
 </pre><ul>
 <li><p>Where</p></li>
@@ -1119,6 +1176,20 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p>the arg <strong><code>$p</code></strong> is the current position in the array <strong><code>@array</code></strong> supplied to <strong><code>dropdown</code></strong>.</p></li>
 <li><p>the arg <strong><code>$l</code></strong> is the length of the array <strong><code>@array</code></strong>.</p></li>
 <li><p>the arg <strong><code>@a</code></strong> is the array <strong><code>@array</code></strong> that was supplied to <strong><code>dropdown</code></strong>.</p></li>
+</ul>
+</ul>
+<li><p><strong><code>@array</code></strong> the of rows to display.</p></li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p></li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p></li>
+<li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p></li>
+<li><p><strong><code>$fg-colour0</code></strong> the foreground colour to use if the line count is divisible by 2.</p></li>
+<li><p><strong><code>$bg-colour1</code></strong> the background colour to use if the line count is not divisible by 2.</p></li>
+<li><p><strong><code>$fg-colour1</code></strong> the foreground colour to use if the line count is not divisible by 2.</p></li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p></li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p></li>
+<li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p></li>
+<ul>
+<ul>
 <ul>
 <li><p>Because we use a function we can compute much more complex results; depending on what we have in <strong><code>@array</code></strong>. It still needs to be an Int (for now) but you can do further computations at the end to get other values.</p></li>
 </ul>
@@ -1127,7 +1198,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p><strong><code>@array</code></strong> is the array to select from.</p></li>
 </ul>
 </ul>
-<p>Here is an example of use.</p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+<p>Here is an example of use.</p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, Int:D $p, @array --&gt; Str:D ) {
     my Str $name;
     my Str $cc;
     my Str $flag;
@@ -1184,7 +1255,7 @@ while !valid-country-cc-id($cc-id, %countries) {
                                     &amp;setup-option-str, &amp;find-pos, &amp;get-result, @_country);
 }
 
-</pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, @array --&gt; Str:D ) {
+</pre><p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --&gt; Str:D ) {
     return @array[$cnt];
 };
 my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
@@ -1240,7 +1311,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-27T22:50:55Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T21:53:28Z</span></div></footer>
 	</body>
 </html>
 

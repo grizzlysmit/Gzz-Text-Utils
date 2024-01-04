@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2023-12-28
+.TH Utils.rakumod 1 2024-01-05
 .SS Table of Contents
 .IP \(bu 2m
 NAME [#name]
@@ -110,7 +110,7 @@ Gzz::Text::Utils
 .SH "AUTHOR"
 Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 .SH "VERSION"
-v0\&.1\&.18
+v0\&.1\&.20
 .SH "TITLE"
 Gzz::Text::Utils
 .SH "SUBTITLE"
@@ -1620,8 +1620,23 @@ Display a text based menu\&.
 .RS 4m
 .EX
 sub menu(@candidates is copy, Str:D $message = "",
-                            Bool:D :c(:color(:$colour)) is copy = False,
-                             Bool:D :s(:$syntax) = False \-\-> MultiT) is export
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight\-bg\-colour = '', Str:D :$highlight\-fg\-colour = '',
+                                     Str:D :$bg\-colour0 = '', Str:D :$fg\-colour0 = '', 
+                                     Str:D :$bg\-colour1 = '', Str:D :$fg\-colour1 = '' \-\-> Str:D) = &default\-row, 
+                              :&value:(Int:D $c, @a \-\-> MultiT) = &default\-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight\-bg\-colour = t\&.bg\-color(0, 0, 127) ~ t\&.bold, 
+                              Str:D :$highlight\-fg\-colour = t\&.bright\-yellow, 
+                              Str:D :$bg\-colour0 = t\&.bg\-yellow ~ t\&.bold, 
+                              Str:D :$fg\-colour0 = t\&.bright\-blue, 
+                              Str:D :$bg\-colour1 = t\&.bg\-color(0, 127, 0) ~ t\&.bold, 
+                              Str:D :$fg\-colour1 = t\&.bright\-blue,  
+                              Str:D :$bg\-prompt = t\&.bg\-green ~ t\&.bold, 
+                              Str:D :$fg\-prompt = t\&.bright\-blue, 
+                              Bool:D :$wrap\-around = False \-\-> MultiT) is export 
 
 
 .EE
@@ -1631,6 +1646,112 @@ Where:
 .RS 2n
 .IP \(bu 2m
 \fB@candidates\fR is an array of strings to make up the rows of the menu\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$message\fR is a message to be displayed at the top of the ascii text form of things (i\&.e\&. no colourising)\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&row\fR is is a callback to deal with the rows of the menu\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Where
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the current row count\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$p\fR is the current position in the @candidates array\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@a\fR is the array @candidates itself\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR is the background colour of the current row (i\&.e\&. $c == $p)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-fg\-colour\fR is the foreground colour of the current row (i\&.e\&. $c == $p)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour0\fR is the background colour of the row (i\&.e\&. $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour0\fR is the foreground colour of the row (i\&.e\&. $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour1\fR is the background colour of the row (i\&.e\&. $c % 2 != 0 or not $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour1\fR is the foreground colour of the row (i\&.e\&. $c % 2 != 0)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&value\fR is a callback to get the return value for the function\&.
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the row selected\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the array @candidates\&.
+.RE
+.RE
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -1647,9 +1768,51 @@ you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactl
 \fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sour of syntax highlighting\&. 
 .RE
 .RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR the background colour to use to highlight the current line\&.
+.RE
 .RS 2n
 .IP \(bu 2m
-for now \fB$syntax\fR is no different from \fB$colour\fR but it may change later\&.
+\fB$highlight\-fg\-colour\fR the foreground colour to use to highlight the current line\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour0\fR the background colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour0\fR the foreground colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour1\fR the background colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour1\fR the foreground colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-prompt\fR the background colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-prompt\fR the foreground colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$wrap\-around\fR if true then the selection area wraps around, (i\&.e going past the end wraps around, instead of refusing to go there)\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR to \fB$wrap\-around\fR are all just used for the dropdown case (i\&.e\&. \fB$colour\fR or \fB$syntax\fR are True)
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$syntax\fR is no different from \fB$colour\fR unless the user defines it using the \fB:&row\fR parameter\&.
 .RE
 .RE
 .RS 2n
@@ -1660,6 +1823,8 @@ calls dropdown [#dropdown] to do the colour work\&.
 .RE
 .RE
 .RE
+
+Top of Document [#table-of-contents]
 Top of Document [#table-of-contents]
 .SS dropdown(…)
 
@@ -1667,11 +1832,20 @@ A text based dropdown/list or menu with ANSI colours\&.
 
 .RS 4m
 .EX
-sub dropdown(MultiT:D $id, Int:D $window\-height, Str:D $id\-name,
-                &setup\-option\-str:(Int:D $c, @a \-\-> Str:D),
-                    &find\-pos:(MultiT $r, Int:D $p, @a \-\-> Int:D),
+sub dropdown(MultiT:D $id, Int:D $window\-height is copy, Str:D $id\-name,
+                        &setup\-option\-str:(Int:D $c, Int:D $p, @a \-\-> Str:D),
+                        &find\-pos:(MultiT $r, Int:D $p, @a \-\-> Int:D),
                         &get\-result:(MultiT:D $res, Int:D $p, Int:D $l, @a \-\-> MultiT:D),
-                                                                @array \-\-> MultiT) is export  
+                        @array,
+                        Str:D :$highlight\-bg\-colour = t\&.bg\-color(0, 0, 127) ~ t\&.bold, 
+                        Str:D :$highlight\-fg\-colour = t\&.bright\-yellow, 
+                        Str:D :$bg\-colour0 = t\&.bg\-yellow ~ t\&.bold, 
+                        Str:D :$fg\-colour0 = t\&.bright\-blue, 
+                        Str:D :$bg\-colour1 = t\&.bg\-color(0, 127, 0) ~ t\&.bold, 
+                        Str:D :$fg\-colour1 = t\&.bright\-blue,  
+                        Str:D :$bg\-prompt = t\&.bg\-green ~ t\&.bold, 
+                        Str:D :$fg\-prompt = t\&.bright\-blue, 
+                        Bool:D :$wrap\-around = False \-\-> MultiT) is export  
 
 
 .EE
@@ -1813,6 +1987,46 @@ the arg \fB@a\fR is the array \fB@array\fR that was supplied to \fBdropdown\fR\&
 .RE
 .RE
 .RS 2n
+.IP \(bu 2m
+\fB@array\fR the of rows to display\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR the background colour to use to highlight the current line\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-fg\-colour\fR the foreground colour to use to highlight the current line\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour0\fR the background colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour0\fR the foreground colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour1\fR the background colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour1\fR the foreground colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-prompt\fR the background colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-prompt\fR the foreground colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$wrap\-around\fR if true then the selection area wraps around, (i\&.e going past the end wraps around, instead of refusing to go there)\&.
+.RE
+.RS 2n
 .RS 2n
 .RS 2n
 .RS 2n
@@ -1833,7 +2047,7 @@ Top of Document [#table-of-contents]
 
 .RS 4m
 .EX
-my &setup\-option\-str = sub (Int:D $cnt, @array \-\-> Str:D ) {
+my &setup\-option\-str = sub (Int:D $cnt, Int:D $p, @array \-\-> Str:D ) {
     my Str $name;
     my Str $cc;
     my Str $flag;
@@ -1900,7 +2114,7 @@ Top of Document [#table-of-contents]
 
 .RS 4m
 .EX
-my &setup\-option\-str = sub (Int:D $cnt, @array \-\-> Str:D ) {
+my &setup\-option\-str = sub (Int:D $cnt, Int:D $pos, @array \-\-> Str:D ) {
     return @array[$cnt];
 };
 my &get\-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array \-\-> MultiT:D ) {
