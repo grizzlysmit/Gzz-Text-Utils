@@ -4648,7 +4648,7 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 =item4 the arg B<C<$p>> is the current position in the array B<C<@array>> supplied to B<C<dropdown>>.
 =item4 the arg B<C<$l>> is the length of the array B<C<@array>>.
 =item4 the arg B<C<@a>> is the array B<C<@array>> that was supplied to B<C<dropdown>>.
-=item2 B<C<@array>> the of rows to display.
+=item2 B<C<@array>> the array of rows to display.
 =item2 B<C<$highlight-bg-colour>>  the background colour to use to highlight the current line.
 =item2 B<C<$highlight-fg-colour>>  the foreground colour to use to highlight the current line.
 =item2 B<C<$bg-colour0>> the background colour to use if the line count is divisible by 2.
@@ -4659,14 +4659,12 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 =item2 B<C<$fg-prompt>>  the foreground colour to use on the prompt line below the selection area.
 =item2 B<C<$wrap-around>> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
 
-=begin item5 
+=begin item3 
 
 Because we use a function we can compute much more complex results; depending on what we have in B<C<@array>>.
 It still needs to be an Int (for now) but you can do further computations at the end to get other values.
 
-=end item5
-
-=item2 B<C<@array>>  is the array to select from.
+=end item3
 
 Here is an example of use.
 

@@ -1182,7 +1182,7 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p>the arg <strong><code>@a</code></strong> is the array <strong><code>@array</code></strong> that was supplied to <strong><code>dropdown</code></strong>.</p></li>
 </ul>
 </ul>
-<li><p><strong><code>@array</code></strong> the of rows to display.</p></li>
+<li><p><strong><code>@array</code></strong> the array of rows to display.</p></li>
 <li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p></li>
 <li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p></li>
 <li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p></li>
@@ -1193,13 +1193,8 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p></li>
 <li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p></li>
 <ul>
-<ul>
-<ul>
 <li><p>Because we use a function we can compute much more complex results; depending on what we have in <strong><code>@array</code></strong>. It still needs to be an Int (for now) but you can do further computations at the end to get other values.</p></li>
 </ul>
-</ul>
-</ul>
-<li><p><strong><code>@array</code></strong> is the array to select from.</p></li>
 </ul>
 </ul>
 <p>Here is an example of use.</p><p><a href="#table-of-contents">Top of Document</a></p><pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, Int:D $p, @array --&gt; Str:D ) {
@@ -1315,7 +1310,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:09:37Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:12:32Z</span></div></footer>
 	</body>
 </html>
 
