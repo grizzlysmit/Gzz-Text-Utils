@@ -530,9 +530,9 @@ Left Justifying text\&.
 .RS 4m
 .EX
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-             :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
+        :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &left\-global\-number\-of\-chars,
                     Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0,
-                                               Str:D :$ellipsis = '' \-\-> Str) is export
+                                        Str:D :$ellipsis = '' \-\-> Str) is export
 
 
 .EE
@@ -557,9 +557,9 @@ Right justifying text\&.
 .RS 4m
 .EX
 sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-            :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &right\-global\-number\-of\-chars,
+          :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &right\-global\-number\-of\-chars,
                     Str:D :$ref = strip\-ansi($text), Int:D :$max\-width = 0,
-                                                 Str:D :$ellipsis = '' \-\-> Str) is export
+                                             Str:D :$ellipsis = '' \-\-> Str) is export
 
 
 .EE

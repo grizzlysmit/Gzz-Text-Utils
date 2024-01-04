@@ -355,9 +355,9 @@ The Functions Provided
 
       ```raku
       sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                   :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
+              :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
                           Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
-                                                     Str:D :$ellipsis = '' --> Str) is export
+                                              Str:D :$ellipsis = '' --> Str) is export
       ```
 
       * **`left`** is the same except that except that it puts all the padding on the right of the field.
@@ -372,9 +372,9 @@ The Functions Provided
 
       ```raku
       sub right(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                  :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
+                :&number-of-chars:(Int:D, Int:D --> Bool:D) = &right-global-number-of-chars,
                           Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
-                                                       Str:D :$ellipsis = '' --> Str) is export
+                                                   Str:D :$ellipsis = '' --> Str) is export
       ```
 
       * **`right`** is again the same except it puts all the padding on the left and the text to the right.
