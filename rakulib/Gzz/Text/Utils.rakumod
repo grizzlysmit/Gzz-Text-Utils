@@ -4632,7 +4632,8 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 =item2 B<C<$id-name>>          is the name of the parameter we are scrolling.
 =item2 B<C<&setup-option-str>> is a function that returns the current row.
 =item3 Where:
-=item4 the arg B<C<$c>> will be the position in the array we are 
+=item4 the arg B<C<$c>> will be the count of the row we are drawing.
+=item4 the arg B<C<$p>> will be the position in the array we are at. 
 =item4 the arg B<C<@a>> will be the B<C<@array>> supplied to B<C<dropdown(…)>> 
 =item5 the use of a function for this means you can compute a much more complex field.
 =item2 B<C<&find-pos>> is a function that finds the start position in the B<C<dropdown>>.

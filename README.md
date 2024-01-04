@@ -783,7 +783,9 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 
       * Where:
 
-        * the arg **`$c`** will be the position in the array we are 
+        * the arg **`$c`** will be the count of the row we are drawing.
+
+        * the arg **`$p`** will be the position in the array we are at. 
 
         * the arg **`@a`** will be the **`@array`** supplied to **`dropdown(…)`** 
 

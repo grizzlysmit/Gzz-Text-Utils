@@ -1152,7 +1152,8 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <ul>
 <li><p>Where:</p></li>
 <ul>
-<li><p>the arg <strong><code>$c</code></strong> will be the position in the array we are </p></li>
+<li><p>the arg <strong><code>$c</code></strong> will be the count of the row we are drawing.</p></li>
+<li><p>the arg <strong><code>$p</code></strong> will be the position in the array we are at. </p></li>
 <li><p>the arg <strong><code>@a</code></strong> will be the <strong><code>@array</code></strong> supplied to <strong><code>dropdown(…)</code></strong> </p></li>
 <ul>
 <li><p>the use of a function for this means you can compute a much more complex field.</p></li>
@@ -1314,7 +1315,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:01:19Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:09:37Z</span></div></footer>
 	</body>
 </html>
 
