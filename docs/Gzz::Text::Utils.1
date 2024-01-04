@@ -700,8 +700,10 @@ Sprintf like sprintf only it can deal with ANSI highlighted text\&. And has lots
 .RS 4m
 .EX
 sub Sprintf(Str:D $format\-str,
-           :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) = &Sprintf\-global\-number\-of\-chars,
-                                           Str:D :$ellipsis = '', *@args \-\-> Str) is export 
+           :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) =
+                                             &Sprintf\-global\-number\-of\-chars,
+                                             Str:D :$ellipsis = '',
+                                             *@args \-\-> Str) is export 
 
 
 .EE

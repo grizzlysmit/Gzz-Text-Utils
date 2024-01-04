@@ -419,8 +419,10 @@ Sprintf
 
     ```raku
     sub Sprintf(Str:D $format-str,
-               :&number-of-chars:(Int:D, Int:D --> Bool:D) = &Sprintf-global-number-of-chars,
-                                               Str:D :$ellipsis = '', *@args --> Str) is export
+               :&number-of-chars:(Int:D, Int:D --> Bool:D) =
+                                                 &Sprintf-global-number-of-chars,
+                                                 Str:D :$ellipsis = '',
+                                                 *@args --> Str) is export
     ```
 
     * Where:
