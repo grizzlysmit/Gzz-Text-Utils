@@ -388,8 +388,10 @@ The Functions Provided
       * Cropping Text in a field.
 
         ```raku
-        sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                     Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export
+        sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw,
+                                     Bool:D $cropped is rw,
+                                     Int:D $max-width,
+                                     Str:D :$ellipsis = '' --> Str:D) is export
         ```
 
         * **`crop-field`** used by **`centre`**, **`left`** and **`right`** to crop their input if necessary. Copes with ANSI escape codes.

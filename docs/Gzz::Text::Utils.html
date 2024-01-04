@@ -850,8 +850,10 @@ sub centre-global-number-of-chars(Int:D $number-of-chars,
 </ul>
 <li><p>text</p></li>
 <ul>
-<li><p>Cropping Text in a field.</p><pre class="pod-block-code">sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                             Int:D $max-width, Str:D :$ellipsis = '' --&gt; Str:D) is export 
+<li><p>Cropping Text in a field.</p><pre class="pod-block-code">sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw,
+                             Bool:D $cropped is rw,
+                             Int:D $max-width,
+                             Str:D :$ellipsis = '' --&gt; Str:D) is export 
 
 </pre></li>
 <ul>
@@ -1311,7 +1313,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:33:55Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:35:58Z</span></div></footer>
 	</body>
 </html>
 

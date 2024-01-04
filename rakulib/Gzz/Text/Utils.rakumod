@@ -1318,8 +1318,10 @@ Cropping Text in a field.
 
 =begin code :lang<raku>
 
-sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                             Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export 
+sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw,
+                             Bool:D $cropped is rw,
+                             Int:D $max-width,
+                             Str:D :$ellipsis = '' --> Str:D) is export 
 
 =end code
 
