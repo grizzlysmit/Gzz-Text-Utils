@@ -1057,9 +1057,12 @@ multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
 <p>Display a text based menu.</p><pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;,
                               :&amp;row:(Int:D $c, Int:D $p, @a,
                                      Bool:D :$colour = False, Bool:D :$syntax = False,
-                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
-                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
-                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --&gt; Str:D) = &amp;default-row, 
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = '' --&gt; Str:D) = &amp;default-row, 
                               :&amp;value:(Int:D $c, @a --&gt; MultiT) = &amp;default-value, 
                               Bool:D :c(:color(:$colour)) is copy = False,
                               Bool:D :s(:$syntax) = False, 
@@ -1311,7 +1314,7 @@ my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, 'backup',
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T21:57:00Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-04T22:01:19Z</span></div></footer>
 	</body>
 </html>
 
