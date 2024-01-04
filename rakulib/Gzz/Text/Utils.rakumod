@@ -4662,7 +4662,7 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 =begin item3 
 
 Because we use a function we can compute much more complex results; depending on what we have in B<C<@array>>.
-It still needs to be an Int (for now) but you can do further computations at the end to get other values.
+The result can be any of Str, Int, Rat or Num see L<MultiT|#multit>.
 
 =end item3
 

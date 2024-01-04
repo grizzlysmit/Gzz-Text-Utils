@@ -835,7 +835,7 @@ sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
 
     * **`$wrap-around`** if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
 
-      * Because we use a function we can compute much more complex results; depending on what we have in **`@array`**. It still needs to be an Int (for now) but you can do further computations at the end to get other values.
+      * Because we use a function we can compute much more complex results; depending on what we have in **`@array`**. The result can be any of Str, Int, Rat or Num see [MultiT](#multit).
 
 Here is an example of use.
 
