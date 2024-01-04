@@ -4419,7 +4419,7 @@ sub menu(@candidates is copy, Str:D $message = "",
 =end code
 
 =item1 Where:
-=item2 B<C<@candidates>> is an array of strings to make up the rows of the menu.
+=item2 B<C<@candidates>> is an array of hashes to make up the rows of the menu.
 =item2 B<C<$message>> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).
 =item2 B<C<&row>> is is a callback to deal with the rows of the menu.
 =item3 Where
