@@ -747,8 +747,6 @@ sub menu(@candidates is copy, Str:D $message = "",
 
 [Top of Document](#table-of-contents)
 
-[Top of Document](#table-of-contents)
-
 ### dropdown(…)
 
 A text based dropdown/list or menu with ANSI colours.

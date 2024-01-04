@@ -4599,7 +4599,6 @@ sub menu(@candidates is copy, Str:D $message = "",
 
 =begin pod
 
-L<Top of Document|#table-of-contents>
 
 =head3 dropdown(…)
 
