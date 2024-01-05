@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.19>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.21>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -47,7 +47,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.20
+=VERSION v0.1.21
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -1318,10 +1318,12 @@ Cropping Text in a field.
 
 =begin code :lang<raku>
 
-sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw,
-                             Bool:D $cropped is rw,
-                             Int:D $max-width,
-                             Str:D :$ellipsis = '' --> Str:D) is export 
+sub crop-field(Str:D $text,
+               Int:D $w is rw,
+               Int:D $width is rw,
+               Bool:D $cropped is rw,
+               Int:D $max-width,
+               Str:D :$ellipsis = '' --> Str:D) is export {
 
 =end code
 
@@ -1381,8 +1383,12 @@ B<C<$ellipsis>> is used to supply a eliding . Empty string by default.
 
 
 
-sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                                Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export {
+sub crop-field(Str:D $text,
+               Int:D $w is rw,
+               Int:D $width is rw,
+               Bool:D $cropped is rw,
+               Int:D $max-width,
+               Str:D :$ellipsis = '' --> Str:D) is export {
     if $debug {
         my $line = "$?FILE\[$?LINE] {$?MODULE.gist} {&?ROUTINE.signature.gist}";
         dd $w, $max-width, $text, $line;
@@ -1455,8 +1461,12 @@ sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped 
     $w  = hwcswidth($text); # insure that $w is set correctly #
     $cropped = False;
     return $text;
-} #`««« sub crop-field(Str:D $text, Int:D $w is rw, Int:D $width is rw, Bool:D $cropped is rw,
-                                        Int:D $max-width, Str:D :$ellipsis = '' --> Str:D) is export »»»
+} #`««« sub crop-field(Str:D $text,
+               Int:D $w is rw,
+               Int:D $width is rw,
+               Bool:D $cropped is rw,
+               Int:D $max-width,
+               Str:D :$ellipsis = '' --> Str:D) is export »»»
 
 our $centre-total-number-of-chars is export = 0;
 our $centre-total-number-of-visible-chars is export = 0;
@@ -1516,7 +1526,9 @@ sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
 
 sub left(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
                 :&number-of-chars:(Int:D, Int:D --> Bool:D) = &left-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+                    Str:D :$ref = strip-ansi($text),
+                    Int:D :$max-width = 0,
+                    Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     dd $w, $width, $max-width, $text, $ref if $debug;
     my Bool:D $cropped = False;
