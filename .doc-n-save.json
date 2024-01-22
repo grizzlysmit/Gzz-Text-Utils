@@ -1,0 +1,17 @@
+{
+    "markdown-path": "README.md",
+    "comment": "using doc-n-save",
+    "additional-pod-files": [
+    ],
+    "name": "Gzz::Text::Utils",
+    "bin": "bin",
+    "docs": "docs",
+    "only-app": false,
+    "exts": [
+        "rakumod",
+        "raku",
+        "rakudoc"
+    ],
+    "lib": "rakulib",
+    "separate-markdown-files": false
+}
