@@ -1,5 +1,5 @@
 .pc
-.TH Utils.rakumod 1 2024-01-05
+.TH Utils.rakumod 1 2024-01-22
 .SS Table of Contents
 .IP \(bu 2m
 NAME [#name]
@@ -91,6 +91,10 @@ menu(…) [#menu]
 .RE
 .RS 2n
 .IP \(bu 2m
+input\-menu(…) [#input-menu]
+.RE
+.RS 2n
+.IP \(bu 2m
 dropdown(…) [#dropdown]
 .RE
 .RS 2n
@@ -110,7 +114,7 @@ Gzz::Text::Utils
 .SH "AUTHOR"
 Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 .SH "VERSION"
-v0\&.1\&.21
+v0\&.1\&.23
 .SH "TITLE"
 Gzz::Text::Utils
 .SH "SUBTITLE"
@@ -263,11 +267,14 @@ Centring text in a field\&.
 
 .RS 4m
 .EX
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-          :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D)
-                                                = &centre\-global\-number\-of\-chars,
-              Str:D :$ref = strip\-ansi($text),
-                 Int:D :$max\-width = 0, Str:D :$ellipsis = '' \-\-> Str) is export 
+sub centre(Str:D $text,
+           Int:D $width is copy,
+           Str:D $fill = ' ',
+           :&number\-of\-chars:(Int:D, Int:D \-\-> Bool:D) =
+                               &centre\-global\-number\-of\-chars,
+           Str:D :$ref = strip\-ansi($text),
+           Int:D :$max\-width = 0,
+           Str:D :$ellipsis = '' \-\-> Str) is export {
 
 
 .EE
@@ -333,13 +340,17 @@ By default this is equal to the closure \fBcentre\-global\-number\-of\-chars\fR 
 .RS 4m
 .EX
 our $centre\-total\-number\-of\-chars is export = 0;
-our $centre\-total\-number\-of\-visible\-chars is export = 0;
+our $centre\-total\-number\-of\-visible\-chars
+                                  is export = 0;
 
-sub centre\-global\-number\-of\-chars(Int:D $number\-of\-chars,
-                                Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
-    $centre\-total\-number\-of\-chars         = $number\-of\-chars;
-    $centre\-total\-number\-of\-visible\-chars = $number\-of\-visible\-chars;
-    return True
+sub centre\-global\-number\-of\-chars(
+      Int:D $number\-of\-chars,
+      Int:D $number\-of\-visible\-chars \-\-> Bool:D) {
+    $centre\-total\-number\-of\-chars         =
+                         $number\-of\-chars;
+    $centre\-total\-number\-of\-visible\-chars =
+                         $number\-of\-visible\-chars;
+    return True;
 }
 
 
@@ -1615,7 +1626,7 @@ A lot of types but not Any\&.
 
 .RS 4m
 .EX
-subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num | Bool | Array;
 
 
 .EE
@@ -1775,7 +1786,7 @@ you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactl
 .RE
 .RS 2n
 .IP \(bu 2m
-\fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sour of syntax highlighting\&. 
+\fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sort of syntax highlighting\&. 
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -1830,6 +1841,296 @@ you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactl
 .RS 2n
 .IP \(bu 2m
 calls dropdown [#dropdown] to do the colour work\&.
+.RE
+.RE
+.RE
+
+Top of Document [#table-of-contents]
+.SS input\-menu(…)
+
+.RS 4m
+.EX
+sub input\-menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight\-bg\-colour = '', Str:D :$highlight\-fg\-colour = '',
+                                     Str:D :$bg\-colour0 = '', Str:D :$fg\-colour0 = '', 
+                                     Str:D :$bg\-colour1 = '', Str:D :$fg\-colour1 = '' \-\-> Str:D) = &default\-row\-input\-menu, 
+                              :&value:(Int:D $c, @a \-\-> MultiT) = &default\-value, 
+                              :&elt\-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg\-prompt = '', Str:D :$fg\-prompt = '' \-\-> Str:D)  = &default\-prompt,
+                              :&edit:(Int:D $c, @a is copy, Str:D $e \-\-> Bool:D) = &default\-edit, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight\-bg\-colour = t\&.bg\-color(0, 0, 127) ~ t\&.bold, 
+                              Str:D :$highlight\-fg\-colour = t\&.bright\-yellow, 
+                              Str:D :$bg\-colour0 = t\&.bg\-yellow ~ t\&.bold, 
+                              Str:D :$fg\-colour0 = t\&.bright\-blue, 
+                              Str:D :$bg\-colour1 = t\&.bg\-color(0, 127, 0) ~ t\&.bold, 
+                              Str:D :$fg\-colour1 = t\&.bright\-blue,  
+                              Str:D :$bg\-prompt = t\&.bg\-green ~ t\&.bold, 
+                              Str:D :$fg\-prompt = t\&.bright\-blue, 
+                              Bool:D :$wrap\-around = False \-\-> MultiT) is export 
+
+
+.EE
+.RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB@candidates\fR is an array of hashes to make up the rows of the menu\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$message\fR is a message to be displayed at the top of the ascii text form of things (i\&.e\&. no colourising)\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&row\fR is is a callback to deal with the rows of the menu\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+Where
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the current row count\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$p\fR is the current position in the @candidates array\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@a\fR is the array @candidates itself\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR is the background colour of the current row (i\&.e\&. $c == $p)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-fg\-colour\fR is the foreground colour of the current row (i\&.e\&. $c == $p)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour0\fR is the background colour of the row (i\&.e\&. $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour0\fR is the foreground colour of the row (i\&.e\&. $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour1\fR is the background colour of the row (i\&.e\&. $c % 2 != 0 or not $c %% 2)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour1\fR is the foreground colour of the row (i\&.e\&. $c % 2 != 0)\&.
+.RE
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&value\fR is a callback to get the return value for the function\&.
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the row selected\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the array @candidates\&.
+.RE
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&elt\-prompt:(Int:D $c, @a, Bool:D :$colour = False, Bool:D :$syntax = False, Str:D :$bg\-prompt = '', Str:D :$fg\-prompt = '' \-\-> Str:D) = &default\-prompt\fR 
+.IP
+The callback called by the function to get the prompts to let the user edit the value of the row\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the entry choosen by the user\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@a\fR is the candidates array\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:c(:color(:$colour))\fR defines a boolean flag to tell whether to use colours or not\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactly the same\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sort of syntax highlighting\&. 
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-prompt\fR the background colour to use on the prompt line below the selection area\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-prompt\fR the foreground colour to use on the prompt line below the selection area\&.
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB&edit:(Int:D $c, @a is copy, Str:D $e \-\-> Bool:D) = &default\-edit\fR
+.IP
+The callback called by the function to set the new value of the row\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$c\fR is the entry choosen by the user\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB@a\fR is the candidates array\&.
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB:c(:color(:$colour))\fR defines a boolean flag to tell whether to use colours or not\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+you can use \fB:c\fR, \fB:color\fR or \fB:colour\fR for this they are all exactly the same\&.
+.RE
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB:s(:$syntax)\fR same as \fB$colour\fR except it could result in some sort of syntax highlighting\&. 
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR the background colour to use to highlight the current line\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-fg\-colour\fR the foreground colour to use to highlight the current line\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour0\fR the background colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour0\fR the foreground colour to use if the line count is divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-colour1\fR the background colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-colour1\fR the foreground colour to use if the line count is not divisible by 2\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$bg\-prompt\fR the background colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$fg\-prompt\fR the foreground colour to use on the prompt line below the selection area\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$wrap\-around\fR if true then the selection area wraps around, (i\&.e going past the end wraps around, instead of refusing to go there)\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$highlight\-bg\-colour\fR to \fB$wrap\-around\fR are all just used for the dropdown case (i\&.e\&. \fB$colour\fR or \fB$syntax\fR are True)
+.RE
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fB$syntax\fR is no different from \fB$colour\fR unless the user defines it using the \fB:&row\fR parameter\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+calls dropdown [#dropdown] to do the colour work\&.
+.RE
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+\fBNB: the colours stuff is not yet implemented\fR
 .RE
 .RE
 .RE

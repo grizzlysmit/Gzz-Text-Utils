@@ -10,7 +10,8 @@
         "Terminal::Width",
         "Terminal::WCWidth",
         "Term::termios",
-        "Terminal::ANSI"
+        "Terminal::ANSI",
+        "Gzz::Prompt"
     ],
     "provides" : {
         "Gzz::Text::Utils" : "lib/Gzz/Text/Utils.rakumod"
@@ -22,7 +23,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.21",
+    "version" : "0.1.23",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]

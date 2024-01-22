@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.21>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.23>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -40,6 +40,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 =item2 L<MultiT|#multit>
 
 =item2 L<menu(…)|#menu>
+=item2 L<input-menu(…)|#input-menu>
 =item2 L<dropdown(…)|#dropdown>
 =item2 L<lead-dots(…)|#lead-dots>
 =item2 L<trailing-dots(…)|#trailing-dots>
@@ -47,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.21
+=VERSION v0.1.23
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -121,6 +122,7 @@ use Terminal::ANSI::OO :t;
 use Term::termios;
 use Terminal::Width;
 use Terminal::WCWidth;
+use Gzz::Prompt;
 
 my @signal; # stuff to run on a interupt/signal #
 
@@ -1070,11 +1072,14 @@ Centring text in a field.
 
 =begin code :lang<raku>
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-          :&number-of-chars:(Int:D, Int:D --> Bool:D)
-                                                = &centre-global-number-of-chars,
-              Str:D :$ref = strip-ansi($text),
-                 Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export 
+sub centre(Str:D $text,
+           Int:D $width is copy,
+           Str:D $fill = ' ',
+           :&number-of-chars:(Int:D, Int:D --> Bool:D) =
+                               &centre-global-number-of-chars,
+           Str:D :$ref = strip-ansi($text),
+           Int:D :$max-width = 0,
+           Str:D :$ellipsis = '' --> Str) is export {
 
 =end code
 
@@ -1117,13 +1122,17 @@ By default this is equal to the closure B<C<centre-global-number-of-chars>> whic
 =begin code :lang<raku>
 
 our $centre-total-number-of-chars is export = 0;
-our $centre-total-number-of-visible-chars is export = 0;
+our $centre-total-number-of-visible-chars
+                                  is export = 0;
 
-sub centre-global-number-of-chars(Int:D $number-of-chars,
-                                Int:D $number-of-visible-chars --> Bool:D) {
-    $centre-total-number-of-chars         = $number-of-chars;
-    $centre-total-number-of-visible-chars = $number-of-visible-chars;
-    return True
+sub centre-global-number-of-chars(
+      Int:D $number-of-chars,
+      Int:D $number-of-visible-chars --> Bool:D) {
+    $centre-total-number-of-chars         =
+                         $number-of-chars;
+    $centre-total-number-of-visible-chars =
+                         $number-of-visible-chars;
+    return True;
 }
 
 =end code
@@ -1474,7 +1483,7 @@ our $centre-total-number-of-visible-chars is export = 0;
 sub centre-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --> Bool:D) {
     $centre-total-number-of-chars         = $number-of-chars;
     $centre-total-number-of-visible-chars = $number-of-visible-chars;
-    return True
+    return True;
 }
 
 our $left-total-number-of-chars is export = 0;
@@ -1496,9 +1505,14 @@ sub right-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visibl
 }
 
 
-sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-            :&number-of-chars:(Int:D, Int:D --> Bool:D) = &centre-global-number-of-chars,
-                Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export {
+sub centre(Str:D $text,
+           Int:D $width is copy,
+           Str:D $fill = ' ',
+           :&number-of-chars:(Int:D, Int:D --> Bool:D) =
+                               &centre-global-number-of-chars,
+           Str:D :$ref = strip-ansi($text),
+           Int:D :$max-width = 0,
+           Str:D :$ellipsis = '' --> Str) is export {
     my Int:D $w  = wcswidth($ref);
     dd $w, $width, $max-width, $text, $ref if $debug;
     my Bool:D $cropped = False;
@@ -4398,13 +4412,13 @@ A lot of types but not Any.
 
 =begin code :lang<raku>
 
-subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num | Bool | Array;
 
 =end code
 
 =end pod
 
-subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num | Bool | Array;
 
 =begin pod
 
@@ -4457,7 +4471,7 @@ sub menu(@candidates is copy, Str:D $message = "",
 =item4 B<C<$c>> is the array @candidates.
 =item2 B<C<:c(:color(:$colour))>> defines a boolean flag to tell whether to use colours or not.
 =item3 you can use B<C<:c>>, B<C<:color>> or B<C<:colour>> for this they are all exactly the same.
-=item2 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sour of syntax highlighting. 
+=item2 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sort of syntax highlighting. 
 =item2 B<C<$highlight-bg-colour>>  the background colour to use to highlight the current line.
 =item2 B<C<$highlight-fg-colour>>  the foreground colour to use to highlight the current line.
 =item2 B<C<$bg-colour0>> the background colour to use if the line count is divisible by 2.
@@ -4580,7 +4594,6 @@ sub menu(@candidates is copy, Str:D $message = "",
     }
     "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit".say;
     my $choice = -1;
-    say "choose a backup to restore";
     loop {
         $choice = prompt("choose a candiate 0..{+@candidates - 1} =:> ");
         $choice = +@candidates - 1 if $choice ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' ] \s* $$ /;
@@ -4605,6 +4618,404 @@ sub menu(@candidates is copy, Str:D $message = "",
                                      Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
                                      Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row, 
                               :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export »»»
+
+sub gzzreadline_call(Str:D $prompt, Str:D $prefill, Gzz_readline:D $gzzreadline --> Str ) is export {
+    my Str $result;
+    try {
+        my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
+        @signal.push: {
+            $original-flags.setattr(:NOW);
+        }; # insure that we call the reset command if it dies on a signal #
+        $result = $gzzreadline.gzzreadline($prompt, $prefill);
+        $original-flags.setattr(:NOW);
+        @signal.pop if @signal; # done without signal so remove our handler #
+        CATCH {
+            default {
+                $original-flags.setattr(:NOW);
+                @signal.pop if @signal;
+                .backtrace;
+                .Str.say; .rethrow 
+            }
+        }
+    } # try #
+    return $result;
+} # sub gzzreadline_call(Str:D $prompt, Str:D $prefill, Gzz_readline:D $gzzreadline --> Str ) #
+
+sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = ''  --> Str:D) is export {
+    my %row = @array[$pos];
+    my Str:D $value = '';
+    given %row«type».tclc {
+        when 'Int'   {
+            my Int:D $val = %row«value».Int;
+            $value = ~$val;
+        }
+        when 'Num'   {
+            my Num:D $val = %row«value».Num;
+            $value = ~$val;
+        }
+        when 'Rat'   {
+            my Rat:D $val = %row«value».Rat;
+            $value = ~$val;
+        }
+        when 'Bool'  {
+            my Str:D $val = %row«value» ?? 'True' !! 'False';
+            $value = $val;
+        }
+        when 'Str'   {
+            $value = %row«value».Str;
+        }
+        when 'Array' {
+            my @val = |%row«value»;
+            $value = @val.join: ', ';
+        }
+        when 'Read-only' {
+            $value = %row«value».Str;
+        }
+    }
+    if $colour || $syntax {
+        if $cnt == $pos {
+            return $highlight-bg-colour ~ $highlight-fg-colour ~ $value;
+        } elsif $cnt %% 2 {
+            return $bg-colour0 ~ $fg-colour0 ~ $value;
+        } else {
+            return $bg-colour1 ~ $fg-colour1 ~ $value;
+        }
+    } else {
+        return $value;
+    }
+} #`««« sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = ''  --> Str:D) is export »»»
+
+sub default-prompt(Int:D $choice, @candidates,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D) {
+    my %candidate = @candidates[$choice];
+    if $syntax {
+        return $bg-prompt ~ $fg-prompt ~ %candidate«name» ~ ' > ';
+    } elsif $colour {
+        return $bg-prompt ~ $fg-prompt ~ %candidate«name» ~ ' > ';
+    } else {
+        return %candidate«name» ~ ' > ';
+    }
+} #`««« sub default-prompt(Int:D $choice, @candidates --> Str:D) »»»
+
+sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) {
+    my %candidate = @candidates[$choice];
+    given %candidate«type».tclc {
+        when 'Int'   {
+            my Int:D $val = +$edit;
+            @candidates[$choice]«value» = $val;
+            return True;
+        }
+        when 'Num'   {
+            my Num:D $val = $edit.Num;
+            @candidates[$choice]«value» = $val;
+            return True;
+        }
+        when 'Rat'   {
+            my Rat:D $val = $edit.Rat;
+            @candidates[$choice]«value» = $val;
+            return True;
+        }
+        when 'Bool'  {
+            my Bool:D $val = ! %candidate«value»; # toggle it #
+            @candidates[$choice]«value» = $val;
+            return True;
+        }
+        when 'Str'   {
+            @candidates[$choice]«value» = $edit;
+            return True;
+        }
+        when 'Array' {
+            my @edit = $edit.split(rx/ ',' \s* /);
+            @candidates[$choice]«value» = @edit;
+            return True;
+        }
+    }
+    return False;
+} #`««« sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) »»»
+
+=begin pod
+
+=head3 input-menu(…)
+
+=begin code :lang<raku>
+
+sub input-menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row-input-menu, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              :&elt-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D)  = &default-prompt,
+                              :&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D) = &default-edit, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export 
+
+=end code
+
+=item1 Where:
+=item2 B<C<@candidates>> is an array of hashes to make up the rows of the menu.
+=item2 B<C<$message>> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).
+=item2 B<C<&row>> is is a callback to deal with the rows of the menu.
+=item3 Where
+=item4 B<C<$c>> is the current row count.
+=item4 B<C<$p>> is the current position in the @candidates array.
+=item4 B<C<@a>> is the array @candidates itself.
+=item4 B<C<$highlight-bg-colour>> is the background colour of the current row (i.e. $c == $p).
+=item4 B<C<$highlight-fg-colour>> is the foreground colour of the current row (i.e. $c == $p).
+=item4 B<C<$bg-colour0>> is the background colour of the row (i.e. $c %% 2).
+=item4 B<C<$fg-colour0>> is the foreground colour of the row (i.e. $c %% 2).
+=item4 B<C<$bg-colour1>> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).
+=item4 B<C<$fg-colour1>> is the foreground colour of the row (i.e. $c % 2 != 0).
+=item2 B<C<&value>> is a callback to get the return value for the function.
+=item4 B<C<$c>> is the row selected.
+=item4 B<C<$c>> is the array @candidates.
+
+=begin item2
+
+B«C«&elt-prompt:(Int:D $c, @a,
+                 Bool:D :$colour = False, Bool:D :$syntax = False,
+                 Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D)  = &default-prompt»» 
+
+The callback called by the function to get the prompts to let the user edit the value of the row.
+
+=end item2
+
+=item3 B<C<$c>> is the entry choosen by the user.
+=item3 B<C<@a>> is the candidates array.
+=item3 B<C<:c(:color(:$colour))>> defines a boolean flag to tell whether to use colours or not.
+=item4 you can use B<C<:c>>, B<C<:color>> or B<C<:colour>> for this they are all exactly the same.
+=item3 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sort of syntax highlighting. 
+=item3 B<C<$bg-prompt>>  the background colour to use on the prompt line below the selection area.
+=item3 B<C<$fg-prompt>>  the foreground colour to use on the prompt line below the selection area.
+
+=begin item2
+
+B«C«&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D)  = &default-edit»»
+
+The callback called by the function to set the new value of the row.
+
+=end item2
+
+=item3 B<C<$c>> is the entry choosen by the user.
+=item3 B<C<@a>> is the candidates array.
+
+=item2 B<C<:c(:color(:$colour))>> defines a boolean flag to tell whether to use colours or not.
+=item3 you can use B<C<:c>>, B<C<:color>> or B<C<:colour>> for this they are all exactly the same.
+=item2 B<C<:s(:$syntax)>> same as B<C<$colour>> except it could result in some sort of syntax highlighting. 
+=item2 B<C<$highlight-bg-colour>>  the background colour to use to highlight the current line.
+=item2 B<C<$highlight-fg-colour>>  the foreground colour to use to highlight the current line.
+=item2 B<C<$bg-colour0>> the background colour to use if the line count is divisible by 2.
+=item2 B<C<$fg-colour0>> the foreground colour to use if the line count is divisible by 2.
+=item2 B<C<$bg-colour1>> the background colour to use if the line count is not divisible by 2.
+=item2 B<C<$fg-colour1>> the foreground colour to use if the line count is not divisible by 2.
+=item2 B<C<$bg-prompt>>  the background colour to use on the prompt line below the selection area.
+=item2 B<C<$fg-prompt>>  the foreground colour to use on the prompt line below the selection area.
+=item2 B<C<$wrap-around>> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
+=item3 B<C<$highlight-bg-colour>> to B<C<$wrap-around>> are all just used for the dropdown case (i.e. B<C<$colour>> or B<C<$syntax>> are True)
+=item3 B<C<$syntax>> is no different from B<C<$colour>> unless the user defines it using the B<C<:&row>> parameter.
+=item4 calls L<dropdown|#dropdown> to do the colour work.
+=item4 B<NB: the colours stuff is not yet implemented>
+
+L<Top of Document|#table-of-contents>
+
+=end pod
+
+sub input-menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row-input-menu, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              :&elt-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D)  = &default-prompt,
+                              :&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D) = &default-edit, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export {
+    $colour = True if $syntax;
+    my %cancel = type => 'read-only', value => 'cancel', name => 'cancel';
+    @candidates.push(%cancel);
+    my %ok = type => 'read-only', value => 'OK', name => 'OK';
+    @candidates.push(%ok);
+    if $colour {
+        die "colour stuff not implemented yet!!!";
+        # insure that the screen is reset on error #
+        my &stack = sub ( --> Nil) {
+            while @signal {
+                my &elt = @signal.pop;
+                &elt();
+            }
+        };
+        signal(SIGINT, SIGHUP, SIGQUIT, SIGTERM, SIGQUIT).tap( { &stack(); put t.restore-screen; say "$_ Caught"; exit 0 } );
+        my &setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --> Str:D ) {
+            return &row($cnt, $pos, @array, :$colour, :$syntax, 
+                        :$highlight-bg-colour, :$highlight-fg-colour,
+                        :$bg-colour0, :$fg-colour0, 
+                        :$bg-colour1, :$bg-colour1);
+        };
+        my &get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --> MultiT:D ) {
+            my $res = $result;
+            if $pos ~~ 0..^$length {
+                $res = @array[$pos]«value»;
+            }
+            return $res
+        };
+        my &find-pos = sub (MultiT $result, Int:D $pos is copy, @array --> Int:D) {
+            for @array.kv -> $idx, %r {
+                if %r«value» eq $result {
+                    $pos = $idx;
+                    last; # found so don't waste resources #
+                }
+            }
+            return $pos;
+        }
+        my Str:D $result = dropdown(@candidates[@candidates.elems - 1]«value», 40, 'backup',
+                                                    &setup-option-str, &find-pos, &get-result,
+                                                    @candidates, 
+                                                    :$highlight-bg-colour,
+                                                    :$highlight-fg-colour,
+                                                    :$bg-colour0,
+                                                    :$fg-colour0,
+                                                    :$bg-colour1,
+                                                    :$fg-colour1,
+                                                    :$bg-prompt,
+                                                    :$fg-prompt,
+                                                    :$wrap-around);
+        return $result;
+    }
+    put t.save-screen;
+    my $choice = -1;
+    my $gzzreadline        = Gzz_readline.new;
+    OUTTER: loop {
+        put t.clear-screen;
+        $message.say if $message;
+        for @candidates.kv -> $indx, %row {
+            my Str:D $candidate = &elt-prompt($indx, @candidates) ~ &row($indx, $indx, @candidates);
+            "%10d\t%-20s\n".printf($indx, $candidate)
+        }
+        "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit or enter to accept the values as is".say;
+        loop {
+            $choice = prompt("choose a candiate 0..{+@candidates - 1} =:> ");
+            $choice = +@candidates - 1 if $choice eq ''; # i.e. an  simple enter #
+            $choice = +@candidates - 2 if $choice ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' ] \s* $$ /;
+            if $choice !~~ rx/ ^^ \s* \d* \s* $$ / {
+                "$choice: is not a valid option".say;
+                redo OUTTER;
+            }
+            unless 0 <= $choice < +@candidates {
+                "$choice: is not a valid option".say;
+                redo OUTTER;
+            }
+            if &row($choice, $choice, @candidates) eq 'cancel' {
+                last OUTTER;
+            } elsif &row($choice, $choice, @candidates) eq 'OK' {
+                last OUTTER;
+            } else {
+                my %row = @candidates[$choice];
+                given %row«type».tclc {
+                    when 'Int'   {
+                        my Str:D $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                    when 'Num'   {
+                        my Str:D $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                    when 'Rat'   {
+                        my Str:D $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                    when 'Bool'  {
+                        my Str:D $edit = &value($choice, @candidates) ?? 'True' !! 'False';
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                    when 'Str'   {
+                        my Str:D $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                    when 'Array' {
+                        my Str:D $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        &edit($choice, @candidates, $edit);
+                        next OUTTER;
+                    }
+                } # given %row«type».tclc #
+            } # if &row($choice, $choice, @candidates) eq 'cancel' ... elsif &row($choice, $choice, @candidates) eq 'OK' ... else ... #
+            last;
+        } # loop #
+    } # OUTTER: loop #
+    my @result;
+    if &row($choice, $choice, @candidates) eq 'OK' {
+        for @candidates -> %row {
+            next if %row«name» eq 'OK' || (%row«name» eq 'cancel');
+            @result.push: %row;
+        }
+    }
+    put t.restore-screen;
+    return @result;
+} #`««« sub input-menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row-input-menu, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              :&elt-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D)  = &default-prompt,
+                              :&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D) = &default-edit, 
                               Bool:D :c(:color(:$colour)) is copy = False,
                               Bool:D :s(:$syntax) = False, 
                               Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 

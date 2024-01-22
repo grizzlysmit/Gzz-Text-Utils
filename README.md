@@ -49,6 +49,8 @@ Table of Contents
 
     * [menu(…)](#menu)
 
+    * [input-menu(…)](#input-menu)
+
     * [dropdown(…)](#dropdown)
 
     * [lead-dots(…)](#lead-dots)
@@ -70,7 +72,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-v0.1.21
+v0.1.23
 
 TITLE
 =====
@@ -222,11 +224,14 @@ The Functions Provided
     * Centring text in a field.
 
       ```raku
-      sub centre(Str:D $text, Int:D $width is copy, Str:D $fill = ' ',
-                :&number-of-chars:(Int:D, Int:D --> Bool:D)
-                                                      = &centre-global-number-of-chars,
-                    Str:D :$ref = strip-ansi($text),
-                       Int:D :$max-width = 0, Str:D :$ellipsis = '' --> Str) is export
+      sub centre(Str:D $text,
+                 Int:D $width is copy,
+                 Str:D $fill = ' ',
+                 :&number-of-chars:(Int:D, Int:D --> Bool:D) =
+                                     &centre-global-number-of-chars,
+                 Str:D :$ref = strip-ansi($text),
+                 Int:D :$max-width = 0,
+                 Str:D :$ellipsis = '' --> Str) is export {
       ```
 
         * Centres the text **`$text`** in a field of width **`$width`** padding either side with **`$fill`**
@@ -243,13 +248,17 @@ The Functions Provided
 
               ```raku
               our $centre-total-number-of-chars is export = 0;
-              our $centre-total-number-of-visible-chars is export = 0;
+              our $centre-total-number-of-visible-chars
+                                                is export = 0;
 
-              sub centre-global-number-of-chars(Int:D $number-of-chars,
-                                              Int:D $number-of-visible-chars --> Bool:D) {
-                  $centre-total-number-of-chars         = $number-of-chars;
-                  $centre-total-number-of-visible-chars = $number-of-visible-chars;
-                  return True
+              sub centre-global-number-of-chars(
+                    Int:D $number-of-chars,
+                    Int:D $number-of-visible-chars --> Bool:D) {
+                  $centre-total-number-of-chars         =
+                                       $number-of-chars;
+                  $centre-total-number-of-visible-chars =
+                                       $number-of-visible-chars;
+                  return True;
               }
               ```
 
@@ -660,7 +669,7 @@ Printf
 A lot of types but not Any.
 
 ```raku
-subset MultiT is export of Any where * ~~  Str | Int | Rat | Num;
+subset MultiT is export of Any where * ~~  Str | Int | Rat | Num | Bool | Array;
 ```
 
 ### menu
@@ -729,7 +738,7 @@ sub menu(@candidates is copy, Str:D $message = "",
 
       * you can use **`:c`**, **`:color`** or **`:colour`** for this they are all exactly the same.
 
-    * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sour of syntax highlighting. 
+    * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sort of syntax highlighting. 
 
     * **`$highlight-bg-colour`** the background colour to use to highlight the current line.
 
@@ -754,6 +763,127 @@ sub menu(@candidates is copy, Str:D $message = "",
       * **`$syntax`** is no different from **`$colour`** unless the user defines it using the **`:&row`** parameter.
 
         * calls [dropdown](#dropdown) to do the colour work.
+
+[Top of Document](#table-of-contents)
+
+### input-menu(…)
+
+```raku
+sub input-menu(@candidates is copy, Str:D $message = "",
+                              :&row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '', Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '', Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '', Str:D :$fg-colour1 = '' --> Str:D) = &default-row-input-menu, 
+                              :&value:(Int:D $c, @a --> MultiT) = &default-value, 
+                              :&elt-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D)  = &default-prompt,
+                              :&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D) = &default-edit, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --> MultiT) is export
+```
+
+  * Where:
+
+    * **`@candidates`** is an array of hashes to make up the rows of the menu.
+
+    * **`$message`** is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).
+
+    * **`&row`** is is a callback to deal with the rows of the menu.
+
+      * Where
+
+        * **`$c`** is the current row count.
+
+        * **`$p`** is the current position in the @candidates array.
+
+        * **`@a`** is the array @candidates itself.
+
+        * **`$highlight-bg-colour`** is the background colour of the current row (i.e. $c == $p).
+
+        * **`$highlight-fg-colour`** is the foreground colour of the current row (i.e. $c == $p).
+
+        * **`$bg-colour0`** is the background colour of the row (i.e. $c %% 2).
+
+        * **`$fg-colour0`** is the foreground colour of the row (i.e. $c %% 2).
+
+        * **`$bg-colour1`** is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).
+
+        * **`$fg-colour1`** is the foreground colour of the row (i.e. $c % 2 != 0).
+
+    * **`&value`** is a callback to get the return value for the function.
+
+        * **`$c`** is the row selected.
+
+        * **`$c`** is the array @candidates.
+
+    * **`&elt-prompt:(Int:D $c, @a, Bool:D :$colour = False, Bool:D :$syntax = False, Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D) = &default-prompt`** 
+
+      The callback called by the function to get the prompts to let the user edit the value of the row.
+
+      * **`$c`** is the entry choosen by the user.
+
+      * **`@a`** is the candidates array.
+
+      * **`:c(:color(:$colour))`** defines a boolean flag to tell whether to use colours or not.
+
+        * you can use **`:c`**, **`:color`** or **`:colour`** for this they are all exactly the same.
+
+      * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sort of syntax highlighting. 
+
+      * **`$bg-prompt`** the background colour to use on the prompt line below the selection area.
+
+      * **`$fg-prompt`** the foreground colour to use on the prompt line below the selection area.
+
+    * **`&edit:(Int:D $c, @a is copy, Str:D $e --> Bool:D) = &default-edit`**
+
+      The callback called by the function to set the new value of the row.
+
+      * **`$c`** is the entry choosen by the user.
+
+      * **`@a`** is the candidates array.
+
+    * **`:c(:color(:$colour))`** defines a boolean flag to tell whether to use colours or not.
+
+      * you can use **`:c`**, **`:color`** or **`:colour`** for this they are all exactly the same.
+
+    * **`:s(:$syntax)`** same as **`$colour`** except it could result in some sort of syntax highlighting. 
+
+    * **`$highlight-bg-colour`** the background colour to use to highlight the current line.
+
+    * **`$highlight-fg-colour`** the foreground colour to use to highlight the current line.
+
+    * **`$bg-colour0`** the background colour to use if the line count is divisible by 2.
+
+    * **`$fg-colour0`** the foreground colour to use if the line count is divisible by 2.
+
+    * **`$bg-colour1`** the background colour to use if the line count is not divisible by 2.
+
+    * **`$fg-colour1`** the foreground colour to use if the line count is not divisible by 2.
+
+    * **`$bg-prompt`** the background colour to use on the prompt line below the selection area.
+
+    * **`$fg-prompt`** the foreground colour to use on the prompt line below the selection area.
+
+    * **`$wrap-around`** if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).
+
+      * **`$highlight-bg-colour`** to **`$wrap-around`** are all just used for the dropdown case (i.e. **`$colour`** or **`$syntax`** are True)
+
+      * **`$syntax`** is no different from **`$colour`** unless the user defines it using the **`:&row`** parameter.
+
+        * calls [dropdown](#dropdown) to do the colour work.
+
+        * **NB: the colours stuff is not yet implemented**
 
 [Top of Document](#table-of-contents)
 
