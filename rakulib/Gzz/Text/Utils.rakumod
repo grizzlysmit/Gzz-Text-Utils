@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.23>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.24>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.23
+=VERSION v0.1.24
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4595,7 +4595,7 @@ sub menu(@candidates is copy, Str:D $message = "",
     "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit".say;
     my $choice = -1;
     loop {
-        $choice = prompt("choose a candiate 0..{+@candidates - 1} =:> ");
+        $choice = prompt("choose a candidate 0..{+@candidates - 1} =:> ");
         $choice = +@candidates - 1 if $choice ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' ] \s* $$ /;
         if $choice !~~ rx/ ^^ \s* \d* \s* $$ / {
             "$choice: is not a valid option".say;
@@ -4943,7 +4943,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
         }
         "use cancel, bye, bye bye, quit, q, or {+@candidates - 1} to quit or enter to accept the values as is".say;
         loop {
-            $choice = prompt("choose a candiate 0..{+@candidates - 1} =:> ");
+            $choice = prompt("choose a candidate 0..{+@candidates - 1} =:> ");
             $choice = +@candidates - 1 if $choice eq ''; # i.e. an  simple enter #
             $choice = +@candidates - 2 if $choice ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' ] \s* $$ /;
             if $choice !~~ rx/ ^^ \s* \d* \s* $$ / {

@@ -14,7 +14,7 @@
         "Gzz::Prompt"
     ],
     "provides" : {
-        "Gzz::Text::Utils" : "lib/Gzz/Text/Utils.rakumod"
+        "Gzz::Text::Utils" : "rakulib/Gzz/Text/Utils.rakumod"
     },
     "source-url" : "https://github.com/grizzlysmit/Gzz-Text-Utils.git",
     "support" : {
@@ -23,7 +23,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.23",
+    "version" : "0.1.24",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]
