@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Gzz::Text::Utils</title>
+    <meta charset="UTF-8"/>
+    <style>hr,
+img {
+    box-sizing: content-box
+}
+body::after,
+body::before,
+hr::after,
+hr::before {
+    display: table;
+    content: ""
+}
+a,
+a:not([href]) {
+    text-decoration: none
+}
+
+hr,
+svg:not(:root) {
+    overflow: hidden
+}
+
+img,
+table tr {
+    background-color: #fff
+}
+
+pre,
+table {
+    overflow: auto
+}
+
+dl,
+dl dt,
+hr,
+pre code,
+pre>code,
+td,
+th {
+    padding: 0
+}
+
+input,
+pre code {
+    overflow: visible
+}
+
+pre,
+pre code {
+    word-wrap: normal
+}
+
+body {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    color: #333;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    width: 820px;
+    margin: 2em auto;
+}
+
+a {
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+    color: #4078c0
+}
+
+a:active,
+a:hover {
+    outline-width: 0;
+    text-decoration: underline
+}
+
+h1 {
+    margin: .67em 0
+}
+
+img {
+    border-style: none;
+    max-width: 100%
+}
+
+h1,
+h2 {
+    padding-bottom: .3em;
+    border-bottom: 1px solid #eee
+}
+
+input {
+    font: inherit;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit
+}
+
+* {
+    box-sizing: border-box
+}
+
+strong {
+    font-weight: 600
+}
+
+body::after,
+hr::after {
+    clear: both
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: block;
+    width: 100%
+}
+
+blockquote {
+    margin: 0;
+    padding: 0 1em;
+    color: #777;
+    border-left: .25em solid #ddd
+}
+
+ol ol,
+ul ol {
+    list-style-type: lower-roman
+}
+
+ol ol ol,
+ol ul ol,
+ul ol ol,
+ul ul ol {
+    list-style-type: lower-alpha
+}
+
+dd {
+    margin-left: 0
+}
+
+code {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace
+}
+
+pre {
+    font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace
+}
+
+input {
+    -webkit-font-feature-settings: "liga" 0;
+    font-feature-settings: "liga" 0
+}
+
+body>:first-child {
+    margin-top: 0!important
+}
+
+body>:last-child {
+    margin-bottom: 0!important
+}
+
+a:not([href]) {
+    color: inherit
+}
+
+blockquote,
+dl,
+ol,
+p,
+pre,
+table,
+ul {
+    margin-top: 0;
+    margin-bottom: 16px
+}
+
+hr {
+    background: #e7e7e7;
+    height: .25em;
+    margin: 24px 0;
+    border: 0
+}
+
+blockquote>:first-child {
+    margin-top: 0
+}
+
+blockquote>:last-child {
+    margin-bottom: 0
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25
+}
+
+dl dt,
+table th {
+    font-weight: 700
+}
+
+h1 code,
+h1 tt,
+h2 code,
+h2 tt,
+h3 code,
+h3 tt,
+h4 code,
+h4 tt,
+h5 code,
+h5 tt,
+h6 code,
+h6 tt {
+    font-size: inherit
+}
+
+h1 {
+    font-size: 2em
+}
+
+h2 {
+    font-size: 1.5em
+}
+
+h3 {
+    font-size: 1.25em
+}
+
+h4 {
+    font-size: 1em
+}
+
+h5 {
+    font-size: .875em
+}
+
+h6 {
+    font-size: .85em;
+    color: #777
+}
+
+ol,
+ul {
+    padding-left: 2em
+}
+
+ol ol,
+ol ul,
+ul ol,
+ul ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+li>p {
+    margin-top: 16px
+}
+
+li+li {
+    margin-top: .25em
+}
+
+dl dt {
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px
+}
+
+table td,
+table th {
+    padding: 6px 13px;
+    border: 1px solid #ddd
+}
+
+table tr {
+    border-top: 1px solid #ccc
+}
+
+table tr:nth-child(2n) {
+    background-color: #f8f8f8
+}
+
+code {
+    padding: .2em 0;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(0, 0, 0, .04);
+    border-radius: 3px
+}
+
+code::after,
+code::before {
+    letter-spacing: -.2em;
+    content: "\00a0"
+}
+
+pre>code {
+    margin: 0;
+    font-size: 100%;
+    word-break: normal;
+    white-space: pre;
+    background: 0 0;
+    border: 0
+}
+
+pre {
+    padding: 16px;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px
+}
+
+pre code {
+    display: inline;
+    max-width: auto;
+    margin: 0;
+    line-height: inherit;
+    background-color: transparent;
+    border: 0
+}
+
+pre code::after,
+pre code::before {
+    content: normal
+}
+
+kbd {
+    display: inline-block;
+    padding: 3px 5px;
+    font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    line-height: 10px;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fcfcfc;
+    border: 1px solid #ccc;
+    border-bottom-color: #bbb;
+    border-radius: 3px;
+    box-shadow: inset 0 -1px 0 #bbb
+}
+
+hr {
+    border-bottom-color: #eee
+}
+</style>
+
+    
+</head>
+
+<body class="pod">
+    <div id="___top"></div>
+    <nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-2"><td class="toc-number">0.1</td><td class="toc-text"><a href="#Table_of_Contents">Table of Contents</a></td></tr>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#Introduction">Introduction</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">1.1</td><td class="toc-text"><a href="#Motivations">Motivations</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">1.1.1</td><td class="toc-text"><a href="#Update">Update</a></td></tr>
+<tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#Exceptions">Exceptions</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">2.1</td><td class="toc-text"><a href="#BadArg">BadArg</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">2.2</td><td class="toc-text"><a href="#ArgParityMissMatch">ArgParityMissMatch</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">2.3</td><td class="toc-text"><a href="#FormatSpecError">FormatSpecError</a></td></tr>
+<tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#Format_and_FormatActions">Format and FormatActions</a></td></tr>
+<tr class="toc-level-1"><td class="toc-number">4</td><td class="toc-text"><a href="#UnhighlightBase_&amp;_UnhighlightBaseActions_and_Unhighlight_&amp;_UnhighlightActions"><code class="pod-code-inline">UnhighlightBase</code> &amp; <code class="pod-code-inline">UnhighlightBaseActions</code> and <code class="pod-code-inline">Unhighlight</code> &amp; <code class="pod-code-inline">UnhighlightActions</code></a></td></tr>
+<tr class="toc-level-1"><td class="toc-number">5</td><td class="toc-text"><a href="#The_Functions_Provided">The Functions Provided</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.0.1</td><td class="toc-text"><a href="#Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted.">Here are 4 functions provided to <code class="pod-code-inline">centre</code>, <code class="pod-code-inline">left</code> and <code class="pod-code-inline">right</code> justify text even when it is ANSI formatted.</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.0.2</td><td class="toc-text"><a href="#centre">centre</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.0.3</td><td class="toc-text"><a href="#left">left</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.0.4</td><td class="toc-text"><a href="#right">right</a></td></tr>
+<tr class="toc-level-4"><td class="toc-number">5.0.4.1</td><td class="toc-text"><a href="#crop-field">crop-field</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">5.1</td><td class="toc-text"><a href="#Sprintf">Sprintf</a></td></tr>
+<tr class="toc-level-2"><td class="toc-number">5.2</td><td class="toc-text"><a href="#Printf">Printf</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.1</td><td class="toc-text"><a href="#MultiT">MultiT</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.2</td><td class="toc-text"><a href="#menu">menu</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.3</td><td class="toc-text"><a href="#input-menu(…)">input-menu(…)</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.4</td><td class="toc-text"><a href="#dropdown(…)">dropdown(…)</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.5</td><td class="toc-text"><a href="#lead-dots(…)">lead-dots(…)</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.6</td><td class="toc-text"><a href="#trailing-dots(…)">trailing-dots(…)</a></td></tr>
+<tr class="toc-level-3"><td class="toc-number">5.2.7</td><td class="toc-text"><a href="#dots(…)">dots(…)</a></td></tr>
+</table>
+</nav>
+
+
+    <div class="pod-body">
+    <h2 id="Table_of_Contents"><a class="u" href="#___top" title="go to top of document">Table of Contents</a></h2>
+<ul><li><p><a href="#name">NAME</a></p>
+</li>
+<li><p><a href="#author">AUTHOR</a></p>
+</li>
+<li><p><a href="#version">VERSION</a></p>
+</li>
+<li><p><a href="#title">TITLE</a></p>
+</li>
+<li><p><a href="#subtitle">SUBTITLE</a></p>
+</li>
+<li><p><a href="#copyright">COPYRIGHT</a></p>
+</li>
+<li><p><a href="#introduction">Introduction</a></p>
+</li>
+<ul><li><p><a href="#motivations">Motivations</a></p>
+</li>
+<ul><li><p><a href="#update">Update</a></p>
+</li>
+</ul>
+</ul>
+<li><p><a href="#exceptions">Exceptions</a></p>
+</li>
+<ul><li><p><a href="#badarg">BadArg</a></p>
+</li>
+<li><p><a href="#argparitymissmatch">ArgParityMissMatch</a></p>
+</li>
+<li><p><a href="#formatspecerror">FormatSpecError</a></p>
+</li>
+</ul>
+<li><p><a href="#unhighlightbase--unhighlightbaseactions-and-unhighlight--unhighlightactions"><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></a></p>
+</li>
+<li><p><a href="#the-functions-provided">The Functions Provided</a></p>
+</li>
+<ul><li><p><a href="#here-are-4-functions-provided-to-centre-left-and-right-justify-text-even-when-it-is-ansi-formatted">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted</a></p>
+</li>
+<ul><li><p><a href="#centre">centre(…)</a></p>
+</li>
+<li><p><a href="#left">left(…)</a></p>
+</li>
+<li><p><a href="#right">right(…)</a></p>
+</li>
+<ul><li><p><a href="#crop-field">crop-field(…)</a></p>
+</li>
+</ul>
+</ul>
+<li><p><a href="#sprintf">Sprintf</a></p>
+</li>
+<li><p><a href="#printf">Printf</a></p>
+</li>
+<li><p><a href="#multit">MultiT</a></p>
+</li>
+<li><p><a href="#menu">menu(…)</a></p>
+</li>
+<li><p><a href="#input-menu">input-menu(…)</a></p>
+</li>
+<li><p><a href="#dropdown">dropdown(…)</a></p>
+</li>
+<li><p><a href="#lead-dots">lead-dots(…)</a></p>
+</li>
+<li><p><a href="#trailing-dots">trailing-dots(…)</a></p>
+</li>
+<li><p><a href="#dots">dots(…)</a></p>
+</li>
+</ul>
+</ul>
+<h1 id="Introduction"><a class="u" href="#___top" title="go to top of document">Introduction</a></h1>
+<p>A Raku module to provide text formatting services to Raku programs.</p>
+<p>Including a sprintf front-end Sprintf that copes better with Ansi highlighted text and implements <strong><code>%U</code></strong> and does octal as <strong><code>0o123</code></strong> or <strong><code>0O123</code></strong> if you choose <strong><code>%O</code></strong> as I hate ambiguity like <strong><code>0123</code></strong> is it an int with leading zeros or an octal number. Also there is <strong><code>%N</code></strong> for a new line and <strong><code>%T</code></strong> for a tab helpful when you want to use single quotes to stop the <strong>&lt;num&gt; <code>$</code></strong> specs needing back slashes.</p>
+<p>And a <strong><code>printf</code></strong> alike <strong><code>Printf</code></strong>.</p>
+<p>Also it does centring and there is a <strong><code>max-width</code></strong> field in the <strong><code>%</code></strong> spec i.e. <strong><code>%*.*.*E</code></strong>, and more.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h2 id="Motivations"><a class="u" href="#___top" title="go to top of document">Motivations</a></h2>
+<p>When you embed formatting information into your text such as <strong>bold</strong>, <em>italics</em>, etc ... and <strong>colours</strong> standard text formatting will not work e.g. printf, sprintf etc also those functions don&#39;t do centring.</p>
+<p>Another important thing to note is that even these functions will fail if you include such formatting in the <strong>text</strong> field unless you supply a copy of the text with out the formatting characters in it in the <strong>:ref</strong> field i.e. <strong><code>left($formatted-text, $width, :ref($unformatted-text))</code></strong> or <strong><code>text($formatted-text, $width, :$ref)</code></strong> if the reference text is in a variable called <strong><code>$ref</code></strong> or you can write it as <strong><code>left($formatted-text, $width, ref =&gt; $unformatted-text)</code></strong></p>
+<p><a href="#able-of-contents">Top of Document</a></p>
+<h3 id="Update"><a class="u" href="#___top" title="go to top of document">Update</a></h3>
+<p>Fixed the proto type of <strong><code>left</code></strong> etc is now </p>
+<pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = &#39; &#39;,
+            :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
+               Str:D :$ref = strip-ansi($text), Int:D
+                                :$max-width = 0, Str:D :$ellipsis = &#39;&#39; --&gt; Str) is export 
+</pre>
+<p>Where <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> is my new function for striping out ANSI escape sequences so we don&#39;t need to supply <strong><code>:$ref</code></strong> unless it contains codes that <strong><code>sub strip-ansi(Str:D $text --&gt; Str:D) is export</code></strong> cannot strip out, if so I would like to know so I can update it to cope with these new codes.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h1 id="Exceptions"><a class="u" href="#___top" title="go to top of document">Exceptions</a></h1>
+<h2 id="BadArg"><a class="u" href="#___top" title="go to top of document">BadArg</a></h2>
+<pre class="pod-block-code">class BadArg is Exception is export
+
+</pre>
+<p>BadArg is a exception type that Sprintf will throw in case of badly specified arguments.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h2 id="ArgParityMissMatch"><a class="u" href="#___top" title="go to top of document">ArgParityMissMatch</a></h2>
+<pre class="pod-block-code">class ArgParityMissMatch is Exception is export
+
+</pre>
+<p>ArgParityMissMatch is an exception class that Sprintf throws if the number of arguments does not match what the number the format string says there should be.</p>
+<p><strong>NB: if you use <em><code>num$</code></em> argument specs these will not count as they grab from the args add hoc, <em><code>*</code></em> width and precision spec however do count as they consume argument.</strong></p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h2 id="FormatSpecError"><a class="u" href="#___top" title="go to top of document">FormatSpecError</a></h2>
+<pre class="pod-block-code">class FormatSpecError is Exception is export
+
+</pre>
+<p>FormatSpecError is an exception class that Format (used by Sprintf) throws if there is an error in the Format specification (i.e. <strong><code>%n</code></strong> instead of <strong><code>%N</code></strong> as <strong><code>%n</code></strong> is already taken, the same with using <strong><code>%t</code></strong> instead of <strong><code>%T</code></strong>).</p>
+<p>Or anything else wrong with the Format specifier.</p>
+<p><strong>NB: <em><code>%N</code></em> introduces a <em><code>\n</code></em> character and <em><code>%T</code></em> a tab (i.e. <em><code>\t</code></em>).</strong></p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h1 id="Format_and_FormatActions"><a class="u" href="#___top" title="go to top of document">Format and FormatActions</a></h1>
+<p>Format &amp; FormatActions are a grammar and Actions pair that parse out the <strong>%</strong> spec and normal text chunks of a format string.</p>
+<p>For use by Sprintf a sprintf alternative that copes with ANSI highlighted text.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h1 id="UnhighlightBase_&_UnhighlightBaseActions_and_Unhighlight_&_UnhighlightActions"><a class="u" href="#___top" title="go to top of document"><code>UnhighlightBase</code> &amp; <code>UnhighlightBaseActions</code> and <code>Unhighlight</code> &amp; <code>UnhighlightActions</code></a></h1>
+<p><strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> are a grammar &amp; role pair that does the work required to to parse apart ansi highlighted text into ANSI highlighted and plain text. </p>
+<p><strong><code>Unhighlight</code></strong> &amp; <strong><code>UnhighlightActions</code></strong> are a grammar &amp; class pair which provide a simple TOP for applying an application of <strong><code>UnhighlightBase</code></strong> &amp; <strong><code>UnhighlightBaseActions</code></strong> for use by <strong><code>sub strip-ansi(Str:D $text --</code> Str:D) is export</strong>&gt; to strip out the plain text from a ANSI formatted string</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h1 id="The_Functions_Provided"><a class="u" href="#___top" title="go to top of document">The Functions Provided</a></h1>
+<ul><li><p>strip-ansi</p>
+<pre class="pod-block-code">sub strip-ansi(Str:D $text --&gt; Str:D) is export
+
+</pre>
+<p>Strips out all the ANSI escapes, at the moment just those provided by the <strong><code>Terminal::ANSI</code></strong> or <strong><code>Terminal::ANSI::OO</code></strong> modules both available as <strong><code>Terminal::ANSI</code></strong> from zef etc I am not sure how exhaustive that is, but I will implement any more escapes as I become aware of them.</p>
+</li>
+</ul>
+<ul><li><p>hwcswidth</p>
+<pre class="pod-block-code">sub hwcswidth(Str:D $text --&gt; Int:D) is export
+
+</pre>
+<p>Same as <strong><code>wcswidth</code></strong> but it copes with ANSI escape sequences unlike <strong><code>wcswidth</code></strong>.</p>
+</li>
+<ul><li><p>The secret sauce is that it is defined as:</p>
+<pre class="pod-block-code">sub hwcswidth(Str:D $text --&gt; Int:D) is export {
+    return wcswidth(strip-ansi($text));
+} #  sub hwcswidth(Str:D $text --&gt; Int:D) is export #
+
+
+</pre>
+</li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="Here_are_4_functions_provided_to_centre,_left_and_right_justify_text_even_when_it_is_ANSI_formatted."><a class="u" href="#___top" title="go to top of document">Here are 4 functions provided to <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> justify text even when it is ANSI formatted.</a></h3>
+<h3 id="centre"><a class="u" href="#___top" title="go to top of document">centre</a></h3>
+<ul><li><p>⋄</p>
+</li>
+<ul><li><p>Centring text in a field.</p>
+<pre class="pod-block-code">sub centre(Str:D $text,
+           Int:D $width is copy,
+           Str:D $fill = &#39; &#39;,
+           :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) =
+                               &amp;centre-global-number-of-chars,
+           Str:D :$ref = strip-ansi($text),
+           Int:D :$max-width = 0,
+           Str:D :$ellipsis = &#39;&#39; --&gt; Str) is export {
+
+</pre>
+</li>
+<ul><ul><li><p>Centres the text <strong><code>$text</code></strong> in a field of width <strong><code>$width</code></strong> padding either side with <strong><code>$fill</code></strong></p>
+</li>
+<li><p><strong>Where:</strong></p>
+</li>
+<ul><li><p><strong><code>$fill</code></strong> is the fill char by default <strong><code>$fill</code></strong> is set to a single white space.</p>
+</li>
+<ul><li><p>If it requires an odd number of padding then the right hand side will get one more char/codepoint.</p>
+</li>
+</ul>
+<li><p><strong><code>&amp;number-of-chars</code></strong> takes a function which takes 2 <strong><code>Int:D</code></strong>&#39;s and returns a <strong><code>Bool:D</code></strong>.</p>
+</li>
+<ul><li><p>By default this is equal to the closure <strong><code>centre-global-number-of-chars</code></strong> which looks like:</p>
+<pre class="pod-block-code">our $centre-total-number-of-chars is export = 0;
+our $centre-total-number-of-visible-chars
+                                  is export = 0;
+
+sub centre-global-number-of-chars(
+      Int:D $number-of-chars,
+      Int:D $number-of-visible-chars --&gt; Bool:D) {
+    $centre-total-number-of-chars         =
+                         $number-of-chars;
+    $centre-total-number-of-visible-chars =
+                         $number-of-visible-chars;
+    return True;
+}
+
+</pre>
+</li>
+<ul><li><p>Which is a closure around the variables: <strong><code>$centre-total-number-of-chars</code></strong> and <strong><code>$centre-total-number-of-visible-chars</code></strong>, these are global <strong><code>our</code></strong> variables that <strong><code>Gzz::Text::Utils</code></strong> exports. But you can just use <strong><code>my</code></strong> variables from with a scope, just as well. And make the <strong><code>sub</code></strong> local to the same scope.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<p>i.e.</p>
+<pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = &#39;&#39;, *@args --&gt; Str) is export {
+    ...
+    ...
+    ...
+    my Int:D $total-number-of-chars = 0;
+    my Int:D $total-number-of-visible-chars = 0;
+    sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+        $total-number-of-chars += $number-of-chars;
+        $total-number-of-visible-chars += $number-of-visible-chars;
+        return True;
+    } # sub internal-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) #
+    ...
+    ...
+    ...
+    for @format-str -&gt; %elt {
+        my Str:D $type = %elt«type»;
+        if $type eq &#39;literal&#39; {
+            my Str:D $lit = %elt«val»;
+            $total-number-of-chars += $lit.chars;
+            $total-number-of-visible-chars += strip-ansi($lit).chars;
+            $result ~= $lit;
+        } elsif $type eq &#39;fmt-spec&#39; {
+            ...
+            ...
+            ...
+            given $spec-char {
+                when &#39;c&#39; {
+                             $arg .=Str;
+                             $ref .=Str;
+                             BadArg.new(:msg(&quot;arg should be one codepoint: {$arg.codes} found&quot;)).throw if $arg.codes != 1;
+                             $max-width = max($max-width, $precision, 0) if $max-width &gt; 0; #`« should not really have a both for this
+                                                                                                so munge together.
+                                                                                                Traditionally sprintf etc treat precision
+                                                                                                as max-width for strings. »
+                             if $padding eq &#39;&#39; {
+                                 if $justify eq &#39;&#39; {
+                                     $result ~=  right($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq &#39;-&#39; {
+                                     $result ~=  left($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq &#39;^&#39; {
+                                     $result ~=  centre($arg, $width, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 }
+                             } else {
+                                 if $justify eq &#39;&#39; {
+                                     $result ~=  right($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq &#39;-&#39; {
+                                     $result ~=  left($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 } elsif $justify eq &#39;^&#39; {
+                                     $result ~=  centre($arg, $width, $padding, :$ref, :number-of-chars(&amp;internal-number-of-chars), :$max-width);
+                                 }
+                             }
+                         }
+                when &#39;s&#39; {
+                            ...
+                            ...
+                            ...
+        ...
+        ...
+        ...
+    ...
+    ...
+    ...
+    return $result;
+    KEEP {
+        &amp;number-of-chars($total-number-of-chars, $total-number-of-visible-chars);
+    }
+} #`««« sub Sprintf(Str:D $format-str,
+                :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                                        Str:D :$ellipsis = &#39;&#39;, *@args --&gt; Str) is export »»»
+
+</pre>
+</li>
+</ul>
+</ul>
+<li><p>The parameter <strong><code>:$ref</code></strong> is by default set to the value of <strong><code>strip-ansi($text)</code></strong></p>
+</li>
+<ul><li><p>This is used to obtain the length of the of the text using <strong><em><code>wcswidth(Str)</code></em></strong> from module <strong>&quot;<code>Terminal::WCWidth</code>&quot;</strong> which is used to obtain the width the text if printed on the current terminal:</p>
+</li>
+<ul><li><p><strong>NB: <code>wcswidth</code> will return -1 if you pass it text with colours etc embedded in them</strong>.</p>
+</li>
+<li><p><strong>&quot;<code>Terminal::WCWidth</code>&quot;</strong> is witten by <strong>bluebear94</strong> <a href="https://raku.land/github:bluebear94">github:bluebear94</a> get it with <strong>zef</strong> or whatever</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>:$max-width</code></strong> sets the maximum width of the field but if set to <strong><code>0</code></strong> (The default), will effectively be infinite (∞).</p>
+</li>
+<li><p><strong><code>:$ellipsis</code></strong> is used to elide the text if it&#39;s too big I recommend either <strong><code>&#39;&#39;</code></strong> the default or <strong><code>&#39;…&#39;</code></strong>.</p>
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="left"><a class="u" href="#___top" title="go to top of document">left</a></h3>
+<ul><li><p>⋄</p>
+</li>
+<ul><li><p>Left Justifying text.</p>
+<pre class="pod-block-code">sub left(Str:D $text, Int:D $width is copy, Str:D $fill = &#39; &#39;,
+        :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;left-global-number-of-chars,
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                        Str:D :$ellipsis = &#39;&#39; --&gt; Str) is export
+
+</pre>
+</li>
+<ul><li><p><strong><code>left</code></strong> is the same except that except that it puts all the padding on the right of the field.</p>
+</li>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="right"><a class="u" href="#___top" title="go to top of document">right</a></h3>
+<ul><li><p>⋄</p>
+</li>
+<ul><li><p>Right justifying text.</p>
+<pre class="pod-block-code">sub right(Str:D $text, Int:D $width is copy, Str:D $fill = &#39; &#39;,
+          :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;right-global-number-of-chars,
+                    Str:D :$ref = strip-ansi($text), Int:D :$max-width = 0,
+                                             Str:D :$ellipsis = &#39;&#39; --&gt; Str) is export
+
+</pre>
+</li>
+<ul><li><p><strong><code>right</code></strong> is again the same except it puts all the padding on the left and the text to the right.</p>
+</li>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+<h4 id="crop-field"><a class="u" href="#___top" title="go to top of document">crop-field</a></h4>
+</li>
+</ul>
+<li><p>text</p>
+</li>
+<ul><li><p>Cropping Text in a field.</p>
+<pre class="pod-block-code">sub crop-field(Str:D $text,
+               Int:D $w is rw,
+               Int:D $width is rw,
+               Bool:D $cropped is rw,
+               Int:D $max-width,
+               Str:D :$ellipsis = &#39;&#39; --&gt; Str:D) is export {
+
+</pre>
+</li>
+<ul><li><p><strong><code>crop-field</code></strong> used by <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> to crop their input if necessary. Copes with ANSI escape codes.</p>
+</li>
+<ul><li><p><strong>Where</strong></p>
+</li>
+<ul><li><p><strong><code>$text</code></strong> is the text to be cropped possibly, wit ANSI escapes embedded. </p>
+</li>
+<li><p><strong><code>$w</code></strong> is used to hold the width of <strong><code>$text</code></strong> is read-write so will return that value.</p>
+</li>
+<li><p><strong><code>$width</code></strong> is the desired width. Will be used to return the updated width.</p>
+</li>
+<li><p><strong><code>$cropped</code></strong> is used to return the status of whether or not <strong><code>$text</code></strong> was truncated.</p>
+</li>
+<li><p><strong><code>$max-width</code></strong> is the maximum width we are allowing.</p>
+</li>
+<li><p><strong><code>$ellipsis</code></strong> is used to supply a eliding . Empty string by default.</p>
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h2 id="Sprintf"><a class="u" href="#___top" title="go to top of document">Sprintf</a></h2>
+<ul><li><p>Sprintf like sprintf only it can deal with ANSI highlighted text. And has lots of other options, including the ability to specify a <strong><code>$max-width</code></strong> using <strong><code>width.precision.max-width</code></strong>, which can be <strong><code>.*</code></strong>, <strong><code>*&lt;num&gt;$</code></strong>, <strong><code>.*</code></strong>, or <strong><code>&lt;num&gt;</code></strong></p>
+<pre class="pod-block-code">sub Sprintf(Str:D $format-str,
+           :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) =
+                                             &amp;Sprintf-global-number-of-chars,
+                                             Str:D :$ellipsis = &#39;&#39;,
+                                             *@args --&gt; Str) is export 
+
+</pre>
+</li>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>format-str</code></strong> is is a superset of the <strong><code>sprintf</code></strong> format string, but it has extra features: like the flag <strong><code>[ &lt;char&gt; ]</code></strong> where &lt;char&gt; can be almost anything except <strong><code>[</code></strong>, <strong><code>]</code></strong> <strong>control characters</strong>, <strong>white space other than the normal space</strong>, and <strong><code>max-width</code></strong> after the precision.</p>
+</li>
+<ul><li><p>The format string looks like this: </p>
+<pre class="pod-block-code">token format      { &lt;chunks&gt;+ }
+token chunks      { [ &lt;chunk&gt; || &#39;%&#39; &lt;format-spec&gt; ] }
+token chunk       { &lt;-[%]&gt;+ }
+token format-spec { [ &lt;fmt-esc&gt; || &lt;fmt-spec&gt; ] }
+token fmt-esc     { [      &#39;%&#39; #`« a literal % »
+                        || &#39;N&#39; #`« a nl i.e. \n char but does not require interpolation so no double quotes required »
+                        || &#39;T&#39; #`« a tab i.e. \t char but does not require interpolation so no double quotes required »
+                        || &#39;n&#39; #`« not implemented and will not be, throws an exception if matched »
+                        || &#39;t&#39; #`« not implemented and will not be, throws an exception if matched »
+                    ]
+                  }
+token fmt-spec   { [ &lt;dollar-directive&gt; &#39;$&#39; ]? &lt;flags&gt;?  &lt;width&gt;? [ &#39;.&#39; &lt;precision&gt; [ &#39;.&#39; &lt;max-width&gt; ]? ]? &lt;modifier&gt;? &lt;spec-char&gt; }
+
+
+</pre>
+</li>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+</li>
+<ul><li><p>Where</p>
+</li>
+<ul><li><p><strong><code>dollar-directive</code></strong> is a integer &gt;= 1</p>
+</li>
+<li><p><strong><code>flags</code></strong> is any zero or more of:</p>
+</li>
+<ul><li><p><strong><code>+</code></strong> put a plus in front of positive values.</p>
+</li>
+<li><p><strong><code>-</code></strong> left justify, right is the default</p>
+</li>
+<li><p><strong><code>^</code></strong> centre justify.</p>
+</li>
+<li><p><strong><code>#</code></strong> ensure the leading <strong><code>0</code></strong> for any octal, prefix non-zero hexadecimal with <strong><code>0x</code></strong> or <strong><code>0X</code></strong>, prefix non-zero binary with <strong><code>0b</code></strong> or <strong><code>0B</code></strong></p>
+</li>
+<li><p><strong><code>v</code></strong> vector flag (used only with d directive)</p>
+</li>
+<li><p><strong><code>&#39; &#39;</code></strong> pad with spaces.</p>
+</li>
+<li><p><strong><code>0</code></strong> pad with zeros.</p>
+</li>
+<li><p><strong><code>[ &lt;char&gt; ]</code></strong> pad with character char where char matches:</p>
+</li>
+<ul><li><p><strong><code>&lt;-[ &lt;cntrl&gt; \s \[ \] ]&gt; || &#39; &#39;</code></strong> i.e. anything except control characters, white space (apart from the basic white space (i.e. \x20 or the one with ord 32)), and <strong><code>[</code></strong> and finally <strong><code>]</code></strong>.</p>
+</li>
+</ul>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+</li>
+</ul>
+<li><p><strong><code>width</code></strong> is either an integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a &#39;$&#39;.</p>
+</li>
+<li><p><strong><code>precision</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a &#39;$&#39;.</p>
+</li>
+<li><p><strong><code>max-width</code></strong> is a <strong><code>.</code></strong> followed by either an positive integer or a <strong><code>*</code></strong> or a <strong><code>*</code></strong> followed by an integer &gt;= 1 and a &#39;$&#39;.</p>
+</li>
+<li><p><strong><code>modifier</code></strong> These are not implemented but is one of:</p>
+</li>
+<ul><li><p><strong><code>hh</code></strong> interpret integer as a type <strong><code>char</code></strong> or <strong><code>unsigned char</code></strong>.</p>
+</li>
+<li><p><strong><code>h</code></strong> interpret integer as a type <strong><code>short</code></strong> or <strong><code>unsigned short</code></strong>.</p>
+</li>
+<li><p><strong><code>j</code></strong> interpret integer as a type <strong><code>intmax_t</code></strong>, only with a C99 compiler (unportable).</p>
+</li>
+<li><p><strong><code>l</code></strong> interpret integer as a type <strong><code>long</code></strong> or <strong><code>unsigned long</code></strong>.</p>
+</li>
+<li><p><strong><code>ll</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p>
+</li>
+<li><p><strong><code>q</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p>
+</li>
+<li><p><strong><code>L</code></strong> interpret integer as a type <strong><code>long long</code></strong>, <strong><code>unsigned long long</code></strong>, or <strong><code>quad</code></strong> (typically 64-bit integers).</p>
+</li>
+<li><p><strong><code>t</code></strong> interpret integer as a type <strong><code>ptrdiff_t</code></strong>.</p>
+</li>
+<li><p><strong><code>z</code></strong> interpret integer as a type <strong><code>size_t</code></strong>.</p>
+</li>
+</ul>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+</li>
+<li><p><strong><code>spec-char</code></strong> or the conversion character is one of:</p>
+</li>
+<ul><li><p><strong><code>c</code></strong> a character with the given codepoint.</p>
+</li>
+<li><p><strong><code>s</code></strong> a string.</p>
+</li>
+<li><p><strong><code>d</code></strong> a signed integer, in decimal.</p>
+</li>
+<li><p><strong><code>u</code></strong> an unsigned integer, in decimal.</p>
+</li>
+<li><p><strong><code>o</code></strong> an unsigned integer, in octal, with a <strong><code>0o</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p>
+</li>
+<li><p><strong><code>x</code></strong> an unsigned integer, in hexadecimal, with a <strong><code>0x</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p>
+</li>
+<li><p><strong><code>e</code></strong> a floating-point number, in scientific notation.</p>
+</li>
+<li><p><strong><code>f</code></strong> a floating-point number, in fixed decimal notation.</p>
+</li>
+<li><p><strong><code>g</code></strong> a floating-point number, in %e or %f notation.</p>
+</li>
+<li><p><strong><code>X</code></strong> like <strong><code>x</code></strong>, but using uppercase letters, with a <strong><code>0X</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p>
+</li>
+<li><p><strong><code>E</code></strong> like <strong><code>e</code></strong>, but using an uppercase <strong><code>E</code></strong>.</p>
+</li>
+<li><p><strong><code>G</code></strong> like <strong><code>g</code></strong>, but with an uppercase <strong><code>E</code></strong> (if applicable).</p>
+</li>
+<li><p><strong><code>b</code></strong> an unsigned integer, in binary, with a <strong><code>0b</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p>
+</li>
+<li><p><strong><code>B</code></strong> an unsigned integer, in binary, with a <strong><code>0B</code></strong> prepended if the <strong><code>#</code></strong> flag is present.</p>
+</li>
+<li><p><strong><code>i</code></strong> a synonym for <strong><code>%d</code></strong>.</p>
+</li>
+<li><p><strong><code>D</code></strong> a synonym for <strong><code>%ld</code></strong>.</p>
+</li>
+<li><p><strong><code>U</code></strong> a synonym for <strong><code>%lu</code></strong>.</p>
+</li>
+<li><p><strong><code>O</code></strong> a synonym for <strong><code>%lo</code></strong>.</p>
+</li>
+<li><p><strong><code>F</code></strong> a synonym for <strong><code>%f</code></strong>.</p>
+</li>
+</ul>
+</ul>
+</ul>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+</li>
+</ul>
+<li><p><strong><code>:&amp;number-of-chars</code></strong> is an optional named argument which takes a function with a signature <strong><code>:(Int:D, Int:D --</code> Bool:D)</strong>&gt; if not specified it will have the value of <strong><code>&amp;Sprintf-global-number-of-chars</code></strong> which is defined as:</p>
+<pre class="pod-block-code">our $Sprintf-total-number-of-chars is export = 0;
+our $Sprintf-total-number-of-visible-chars is export = 0;
+
+sub Sprintf-global-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+    $Sprintf-total-number-of-chars         = $number-of-chars;
+    $Sprintf-total-number-of-visible-chars = $number-of-visible-chars;
+    return True
+}
+
+</pre>
+</li>
+<ul><li><p>This is exactly the same as the argument by the same name in <strong><code>centre</code></strong>, <strong><code>left</code></strong> and <strong><code>right</code></strong> above.</p>
+<p>i.e. </p>
+<pre class="pod-block-code">sub test( --&gt; True) is export {
+    ...
+    ...
+    ...
+    my $test-number-of-chars = 0;
+    my $test-number-of-visible-chars = 0;
+
+    sub test-number-of-chars(Int:D $number-of-chars, Int:D $number-of-visible-chars --&gt; Bool:D) {
+        $test-number-of-chars         = $number-of-chars;
+        $test-number-of-visible-chars = $number-of-visible-chars;
+        return True
+    }
+
+    put Sprintf(&#39;%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s&#39;,
+                                        ${ arg =&gt; $highlighted, ref =&gt; $text }, $text, 30, 14, $highlighted, 13,
+                                                                    :number-of-chars(&amp;test-number-of-chars), :ellipsis(&#39;…&#39;));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    put Sprintf(&#39;%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s&#39;,
+                                $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                    :number-of-chars(&amp;test-number-of-chars), :ellipsis(&#39;…&#39;));
+    dd $test-number-of-chars,  $test-number-of-visible-chars;
+    ...
+    ...
+    ...
+}
+
+</pre>
+</li>
+<ul><li><p><strong>Note: This is a closure we should always use a closure if we want to get the number of characters printed.</strong> </p>
+</li>
+</ul>
+<li><p><a href="#table-of-contents">Top of Document</a></p>
+</li>
+</ul>
+<li><p><strong><code>:$ellipsis</code></strong> this is an optional argument of type <strong><code>Str:D</code></strong> which defaults to <strong><code>&#39;&#39;</code></strong>, if set will be used to mark elided text, if the argument is truncated due to exceeding the value of <strong><code>max-width</code></strong> (note <strong><code>max-width</code></strong> defaults to <strong><code>0</code></strong> which means infinity). The recommended value would be something like <strong><code>…</code></strong>.</p>
+</li>
+<li><p><strong><code>*@args</code></strong> is an arbitrary long list of values each argument can be either a scalar value to be printed or a Hash or an Array</p>
+</li>
+<ul><li><p>If a Hash then it should contain two pairs with keys: <strong><code>arg</code></strong> and <strong><code>ref</code></strong>; denoting the actual argument and a reference argument respectively, the ref argument should be the same as <strong><code>arg</code></strong> but with no ANSI formatting etc to mess up the counting. As this ruins formatting spacing. If not present will be set to <strong><code>strip-ansi($arg)</code></strong>, only bother with all this if <strong><code>strip-ansi($arg)</code></strong> isn&#39;t good enough.</p>
+</li>
+<li><p>If a Array then it should contain two values. The first being <strong><code>arg</code></strong> and the other being <strong><code>ref</code></strong>; everything else is the same as above.</p>
+</li>
+<li><p><strong><code>arg</code></strong> the actual argument.</p>
+</li>
+<li><p><strong><code>@args[$i][]</code></strong> the actual argument. Where <strong><code>$i</code></strong> is the current index into the array of args.</p>
+</li>
+<li><p><strong><code>@args[$i][1]</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p>
+</li>
+<li><p>If it&#39;s a scalar then it&#39;s the argument itself. And <strong><code>$ref</code></strong> is <strong><code>strip-ansi($arg)</code></strong> if $arg is a string type i.e. Str or just <strong>C</strong>$arg&gt;&gt; otherwise.</p>
+</li>
+<ul><li><p><strong><code>ref</code></strong> the reference argument, as in the <strong><code>:$ref</code></strong> arg of the <strong>left</strong>, <strong>right</strong> and <strong>centre</strong> functions which it uses. It only makes sense if your talking strings possibly formatted if not present will be set to <strong><code>strip-ansi($arg)</code></strong> if $arg is a Str or just $arg otherwise.</p>
+<p>i.e.</p>
+<pre class="pod-block-code">put Sprintf(&#39;%30.14.14s, %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s&#39;,
+                            ${ arg =&gt; $highlighted, ref =&gt; $text }, $text, 30, 14, $highlighted, 13,
+                                                                        :number-of-chars(&amp;test-number-of-chars), :ellipsis(&#39;…&#39;));
+dd $test-number-of-chars,  $test-number-of-visible-chars;
+put Sprintf(&#39;%30.14.14s,  testing %30.14.13s%N%%%N%^*.*s%3$*4$.*3$.*6$d%N%2$^[&amp;]*3$.*4$.*6$s%T%1$[*]^100.*4$.99s&#39;,
+                            $[ $highlighted, $text ], $text, 30, 14, $highlighted, 13, 13,
+                                                                        :number-of-chars(&amp;test-number-of-chars), :ellipsis(&#39;…&#39;));
+dd $test-number-of-chars,  $test-number-of-visible-chars;
+
+</pre>
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h2 id="Printf"><a class="u" href="#___top" title="go to top of document">Printf</a></h2>
+<ul><li><p>Same as <strong><code>Sprintf</code></strong> but writes it&#39;s output to <strong><code>$*OUT</code></strong> or an arbitrary filehandle if you choose.</p>
+</li>
+<ul><li><p>defined as</p>
+<pre class="pod-block-code">multi sub Printf(Str:D $format-str,
+        :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                      Str:D :$ellipsis = &#39;&#39;, *@args --&gt; True) is export {
+    Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args).print;
+} #`««« sub Printf(Str:D $format-str,
+         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                      Str:D :$ellipsis = &#39;&#39;, *@args --&gt; True) is export »»»
+
+multi sub Printf(IO::Handle:D $fp, Str:D $format-str,
+         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                      Str:D :$ellipsis = &#39;&#39;, *@args --&gt; True) is export {
+    $fp.print: Sprintf($format-str, :&amp;number-of-chars, :$ellipsis, |@args);
+} #`««« sub Printf(my IO::Handle:D $fp, Str:D $format-str,
+         :&amp;number-of-chars:(Int:D, Int:D --&gt; Bool:D) = &amp;Sprintf-global-number-of-chars,
+                                      Str:D :$ellipsis = &#39;&#39;, *@args --&gt; True) is export »»»
+
+</pre>
+</li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="MultiT"><a class="u" href="#___top" title="go to top of document">MultiT</a></h3>
+<p>A lot of types but not Any.</p>
+<pre class="pod-block-code">subset MultiT is export of Any where * ~~  Str | Int | Rat | Num | Bool | Array;
+
+</pre>
+<h3 id="menu"><a class="u" href="#___top" title="go to top of document">menu</a></h3>
+<p>Display a text based menu.</p>
+<pre class="pod-block-code">sub menu(@candidates is copy, Str:D $message = &quot;&quot;,
+                              :&amp;row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = &#39;&#39;,
+                                     Str:D :$highlight-fg-colour = &#39;&#39;,
+                                     Str:D :$bg-colour0 = &#39;&#39;,
+                                     Str:D :$fg-colour0 = &#39;&#39;, 
+                                     Str:D :$bg-colour1 = &#39;&#39;,
+                                     Str:D :$fg-colour1 = &#39;&#39; --&gt; Str:D) = &amp;default-row, 
+                              :&amp;value:(Int:D $c, @a --&gt; MultiT) = &amp;default-value, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --&gt; MultiT) is export 
+
+</pre>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>@candidates</code></strong> is an array of hashes to make up the rows of the menu.</p>
+</li>
+<li><p><strong><code>$message</code></strong> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).</p>
+</li>
+<li><p><strong><code>&amp;row</code></strong> is is a callback to deal with the rows of the menu.</p>
+</li>
+<ul><li><p>Where</p>
+</li>
+<ul><li><p><strong><code>$c</code></strong> is the current row count.</p>
+</li>
+<li><p><strong><code>$p</code></strong> is the current position in the @candidates array.</p>
+</li>
+<li><p><strong><code>@a</code></strong> is the array @candidates itself.</p>
+</li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> is the background colour of the current row (i.e. $c == $p).</p>
+</li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> is the foreground colour of the current row (i.e. $c == $p).</p>
+</li>
+<li><p><strong><code>$bg-colour0</code></strong> is the background colour of the row (i.e. $c %% 2).</p>
+</li>
+<li><p><strong><code>$fg-colour0</code></strong> is the foreground colour of the row (i.e. $c %% 2).</p>
+</li>
+<li><p><strong><code>$bg-colour1</code></strong> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).</p>
+</li>
+<li><p><strong><code>$fg-colour1</code></strong> is the foreground colour of the row (i.e. $c % 2 != 0).</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>&amp;value</code></strong> is a callback to get the return value for the function.</p>
+</li>
+<ul><ul><li><p><strong><code>$c</code></strong> is the row selected.</p>
+</li>
+<li><p><strong><code>$c</code></strong> is the array @candidates.</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>:c(:color(:$colour))</code></strong> defines a boolean flag to tell whether to use colours or not.</p>
+</li>
+<ul><li><p>you can use <strong><code>:c</code></strong>, <strong><code>:color</code></strong> or <strong><code>:colour</code></strong> for this they are all exactly the same.</p>
+</li>
+</ul>
+<li><p><strong><code>:s(:$syntax)</code></strong> same as <strong><code>$colour</code></strong> except it could result in some sort of syntax highlighting. </p>
+</li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour0</code></strong> the foreground colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-colour1</code></strong> the background colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour1</code></strong> the foreground colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p>
+</li>
+<ul><li><p><strong><code>$highlight-bg-colour</code></strong> to <strong><code>$wrap-around</code></strong> are all just used for the dropdown case (i.e. <strong><code>$colour</code></strong> or <strong><code>$syntax</code></strong> are True)</p>
+</li>
+<li><p><strong><code>$syntax</code></strong> is no different from <strong><code>$colour</code></strong> unless the user defines it using the <strong><code>:&amp;row</code></strong> parameter.</p>
+</li>
+<ul><li><p>calls <a href="#dropdown">dropdown</a> to do the colour work.</p>
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="input-menu(…)"><a class="u" href="#___top" title="go to top of document">input-menu(…)</a></h3>
+<pre class="pod-block-code">sub input-menu(@candidates is copy, Str:D $message = &quot;&quot;,
+                              :&amp;row:(Int:D $c, Int:D $p, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = &#39;&#39;, Str:D :$highlight-fg-colour = &#39;&#39;,
+                                     Str:D :$bg-colour0 = &#39;&#39;, Str:D :$fg-colour0 = &#39;&#39;, 
+                                     Str:D :$bg-colour1 = &#39;&#39;, Str:D :$fg-colour1 = &#39;&#39; --&gt; Str:D) = &amp;default-row-input-menu, 
+                              :&amp;value:(Int:D $c, @a --&gt; MultiT) = &amp;default-value, 
+                              :&amp;elt-prompt:(Int:D $c, @a,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$bg-prompt = &#39;&#39;, Str:D :$fg-prompt = &#39;&#39; --&gt; Str:D)  = &amp;default-prompt,
+                              :&amp;edit:(Int:D $c, @a is copy, Str:D $e --&gt; Bool:D) = &amp;default-edit, 
+                              Bool:D :c(:color(:$colour)) is copy = False,
+                              Bool:D :s(:$syntax) = False, 
+                              Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                              Str:D :$highlight-fg-colour = t.bright-yellow, 
+                              Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                              Str:D :$fg-colour0 = t.bright-blue, 
+                              Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                              Str:D :$fg-colour1 = t.bright-blue,  
+                              Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                              Str:D :$fg-prompt = t.bright-blue, 
+                              Bool:D :$wrap-around = False --&gt; MultiT) is export 
+
+</pre>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>@candidates</code></strong> is an array of hashes to make up the rows of the menu.</p>
+</li>
+<li><p><strong><code>$message</code></strong> is a message to be displayed at the top of the ascii text form of things (i.e. no colourising).</p>
+</li>
+<li><p><strong><code>&amp;row</code></strong> is is a callback to deal with the rows of the menu.</p>
+</li>
+<ul><li><p>Where</p>
+</li>
+<ul><li><p><strong><code>$c</code></strong> is the current row count.</p>
+</li>
+<li><p><strong><code>$p</code></strong> is the current position in the @candidates array.</p>
+</li>
+<li><p><strong><code>@a</code></strong> is the array @candidates itself.</p>
+</li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> is the background colour of the current row (i.e. $c == $p).</p>
+</li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> is the foreground colour of the current row (i.e. $c == $p).</p>
+</li>
+<li><p><strong><code>$bg-colour0</code></strong> is the background colour of the row (i.e. $c %% 2).</p>
+</li>
+<li><p><strong><code>$fg-colour0</code></strong> is the foreground colour of the row (i.e. $c %% 2).</p>
+</li>
+<li><p><strong><code>$bg-colour1</code></strong> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).</p>
+</li>
+<li><p><strong><code>$fg-colour1</code></strong> is the foreground colour of the row (i.e. $c % 2 != 0).</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>&amp;value</code></strong> is a callback to get the return value for the function.</p>
+</li>
+<ul><ul><li><p><strong><code>$c</code></strong> is the row selected.</p>
+</li>
+<li><p><strong><code>$c</code></strong> is the array @candidates.</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>&amp;elt-prompt:(Int:D $c, @a, Bool:D :$colour = False, Bool:D :$syntax = False, Str:D :$bg-prompt = &#39;&#39;, Str:D :$fg-prompt = &#39;&#39; --&gt; Str:D) = &amp;default-prompt</code></strong> </p>
+<p>The callback called by the function to get the prompts to let the user edit the value of the row.</p>
+</li>
+<ul><li><p><strong><code>$c</code></strong> is the entry choosen by the user.</p>
+</li>
+<li><p><strong><code>@a</code></strong> is the candidates array.</p>
+</li>
+<li><p><strong><code>:c(:color(:$colour))</code></strong> defines a boolean flag to tell whether to use colours or not.</p>
+</li>
+<ul><li><p>you can use <strong><code>:c</code></strong>, <strong><code>:color</code></strong> or <strong><code>:colour</code></strong> for this they are all exactly the same.</p>
+</li>
+</ul>
+<li><p><strong><code>:s(:$syntax)</code></strong> same as <strong><code>$colour</code></strong> except it could result in some sort of syntax highlighting. </p>
+</li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p>
+</li>
+</ul>
+<li><p><strong><code>&amp;edit:(Int:D $c, @a is copy, Str:D $e --&gt; Bool:D) = &amp;default-edit</code></strong></p>
+<p>The callback called by the function to set the new value of the row.</p>
+</li>
+<ul><li><p><strong><code>$c</code></strong> is the entry choosen by the user.</p>
+</li>
+<li><p><strong><code>@a</code></strong> is the candidates array.</p>
+</li>
+</ul>
+<li><p><strong><code>:c(:color(:$colour))</code></strong> defines a boolean flag to tell whether to use colours or not.</p>
+</li>
+<ul><li><p>you can use <strong><code>:c</code></strong>, <strong><code>:color</code></strong> or <strong><code>:colour</code></strong> for this they are all exactly the same.</p>
+</li>
+</ul>
+<li><p><strong><code>:s(:$syntax)</code></strong> same as <strong><code>$colour</code></strong> except it could result in some sort of syntax highlighting. </p>
+</li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour0</code></strong> the foreground colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-colour1</code></strong> the background colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour1</code></strong> the foreground colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p>
+</li>
+<ul><li><p><strong><code>$highlight-bg-colour</code></strong> to <strong><code>$wrap-around</code></strong> are all just used for the dropdown case (i.e. <strong><code>$colour</code></strong> or <strong><code>$syntax</code></strong> are True)</p>
+</li>
+<li><p><strong><code>$syntax</code></strong> is no different from <strong><code>$colour</code></strong> unless the user defines it using the <strong><code>:&amp;row</code></strong> parameter.</p>
+</li>
+<ul><li><p>calls <a href="#dropdown">dropdown</a> to do the colour work.</p>
+</li>
+<li><p><strong>NB: the colours stuff is not yet implemented</strong></p>
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="dropdown(…)"><a class="u" href="#___top" title="go to top of document">dropdown(…)</a></h3>
+<p>A text based dropdown/list or menu with ANSI colours.</p>
+<pre class="pod-block-code">sub dropdown(MultiT:D $id, Int:D $window-height is copy, Str:D $id-name,
+                        &amp;setup-option-str:(Int:D $c, Int:D $p, @a --&gt; Str:D),
+                        &amp;find-pos:(MultiT $r, Int:D $p, @a --&gt; Int:D),
+                        &amp;get-result:(MultiT:D $res, Int:D $p, Int:D $l, @a --&gt; MultiT:D),
+                        @array,
+                        Str:D :$highlight-bg-colour = t.bg-color(0, 0, 127) ~ t.bold, 
+                        Str:D :$highlight-fg-colour = t.bright-yellow, 
+                        Str:D :$bg-colour0 = t.bg-yellow ~ t.bold, 
+                        Str:D :$fg-colour0 = t.bright-blue, 
+                        Str:D :$bg-colour1 = t.bg-color(0, 127, 0) ~ t.bold, 
+                        Str:D :$fg-colour1 = t.bright-blue,  
+                        Str:D :$bg-prompt = t.bg-green ~ t.bold, 
+                        Str:D :$fg-prompt = t.bright-blue, 
+                        Bool:D :$wrap-around = False --&gt; MultiT) is export  
+
+</pre>
+<ul><li><p>Where</p>
+</li>
+<ul><li><p><strong><code>$id</code></strong> is the starting value of our position in the array/choices.</p>
+</li>
+<li><p><strong><code>$window-height</code></strong> is the number of rows of characters to display at a time.</p>
+</li>
+<li><p><strong><code>$id-name</code></strong> is the name of the parameter we are scrolling.</p>
+</li>
+<li><p><strong><code>&amp;setup-option-str</code></strong> is a function that returns the current row.</p>
+</li>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p>the arg <strong><code>$c</code></strong> will be the count of the row we are drawing.</p>
+</li>
+<li><p>the arg <strong><code>$p</code></strong> will be the position in the array we are at. </p>
+</li>
+<li><p>the arg <strong><code>@a</code></strong> will be the <strong><code>@array</code></strong> supplied to <strong><code>dropdown(…)</code></strong> </p>
+</li>
+<ul><li><p>the use of a function for this means you can compute a much more complex field.</p>
+</li>
+</ul>
+</ul>
+</ul>
+<li><p><strong><code>&amp;find-pos</code></strong> is a function that finds the start position in the <strong><code>dropdown</code></strong>.</p>
+</li>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p>the arg <strong><code>$r</code></strong> is the value in the array <strong><code>@array</code></strong> to look for.</p>
+</li>
+<li><p>the arg <strong><code>$p</code></strong> is the best approximation of where it might be if you are using it in a loop or something it could be where it last was. </p>
+</li>
+<li><p>the arg <strong><code>@a</code></strong> the argument <strong><code>@array</code></strong> that was passed to <strong><code>dropdown</code></strong>.</p>
+</li>
+<ul><li><p>you can name these argument anything you like in you function, and because of the computed nature of this function and the other two you have great flexibility.</p>
+</li>
+</ul>
+</ul>
+</ul>
+<li><p><strong><code>&amp;get-result</code></strong> is a function to work out the value selected.</p>
+</li>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p>the arg <strong><code>$res</code></strong> is the default value to return.</p>
+</li>
+<li><p>the arg <strong><code>$p</code></strong> is the current position in the array <strong><code>@array</code></strong> supplied to <strong><code>dropdown</code></strong>.</p>
+</li>
+<li><p>the arg <strong><code>$l</code></strong> is the length of the array <strong><code>@array</code></strong>.</p>
+</li>
+<li><p>the arg <strong><code>@a</code></strong> is the array <strong><code>@array</code></strong> that was supplied to <strong><code>dropdown</code></strong>.</p>
+</li>
+</ul>
+</ul>
+<li><p><strong><code>@array</code></strong> the array of rows to display.</p>
+</li>
+<li><p><strong><code>$highlight-bg-colour</code></strong> the background colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$highlight-fg-colour</code></strong> the foreground colour to use to highlight the current line.</p>
+</li>
+<li><p><strong><code>$bg-colour0</code></strong> the background colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour0</code></strong> the foreground colour to use if the line count is divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-colour1</code></strong> the background colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$fg-colour1</code></strong> the foreground colour to use if the line count is not divisible by 2.</p>
+</li>
+<li><p><strong><code>$bg-prompt</code></strong> the background colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$fg-prompt</code></strong> the foreground colour to use on the prompt line below the selection area.</p>
+</li>
+<li><p><strong><code>$wrap-around</code></strong> if true then the selection area wraps around, (i.e going past the end wraps around, instead of refusing to go there).</p>
+</li>
+<ul><li><p>Because we use a function we can compute much more complex results; depending on what we have in <strong><code>@array</code></strong>. The result can be any of Str, Int, Rat or Num see <a href="#multit">MultiT</a>.</p>
+</li>
+</ul>
+</ul>
+</ul>
+<p>Here is an example of use.</p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, Int:D $p, @array --&gt; Str:D ) {
+    my Str $name;
+    my Str $cc;
+    my Str $flag;
+    my Str $prefix;
+    if $cnt &lt; 0 {
+        $name   = &quot;No country selected yet.&quot;;
+        $cc     = &quot;&quot;;
+        $flag   = &quot;&quot;;
+        $prefix = &quot;you must choose one&quot;;
+    } else {
+        my %row = @array[$cnt];
+        $name   = %row«_name»;
+        $cc     = %row«cc»;
+        try {
+            CATCH {
+                default {
+                    my $Name = $name;
+                    $Name ~~ s:g/ &lt;wb&gt; &#39;and&#39; &lt;wb&gt; /\&amp;/;
+                    try {
+                        CATCH {
+                            default { $flag = uniparse &#39;PENGUIN&#39;}
+                        }
+                        $flag = uniparse $Name;
+                    }
+                }
+            }
+            $flag   = uniparse&nbsp;$name;
+        }
+        $prefix = %row«prefix»;
+    }
+    return &quot;$flag $name: $cc ($prefix)&quot;
+};
+my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
+    for @array.kv -&gt; $idx, %r {
+        if %r{$id-name} == $result {
+            $pos = $idx;
+            last; # found so don&#39;t waste resources #
+        }
+    }
+    return $pos;
+}
+my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      my %row = |%(@array[$pos]);
+      $res = %row«id» if %row«id»:exists;
+    }
+    return $res
+};
+my Int:D $cc-id        = dropdown($cc_id, 20, &#39;id&#39;,
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @_country);
+while !valid-country-cc-id($cc-id, %countries) {
+    $cc-id             = dropdown($cc-id, 20, &#39;id&#39;,
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @_country);
+}
+
+</pre>
+<p>Or using a much simpler array. <strong>NB: from <code>menu</code></strong></p>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<pre class="pod-block-code">my &amp;setup-option-str = sub (Int:D $cnt, Int:D $pos, @array --&gt; Str:D ) {
+    return @array[$cnt];
+};
+my &amp;get-result = sub (MultiT:D $result, Int:D $pos, Int:D $length, @array --&gt; MultiT:D ) {
+    my $res = $result;
+    if $pos ~~ 0..^$length {
+      $res = @array[$pos];
+    }
+    return $res
+};
+my &amp;find-pos = sub (MultiT $result, Int:D $pos, @array --&gt; Int:D) {
+    for @array.kv -&gt; $idx, $r {
+        if $r eq $result {
+            $pos = $idx;
+            last; # found so don&#39;t waste resources #
+        }
+    }
+    return $pos;
+}
+my Str:D $result = dropdown(@candidates[@candidates.elems - 1], 40, &#39;backup&#39;,
+                                    &amp;setup-option-str, &amp;find-pos, &amp;get-result, @candidates);
+
+</pre>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="lead-dots(…)"><a class="u" href="#___top" title="go to top of document">lead-dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p>
+<pre class="pod-block-code">sub lead-dots(Str:D $text, Int:D $width is copy, Str:D $fill = &#39;.&#39; --&gt; Str) is export
+
+</pre>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>$text</code></strong> the text to be preceded by the dots.</p>
+</li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p>
+</li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p>
+</li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="trailing-dots(…)"><a class="u" href="#___top" title="go to top of document">trailing-dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots trailing after it. Sort of like <strong><code>right</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong> but with a single space between the text and the padding.</p>
+<pre class="pod-block-code">sub trailing-dots(Str:D $text, Int:D $width is copy, Str:D $fill = &#39;.&#39; --&gt; Str) is export
+
+</pre>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>$text</code></strong> the text to be trailed by the dots.</p>
+</li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p>
+</li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p>
+</li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+<h3 id="dots(…)"><a class="u" href="#___top" title="go to top of document">dots(…)</a></h3>
+<p>Returns <strong><code>$text</code></strong> in a field of <strong><code>$width</code></strong> with a line of dots preceding it. Sort of like <strong><code>left</code></strong> with <strong><code>$fill</code></strong> defaulting to <strong><code>.</code></strong>.</p>
+<pre class="pod-block-code">sub dots(Str:D $text, Int:D $width is copy, Str:D $fill = &#39;.&#39; --&gt; Str) is export
+
+</pre>
+<ul><li><p>Where:</p>
+</li>
+<ul><li><p><strong><code>$text</code></strong> the text to be preceded by the dots.</p>
+</li>
+<li><p><strong><code>$width</code></strong> the width of the total field.</p>
+</li>
+<li><p><strong><code>$fill</code></strong> the fill char or string.</p>
+</li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p>
+
+    </div>
+
+    
+</body>
+</html>
+
