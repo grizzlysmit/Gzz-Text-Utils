@@ -4812,6 +4812,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
 =item3 B<C<&value>> is a callback to get the return value for the function.
 =item4 B<C<$c>> is the row selected.
 =item4 B<C<$c>> is the array @candidates.
+=item3
 
 =begin item2
 
