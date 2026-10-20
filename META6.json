@@ -24,7 +24,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.26",
+    "version" : "0.1.27",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]
