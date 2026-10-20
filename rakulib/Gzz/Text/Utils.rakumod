@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.25>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.26>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.25
+=VERSION v0.1.26
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4748,6 +4748,10 @@ sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) {
             return True;
         }
         when 'Str'   {
+            @candidates[$choice]«value» = $edit;
+            return True;
+        }
+        when 'Pass'   {
             @candidates[$choice]«value» = $edit;
             return True;
         }
