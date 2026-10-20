@@ -5,6 +5,7 @@ plan 23;
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
 use Terminal::WCWidth;
+use Terminal::Getpass;
 
 use lib 'rakulib';
 use Gzz::Text::Utils;

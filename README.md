@@ -827,8 +827,6 @@ sub input-menu(@candidates is copy, Str:D $message = "",
 
         * **`$c`** is the array @candidates.
 
-      * 
-
     * **`&elt-prompt:(Int:D $c, @a, Bool:D :$colour = False, Bool:D :$syntax = False, Str:D :$bg-prompt = '', Str:D :$fg-prompt = '' --> Str:D) = &default-prompt`** 
 
       The callback called by the function to get the prompts to let the user edit the value of the row.

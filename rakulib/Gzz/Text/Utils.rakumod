@@ -2132,7 +2132,8 @@ sub Sprintf(Str:D $format-str,
                                                                                                  $n++ if %e«precision»«kind» eq 'star';
                                                                                                  $n;
                                                                                              }));
-    my %extra-args is SetHash[Int] = (^$positionals).list;
+    #my %extra-args is SetHash[Int] = (^$positionals).list;
+    my %extra-args is SetHash = (^$positionals).list;
     my Int:D $dollars  = [+] (@format-str.grep( -> %elt { %elt«type» eq 'fmt-spec' }).map( -> %e {
                                                                                           my Int:D $n = 0;
                                                                                           my Int:D $dollar-directive = %e«dollar-directive»;
@@ -4812,7 +4813,6 @@ sub input-menu(@candidates is copy, Str:D $message = "",
 =item3 B<C<&value>> is a callback to get the return value for the function.
 =item4 B<C<$c>> is the row selected.
 =item4 B<C<$c>> is the array @candidates.
-=item3
 
 =begin item2
 
