@@ -4809,7 +4809,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
 =item4 B<C<$fg-colour0>> is the foreground colour of the row (i.e. $c %% 2).
 =item4 B<C<$bg-colour1>> is the background colour of the row (i.e. $c % 2 != 0 or not $c %% 2).
 =item4 B<C<$fg-colour1>> is the foreground colour of the row (i.e. $c % 2 != 0).
-=item2 B<C<&value>> is a callback to get the return value for the function.
+=item3 B<C<&value>> is a callback to get the return value for the function.
 =item4 B<C<$c>> is the row selected.
 =item4 B<C<$c>> is the array @candidates.
 

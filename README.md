@@ -821,7 +821,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
 
         * **`$fg-colour1`** is the foreground colour of the row (i.e. $c % 2 != 0).
 
-    * **`&value`** is a callback to get the return value for the function.
+      * **`&value`** is a callback to get the return value for the function.
 
         * **`$c`** is the row selected.
 
