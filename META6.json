@@ -11,7 +11,7 @@
         "Terminal::WCWidth",
         "Term::termios",
         "Terminal::ANSI",
-        "Gzz::Prompt"
+        "Gzz::Readline"
     ],
     "provides" : {
         "Gzz::Text::Utils" : "rakulib/Gzz/Text/Utils.rakumod"
@@ -23,7 +23,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.29",
+    "version" : "0.1.30",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]
