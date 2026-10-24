@@ -11,7 +11,6 @@
         "Terminal::WCWidth",
         "Term::termios",
         "Terminal::ANSI",
-        "Terminal::Getpass",
         "Gzz::Prompt"
     ],
     "provides" : {
@@ -24,7 +23,7 @@
         "bugtracker": "https://github.com/grizzlysmit/Gzz-Text-Utils/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.28",
+    "version" : "0.1.29",
     "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ],
   "test-depends": [
   ]
