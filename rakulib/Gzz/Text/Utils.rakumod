@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.27>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.28>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.27
+=VERSION v0.1.28
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -119,11 +119,12 @@ INIT my $debug = False;
 INIT "Grammar::Debugger is on".say if $debug;
 
 use Terminal::ANSI::OO :t;
+use Term::ReadKey;
 use Term::termios;
 use Terminal::Width;
 use Terminal::WCWidth;
-use Gzz::Prompt;
-use Terminal::Getpass;
+use Gzz::Readline;
+#use Terminal::Getpass;
 
 my @signal; # stuff to run on a interupt/signal #
 
@@ -4636,15 +4637,18 @@ sub gzzreadline_call(Str:D $prompt, Str:D $prefill, Gzz_readline:D $gzzreadline 
     my Str $result;
     try {
         my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
+        without $original-flags {
+            $original-flags = Term::termios.new(:fd($*OUT.native-descriptor)).getattr;
+        }
         @signal.push: {
-            $original-flags.setattr(:NOW);
+            $original-flags.setattr(:NOW) with $original-flags;
         }; # insure that we call the reset command if it dies on a signal #
         $result = $gzzreadline.gzzreadline($prompt, $prefill);
-        $original-flags.setattr(:NOW);
+        $original-flags.setattr(:NOW) with $original-flags;
         @signal.pop if @signal; # done without signal so remove our handler #
         CATCH {
             default {
-                $original-flags.setattr(:NOW);
+                $original-flags.setattr(:NOW) with $original-flags;
                 @signal.pop if @signal;
                 .backtrace;
                 .Str.say; .rethrow 
@@ -4681,7 +4685,7 @@ sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
             my Str:D $val = %row«value» ?? 'True' !! 'False';
             $value = $val;
         }
-        when 'Str'   {
+        when 'Str'|'Pass'   {
             $value = %row«value».Str;
         }
         when 'Array' {
@@ -4863,6 +4867,70 @@ The callback called by the function to set the new value of the row.
 L<Top of Document|#table-of-contents>
 
 =end pod
+
+sub mkstars(Str:D $line --> Str:D) is export {
+    my Str:D $result = '';
+    for 0..^$line.chars {
+        $result ~= '*';
+    }
+    return $result;
+}
+
+sub getpass(Str:D $prompt = '') is export {
+    my Str $result;
+    try {
+        my $original-flags := Term::termios.new(:fd($*IN.native-descriptor)).getattr;
+        without $original-flags {
+            $original-flags = Term::termios.new(:fd($*OUT.native-descriptor)).getattr;
+        }
+        @signal.push: {
+            $original-flags.setattr(:NOW) with $original-flags;
+        }; # insure that we call the reset command if it dies on a signal #
+        #$result = $gzzreadline.gzzreadline($prompt, $prefill);
+        #$*IN.chomp();
+        $result = '';
+        printf("%s%d", "\e", 7);             # save the cursor location        #
+        printf("%s%s", $prompt, mkstars($result));
+        if $*IN.t {
+            #$original-flags.unset_lflags(<ECHO>) with $original-flags;
+            my Str $ch;
+            printf("%s%d", "\e", 7);                        # save the cursor location        #
+            while ($ch = read-key(:!echo) // '') && $ch ~~ rx/ <-[\v]>+ / {
+                #`«««
+                given $ch {
+                    when "\b" {
+                    }
+                }
+                #»»»
+                $result ~= $ch;
+                printf("%s8", "\e");                        # restore the cursor location     #
+                printf("%s0K", "\e[");                      # clear the line                  #
+                printf("%s%s", $prompt, mkstars($result));
+            }
+            printf("%s8", "\e");                            # restore the cursor location     #
+            printf("%s0K", "\e[");                          # clear the line                  #
+        }
+        $original-flags.setattr(:NOW) with $original-flags;
+        without $original-flags {
+            $original-flags = Term::termios.new(:fd($*OUT.native-descriptor)).setattr(:NOW);
+        }
+        @signal.pop if @signal; # done without signal so remove our handler #
+        CATCH {
+            default {
+                $original-flags.setattr(:NOW) with $original-flags;
+                for @signal -> &p {
+                    &p();
+                }
+                without $original-flags {
+                    $original-flags = Term::termios.new(:fd($*OUT.native-descriptor)).setattr(:NOW);
+                }
+                .backtrace;
+                .Str.say; .rethrow 
+            }
+        }
+    } # try #
+    return $result;
+}
 
 sub input-menu(@candidates is copy, Str:D $message = "",
                               :&row:(Int:D $c, Int:D $p, @a,
