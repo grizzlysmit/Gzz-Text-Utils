@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.31>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.32>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.31
+=VERSION v0.1.32
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4685,8 +4685,11 @@ sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
             my Str:D $val = %row«value» ?? 'True' !! 'False';
             $value = $val;
         }
-        when 'Str'|'Pass'   {
+        when 'Str'   {
             $value = %row«value».Str;
+        }
+        when 'Pass'   {
+            $value = mkstars(%row«value».Str);
         }
         when 'Array' {
             my @val = |%row«value»;
@@ -5061,7 +5064,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                         next OUTTER;
                     }
                     when 'Pass'   {
-                        my $prompt = %row«name»;
+                        my $prompt = &elt-prompt($choice, @candidates);
                         my Str:D $edit = getpass($prompt);
                         &edit($choice, @candidates, $edit);
                         next OUTTER;
