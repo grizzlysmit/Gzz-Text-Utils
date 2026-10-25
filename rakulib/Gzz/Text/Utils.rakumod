@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.36>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.37>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.36
+=VERSION v0.1.37
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4744,6 +4744,7 @@ sub default-prompt(Int:D $choice, @candidates,
 
 sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) {
     my %candidate = @candidates[$choice];
+    dd "inside default-edit", $choice, @candidates, %candidate;
     given %candidate«type».tclc {
         when 'Int'   {
             my Int:D $val = +$edit;
@@ -4779,6 +4780,7 @@ sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) {
             return True;
         }
     }
+    dd $choice, @candidates, %candidate, "End default-edit";
     return False;
 } #`««« sub default-edit(Int:D $choice, @candidates is copy, Str:D $edit --> Bool:D) »»»
 
@@ -4981,6 +4983,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
         }
         die qq[Error: Use of reserved row names, {@cancel-ok.reduce: &infix:<+>} occurrences!!!];
     }
+    #dd @candidates, $count;
     $colour = True if $syntax;
     my %cancel = type => 'read-only', value => 'cancel', name => 'cancel';
     @candidates.push(%cancel);
@@ -5089,10 +5092,12 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                     }
                     when 'Pass'   {
                         my @show = @candidates.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name» ~~ rx:i/ ^^ 'show password' 's'? $$ / };
+                        #dd @candidates, @show;
                         my Bool:D $show-pass = False;
                         if @show {
                             my %show-pass-row = @show[0];
                             $show-pass = %show-pass-row«value».Bool;
+                            #dd %show-pass-row, $show-pass;
                         }
                         my $prompt = &elt-prompt($choice, @candidates);
                         my Str:D $edit = '';
