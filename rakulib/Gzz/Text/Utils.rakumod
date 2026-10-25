@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.35>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.36>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.35
+=VERSION v0.1.36
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4689,7 +4689,7 @@ sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
             $value = %row«value».Str;
         }
         when 'Pass'   {
-            my @show = @array.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name» ~~ rx:i/ 'show password' 's'? / };
+            my @show = @array.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name» ~~ rx:i/ ^^ 'show password' 's'? $$ / };
             my Bool:D $show-pass = False;
             if @show {
                 my %show-pass-row = @show[0];
@@ -5078,7 +5078,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                         next OUTTER;
                     }
                     when 'Bool'  {
-                        my Str:D $edit = !&value($choice, @candidates);
+                        my Str:D $edit = &value($choice, @candidates) ?? 'False' !! 'True';
                         &edit($choice, @candidates, $edit);
                         next OUTTER;
                     }
@@ -5088,8 +5088,19 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                         next OUTTER;
                     }
                     when 'Pass'   {
+                        my @show = @candidates.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name» ~~ rx:i/ ^^ 'show password' 's'? $$ / };
+                        my Bool:D $show-pass = False;
+                        if @show {
+                            my %show-pass-row = @show[0];
+                            $show-pass = %show-pass-row«value».Bool;
+                        }
                         my $prompt = &elt-prompt($choice, @candidates);
-                        my Str:D $edit = getpass($prompt);
+                        my Str:D $edit = '';
+                        if $show-pass {
+                            $edit = gzzreadline_call(&elt-prompt($choice, @candidates), ~&value($choice, @candidates), $gzzreadline);
+                        } else {
+                            $edit = getpass($prompt);
+                        }
                         &edit($choice, @candidates, $edit);
                         next OUTTER;
                     }
