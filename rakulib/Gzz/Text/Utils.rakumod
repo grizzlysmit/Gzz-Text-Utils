@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.34>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.35>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.34
+=VERSION v0.1.35
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4689,7 +4689,7 @@ sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
             $value = %row«value».Str;
         }
         when 'Pass'   {
-            my @show = @array.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name».tclc eq 'Show' };
+            my @show = @array.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name» ~~ rx:i/ 'show password' 's'? / };
             my Bool:D $show-pass = False;
             if @show {
                 my %show-pass-row = @show[0];
