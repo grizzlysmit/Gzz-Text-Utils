@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.37>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.38>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.37
+=VERSION v0.1.38
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4904,26 +4904,28 @@ sub getpass(Str:D $prompt = '') is export {
         #$result = $gzzreadline.gzzreadline($prompt, $prefill);
         #$*IN.chomp();
         $result = '';
+        printf("%s", $prompt);
         printf("%s%d", "\e", 7);             # save the cursor location        #
-        printf("%s%s", $prompt, mkstars($result));
         if $*IN.t {
             #$original-flags.unset_lflags(<ECHO>) with $original-flags;
             my Str $ch;
             printf("%s%d", "\e", 7);                        # save the cursor location        #
             while ($ch = read-key(:!echo) // '') && $ch ~~ rx/ <-[\v]>+ / {
-                #`«««
                 given $ch {
-                    when "\b" {
+                    when "\x[7F]" {
+                        $result = $result.substr(0, *-1) unless $result.chars < 1;
+                    }
+                    default {
+                        $result ~= $ch;
                     }
                 }
-                #»»»
-                $result ~= $ch;
                 printf("%s8", "\e");                        # restore the cursor location     #
                 printf("%s0K", "\e[");                      # clear the line                  #
-                printf("%s%s", $prompt, mkstars($result));
+                printf("%s", mkstars($result));
             }
-            printf("%s8", "\e");                            # restore the cursor location     #
-            printf("%s0K", "\e[");                          # clear the line                  #
+            #printf("%s8", "\e");                            # restore the cursor location     #
+            #printf("%s0K\n", "\e[");                          # clear the line                  #
+            "".say;
         }
         $original-flags.setattr(:NOW) with $original-flags;
         without $original-flags {
