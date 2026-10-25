@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.33>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.34>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.33
+=VERSION v0.1.34
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4972,7 +4972,14 @@ sub input-menu(@candidates is copy, Str:D $message = "",
         for $count.kv -> $name, $cnt {
             qq[Error: row of name "$name" not unique should only occur once found $cnt times!!!].say;
         }
-        die qq[Error duplicated row names, {$count.values.reduce: &infix:<+>} occurrences.];
+        die qq[Error: duplicated row names, {$count.values.reduce: &infix:<+>} occurrences!!!];
+    }
+    my @cancel-ok = @candidates.grep: -> %current-row { %current-row«name» ~~ rx:i/ ^^ \s* [ 'cancel' || 'bye' [ \s* 'bye' ] ? || 'quit' || 'q' || 'ok' ] \s* $$ / };
+    if @cancel-ok {
+        for @cancel-ok -> %row {
+            qq[Error: Do not use reserved row name "{%row«name»}" in \@candidates!!!].say;
+        }
+        die qq[Error: Use of reserved row names, {@cancel-ok.reduce: &infix:<+>} occurrences!!!];
     }
     $colour = True if $syntax;
     my %cancel = type => 'read-only', value => 'cancel', name => 'cancel';
@@ -5011,7 +5018,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
             }
             return $pos;
         }
-        my Str:D $result = dropdown(@candidates[@candidates.elems - 1]«value», 40, 'backup',
+        my Str:D $result = dropdown(@candidates[@candidates.elems - 1]«value», 40, ($message ?? $message !! 'backup'),
                                                     &setup-option-str, &find-pos, &get-result,
                                                     @candidates, 
                                                     :$highlight-bg-colour,
@@ -5048,9 +5055,9 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                 "$choice: is not a valid option".say;
                 redo OUTTER;
             }
-            if &row($choice, $choice, @candidates) eq 'cancel' {
+            if &row($choice, $choice, @candidates).tclc eq 'Cancel' {
                 last OUTTER;
-            } elsif &row($choice, $choice, @candidates) eq 'OK' {
+            } elsif &row($choice, $choice, @candidates).uc eq 'OK' {
                 last OUTTER;
             } else {
                 my %row = @candidates[$choice];
@@ -5071,7 +5078,7 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                         next OUTTER;
                     }
                     when 'Bool'  {
-                        my Str:D $edit = &value($choice, @candidates) ?? 'True' !! 'False';
+                        my Str:D $edit = !&value($choice, @candidates);
                         &edit($choice, @candidates, $edit);
                         next OUTTER;
                     }
