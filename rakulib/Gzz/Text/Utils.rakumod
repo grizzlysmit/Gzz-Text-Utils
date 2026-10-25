@@ -1,4 +1,4 @@
-unit module Gzz::Text::Utils:ver<0.1.32>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module Gzz::Text::Utils:ver<0.1.33>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ L<Here are 4 functions provided  to B<C<centre>>, B<C<left>> and B<C<right>> jus
 
 =NAME Gzz::Text::Utils 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION v0.1.32
+=VERSION v0.1.33
 =TITLE Gzz::Text::Utils
 =SUBTITLE A Raku module to provide text formatting services to Raku programs.
 
@@ -4689,7 +4689,17 @@ sub default-row-input-menu(Int:D $cnt, Int:D $pos, @array,
             $value = %row«value».Str;
         }
         when 'Pass'   {
-            $value = mkstars(%row«value».Str);
+            my @show = @array.grep: -> %current-row { %current-row«type».tclc eq 'Bool' && %current-row«name».tclc eq 'Show' };
+            my Bool:D $show-pass = False;
+            if @show {
+                my %show-pass-row = @show[0];
+                $show-pass = %show-pass-row«value».Bool;
+            }
+            if $show-pass {
+                $value = %row«value».Str;
+            } else {
+                $value = mkstars(%row«value».Str);
+            }
         }
         when 'Array' {
             my @val = |%row«value»;
@@ -4957,6 +4967,13 @@ sub input-menu(@candidates is copy, Str:D $message = "",
                               Str:D :$bg-prompt = t.bg-green ~ t.bold, 
                               Str:D :$fg-prompt = t.bright-blue, 
                               Bool:D :$wrap-around = False --> MultiT) is export {
+    my $count = Bag.new-from-pairs: |(@candidates.Bag.pairs.grep( { .value > 1 }));
+    if $count.Bool {
+        for $count.kv -> $name, $cnt {
+            qq[Error: row of name "$name" not unique should only occur once found $cnt times!!!].say;
+        }
+        die qq[Error duplicated row names, {$count.values.reduce: &infix:<+>} occurrences.];
+    }
     $colour = True if $syntax;
     my %cancel = type => 'read-only', value => 'cancel', name => 'cancel';
     @candidates.push(%cancel);
